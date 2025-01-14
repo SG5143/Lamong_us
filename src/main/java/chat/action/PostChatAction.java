@@ -3,6 +3,7 @@ package chat.action;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import chat.model.ChatDao;
@@ -39,17 +40,24 @@ public class PostChatAction implements Action {
 			String user = reqData.optString("user_uuid", null);
 			String message = reqData.optString("message", null);
 
+			// 입력값 검증
+			if (chatRoom == null || chatRoom.isEmpty() || user == null || user.isEmpty() || message == null) {
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 데이터가 누락되었습니다.");
+				return;
+			}
 			ChatRequestDto chatDto = new ChatRequestDto(chatRoom, user, message);
 
 			ChatDao chatDao = ChatDao.getInstance();
 
-			if (chatDao.insertChat(chatDto)) {
+			if (chatDao.insertChat(chatDto))
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "메시지를 등록했습니다");
-			} else {
+			else
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "요청 데이터가 누락되었습니다.");
-			}
-		} catch (Exception e) {
-			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
+
+		} catch (JSONException e) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "잘못된 JSON 형식입니다.");
+		} catch (IOException e) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "입력 데이터 처리 중 오류가 발생했습니다.");
 		}
 
 	}
