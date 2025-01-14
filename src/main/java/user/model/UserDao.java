@@ -30,6 +30,7 @@ public class UserDao {
 	private static final String FIND_USER_USERNAME = "SELECT * FROM Users WHERE username=?";
 	private static final String UPDATE_USER_INFO = "UPDATE Users SET nickname = ?, password = ?, email = ?, phone = ? WHERE username = ?";
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
+	private static final String FIND_USER_PUBLIC_INFO = "SELECT uuid, nickname, profile_info, profile_image, score, reg_date FROM Users WHERE uuid = ?";
 
 	private UserDao() {
 	}
@@ -47,7 +48,11 @@ public class UserDao {
 
 			pstmt.setString(1, userDto.getUuid());
 			pstmt.setString(2, userDto.getUsername());
-			pstmt.setString(3, userDto.getPassword());
+
+			String rawPassword = userDto.getPassword();
+			String hashedPassword = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
+
+			pstmt.setString(3, hashedPassword);
 			pstmt.setString(4, userDto.getNickname());
 			pstmt.setString(5, userDto.getPhone());
 			pstmt.setString(6, userDto.getEmail());
@@ -198,6 +203,40 @@ public class UserDao {
 		}
 
 		return deactivatedUser;
+	}
+
+	public User getUserPublicInfo(String uuid) {
+		User userPublicInfo = null;
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_PUBLIC_INFO)) {
+
+			pstmt.setString(1, uuid);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					String userUuid = rs.getString("uuid");
+					String nickname = rs.getString("nickname");
+					String profileInfo = rs.getString("profile_info");
+
+					byte[] profileImage = null;
+					Blob blob = rs.getBlob("profile_image");
+					if (blob != null) {
+						profileImage = blob.getBytes(1, (int) blob.length());
+					}
+
+					int score = rs.getInt("score");
+					Timestamp regDate = rs.getTimestamp("reg_date");
+
+					userPublicInfo = new User(userUuid, nickname, profileInfo, profileImage, score, regDate);
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return userPublicInfo;
 	}
 
 }
