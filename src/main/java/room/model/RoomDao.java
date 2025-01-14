@@ -10,18 +10,24 @@ import java.util.List;
 import util.DBManager;
 
 public class RoomDao {
-	
-	private static final String CREATE_ROOM = 
-		    "INSERT INTO GameWatingRoom (host_user, room_title, is_private, " +
-		    "room_password, max_players, round_count) " +
-		    "VALUES (?, ?, ?, ?, ?, ?)";
+
+	private static final String COL_ROOM_CODE = "code";
+	private static final String COL_HOST = "host";
+	private static final String COL_ROOM_NUMBER = "room_number";
+	private static final String COL_ROOM_TITLE = "room_title";
+	private static final String COL_ISPRIVATE = "is_private";
+	private static final String COL_ROOM_PASSWORD = "room_password";
+	private static final String COL_MAXPLAYERS = "max_players";
+	private static final String COL_ROUNDCOUNT = "round_count";
+
+	private static final String CREATE_ROOM = "INSERT INTO GameWatingRoom (host_user, room_title, is_private, "
+			+ "room_password, max_players, round_count) " + "VALUES (?, ?, ?, ?, ?, ?)";
 
 	private static final String FIND_ALL_ROOM = 
-		    "SELECT code, host, roomNumber, title, isPrivate, password, maxPlayers, roundCount " +
+		    "SELECT room_code, host_user, room_number, room_title, is_private, room_password, max_players, round_count " +
 		    "FROM GameWatingRoom " +
 		    "WHERE room_state != 'delete' " +
 		    "LIMIT 10 OFFSET ?";
-
 
 	private RoomDao() {};
 
@@ -60,14 +66,14 @@ public class RoomDao {
 			pstmt.setInt(1, (page - 1) * 10);
 
 			while (rs.next()) {
-				String code = rs.getString(1);
-				String host = rs.getString(2);
-				int roomNumber = rs.getInt(3);
-				String title = rs.getString(4);
-				boolean isPrivate = rs.getBoolean(5);
-				String password = rs.getString(6);
-				int maxPlayers = rs.getInt(7);
-				int roundCount = rs.getInt(8);
+				String code = rs.getString(COL_ROOM_CODE);
+				String host = rs.getString(COL_HOST);
+				int roomNumber = rs.getInt(COL_ROOM_NUMBER);
+				String title = rs.getString(COL_ROOM_TITLE);
+				boolean isPrivate = rs.getBoolean(COL_ISPRIVATE);
+				String password = rs.getString(COL_ROOM_PASSWORD);
+				int maxPlayers = rs.getInt(COL_MAXPLAYERS);
+				int roundCount = rs.getInt(COL_ROUNDCOUNT);
 
 				RoomResponseDto roomDto = new RoomResponseDto(code, host, roomNumber, title, isPrivate, password,
 						maxPlayers, roundCount);
