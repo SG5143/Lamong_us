@@ -23,11 +23,7 @@ public class RoomDao {
 	private static final String CREATE_ROOM = "INSERT INTO GameWatingRoom (host_user, room_title, is_private, "
 			+ "room_password, max_players, round_count) " + "VALUES (?, ?, ?, ?, ?, ?)";
 
-	private static final String FIND_ALL_ROOM = 
-		    "SELECT room_code, host_user, room_number, room_title, is_private, room_password, max_players, round_count " +
-		    "FROM GameWatingRoom " +
-		    "WHERE room_state != 'delete' " +
-		    "LIMIT 10 OFFSET ?";
+	private static final String FIND_ALL_ROOM = "SELECT * FROM room_view LIMIT 10 OFFSET ?";
 
 	private RoomDao() {};
 
