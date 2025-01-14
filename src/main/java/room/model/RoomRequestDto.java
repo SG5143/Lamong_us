@@ -1,62 +1,43 @@
 package room.model;
 
-import java.sql.Timestamp;
-
 public class RoomRequestDto {
-	private String roomCode;
-	private String hostUser;
+
+	private String code;
+	private String host;
 	private int roomNumber;
-	private String roomTitle;
+	private String title;
 	private boolean isPrivate;
-	private String roomPassword;
+	private char[] password; // 4자리
 	private int maxPlayers;
 	private int roundCount;
-	private String roomState;
-	private Timestamp regDate;
-	private Timestamp modDate;
+	private String state;
 
-	public RoomRequestDto() {
+	public RoomRequestDto() {}
 
-	}
-
-	public RoomRequestDto(String hostUser, String roomTitle, boolean isPrivate, String roomPassword, int maxPlayers,
-			int roundCount) {
-
-		this.hostUser = hostUser;
-		this.roomTitle = roomTitle;
-		this.isPrivate = isPrivate;
-		this.roomPassword = roomPassword;
-		this.maxPlayers = maxPlayers;
-		this.roundCount = roundCount;
-
-	}
-
-	public RoomRequestDto(String hostUser, String roomTitle, String isPrivate, String roomPassword, String maxPlayers,
+	public RoomRequestDto(String host, String title, String isPrivate, String password, String maxPlayers,
 			String roundCount) {
-
-		this.hostUser = hostUser;
-		this.roomTitle = roomTitle;
+		this.host = host;
+		this.title = title;
 		this.isPrivate = isPrivate.equals("on");
-		this.roomPassword = roomPassword;
+		this.password = password.length() > 4 ? password.substring(0, 4).toCharArray() : password.toCharArray();
 		this.maxPlayers = Integer.parseInt(maxPlayers);
 		this.roundCount = Integer.parseInt(roundCount);
-
 	}
 
-	public String getRoomCode() {
-		return roomCode;
+	public String getCode() {
+		return code;
 	}
 
-	public void setRoomCode(String roomCode) {
-		this.roomCode = roomCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public String getHostUser() {
-		return hostUser;
+	public String getHost() {
+		return host;
 	}
 
-	public void setHostUser(String hostUser) {
-		this.hostUser = hostUser;
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	public int getRoomNumber() {
@@ -67,12 +48,12 @@ public class RoomRequestDto {
 		this.roomNumber = roomNumber;
 	}
 
-	public String getRoomTitle() {
-		return roomTitle;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setRoomTitle(String roomTitle) {
-		this.roomTitle = roomTitle;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public boolean isPrivate() {
@@ -83,12 +64,12 @@ public class RoomRequestDto {
 		this.isPrivate = isPrivate;
 	}
 
-	public String getRoomPassword() {
-		return roomPassword;
+	public String getPassword() {
+		return new String(password);
 	}
 
-	public void setRoomPassword(String roomPassword) {
-		this.roomPassword = roomPassword;
+	public void setPassword(char[] password) {
+		this.password = password;
 	}
 
 	public int getMaxPlayers() {
@@ -107,28 +88,12 @@ public class RoomRequestDto {
 		this.roundCount = roundCount;
 	}
 
-	public String getRoomState() {
-		return roomState;
+	public String getState() {
+		return state;
 	}
 
-	public void setRoomState(String roomState) {
-		this.roomState = roomState;
+	public void setState(String state) {
+		this.state = state;
 	}
-
-	public Timestamp getRegDate() {
-		return regDate;
-	}
-
-	public void setRegDate(Timestamp regDate) {
-		this.regDate = regDate;
-	}
-
-	public Timestamp getModDate() {
-		return modDate;
-	}
-
-	public void setModDate(Timestamp modDate) {
-		this.modDate = modDate;
-	};
 
 }

@@ -2,21 +2,21 @@
 
 @font-face {
 	font-family: 'SB_Aggro_Bold';
-	src: url('/resources/fonts/SB_aggro_B.ttf') format('truetype');
+	src: url('../fonts/SB_aggro_B.ttf') format('truetype');
 	font-weight: bold;
 	font-style: normal;
 }
 
 @font-face {
 	font-family: 'SB_Aggro_Light';
-	src: url('/resources/fonts/SB_aggro_L.ttf') format('truetype');
+	src: url('../fonts/SB_aggro_L.ttf') format('truetype');
 	font-weight: lighter;
 	font-style: normal;
 }
 
 @font-face {
 	font-family: 'SB_Aggro_Medium';
-	src: url('/resources/fonts/SB_aggro_M.ttf') format('truetype');
+	src: url('../fonts/SB_aggro_M.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
