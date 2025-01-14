@@ -4,57 +4,56 @@ import java.sql.Timestamp;
 
 public class Room {
 
-	private String roomCode;
-	private String hostUser;
+	private String code;
+	private String host;
 	private int roomNumber;
-	private String roomTitle;
+	private String title;
 	private boolean isPrivate;
-	private String roomPassword;
+	private char[] password; // 4자리
 	private int maxPlayers;
 	private int roundCount;
-	private String roomState;
+	private String state;
+	
 	private Timestamp regDate;
 	private Timestamp modDate;
-
-	public Room(String roomCode, String hostUser, int roomNumber, String roomTitle, boolean isPrivate,
-			String roomPassword, int maxPlayers, int roundCount, String roomState, Timestamp regDate,
-			Timestamp modDate) {
-		super();
-		this.roomCode = roomCode;
-		this.hostUser = hostUser;
+	
+	public Room(String code, String host, int roomNumber, String title, boolean isPrivate, char[] password,
+			int maxPlayers, int roundCount, String state, Timestamp regDate, Timestamp modDate) {
+		this.code = code;
+		this.host = host;
 		this.roomNumber = roomNumber;
-		this.roomTitle = roomTitle;
+		this.title = title;
 		this.isPrivate = isPrivate;
-		this.roomPassword = roomPassword;
+		this.password = password;
 		this.maxPlayers = maxPlayers;
 		this.roundCount = roundCount;
-		this.roomState = roomState;
+		this.state = state;
 		this.regDate = regDate;
 		this.modDate = modDate;
 	}
 
-	public String getRoomCode() {
-		return roomCode;
+	public String getCode() {
+		return code;
 	}
 
-	public String getHostUser() {
-		return hostUser;
+	public String getHost() {
+		return host;
 	}
 
 	public int getRoomNumber() {
 		return roomNumber;
 	}
 
-	public String getRoomTitle() {
-		return roomTitle;
+	public String getTitle() {
+		return title;
 	}
 
 	public boolean isPrivate() {
 		return isPrivate;
 	}
 
-	public String getRoomPassword() {
-		return roomPassword;
+	public char[] getPassword() {
+		return password;
 	}
 
 	public int getMaxPlayers() {
@@ -65,8 +64,8 @@ public class Room {
 		return roundCount;
 	}
 
-	public String getRoomState() {
-		return roomState;
+	public String getState() {
+		return state;
 	}
 
 	public Timestamp getRegDate() {
