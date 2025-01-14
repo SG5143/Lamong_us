@@ -31,6 +31,18 @@ public class RoomRequestDto {
 
 	}
 
+	public RoomRequestDto(String hostUser, String roomTitle, String isPrivate, String roomPassword, String maxPlayers,
+			String roundCount) {
+
+		this.hostUser = hostUser;
+		this.roomTitle = roomTitle;
+		this.isPrivate = isPrivate.equals("on");
+		this.roomPassword = roomPassword;
+		this.maxPlayers = Integer.parseInt(maxPlayers);
+		this.roundCount = Integer.parseInt(roundCount);
+
+	}
+
 	public String getRoomCode() {
 		return roomCode;
 	}
