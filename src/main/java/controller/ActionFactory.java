@@ -1,5 +1,6 @@
 package controller;
 
+import chat.action.PostChatAction;
 import util.HttpMethod;
 
 public class ActionFactory {
@@ -17,8 +18,12 @@ public class ActionFactory {
 
 		if (path == null || command == null)
 			return action;
-		else if (path.equals("user"))
-			return action;
+		else if (path.equals("members"))
+			return getUserAction(command, method);
+		else if (path.equals("game-room"))
+			return getGameRoomAction(command, method);
+		else if (path.equals("chat"))
+			return getChatAction(command, method);
 
 		return action;
 	}
@@ -26,11 +31,36 @@ public class ActionFactory {
 	private Action getUserAction(String command, HttpMethod method) {
 		Action action = null;
 
+		if (method == HttpMethod.GET)
+			return action;
+		else if (method == HttpMethod.DELETE)
+			return action;
+
 		return action;
 	}
 
-	private Action getApiAction(String command, HttpMethod method) {
+	private Action getGameRoomAction(String command, HttpMethod method) {
 		Action action = null;
+
+		if (method == HttpMethod.POST)
+			return action;
+		else if (method == HttpMethod.GET)
+			return action;
+		else if (method == HttpMethod.PATCH)
+			return action;
+		else if (method == HttpMethod.DELETE)
+			return action;
+
+		return action;
+	}
+
+	private Action getChatAction(String command, HttpMethod method) {
+		Action action = null;
+
+		if (method == HttpMethod.POST)
+			return new PostChatAction();
+		else if (method == HttpMethod.GET)
+			return action;
 
 		return action;
 	}
