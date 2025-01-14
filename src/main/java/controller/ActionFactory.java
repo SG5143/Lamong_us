@@ -16,7 +16,7 @@ public class ActionFactory {
 	public Action getAction(String path, String command, HttpMethod method) {
 		Action action = null;
 
-		if (path == null || command == null)
+		if (path == null && command == null)
 			return action;
 		else if (path.equals("members"))
 			return getUserAction(command, method);
