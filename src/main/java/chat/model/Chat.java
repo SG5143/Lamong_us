@@ -14,9 +14,8 @@ public class Chat {
 	private String location;
 	private String locationCode;
 
-	public Chat(int code, String chatRoomCode, String writer, String message, Timestamp regDate) {
+	public Chat(int code, String writer, String message, Timestamp regDate) {
 		this.code = code;
-		this.chatRoomCode = chatRoomCode;
 		this.writer = writer;
 		this.message = message;
 		this.regDate = regDate;
