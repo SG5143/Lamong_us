@@ -42,6 +42,15 @@ public class User {
 		this.modDate = modDate;
 	}
 
+	public User(String uuid, String nickname, String profileInfo, byte[] profileImage, int score, Timestamp regDate) {
+		this.uuid = uuid;
+		this.nickname = nickname;
+		this.profileInfo = profileInfo;
+		this.profileImage = profileImage;
+		this.score = score;
+		this.regDate = regDate;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
