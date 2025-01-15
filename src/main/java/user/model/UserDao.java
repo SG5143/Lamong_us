@@ -27,12 +27,13 @@ public class UserDao {
 
 	private static final String CREATE_USER = "INSERT INTO Users (username, password, nickname, phone, email, login_type) VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ALL_USERS = "SELECT * FROM Users";
+	private static final String FIND_USER_UUID = "SELECT * FROM Users WHERE uuid=?";
 	private static final String FIND_USER_USERNAME = "SELECT * FROM Users WHERE username=?";
 	private static final String FIND_USER_BY_EMAIL = "SELECT * FROM Users WHERE email=?";
 	private static final String FIND_USER_BY_NICKNAME = "SELECT * FROM Users WHERE nickname=?";
 	private static final String FIND_USER_BY_PHONE = "SELECT * FROM Users WHERE phone=?";
 
-	private static final String UPDATE_USER_INFO = "UPDATE Users SET nickname = ?, password = ?, email = ?, phone = ? WHERE username = ?";
+	private static final String UPDATE_USER_INFO = "UPDATE Users SET password = ?, nickname = ?, email = ?, phone = ?, profile_info = ?, profile_image = ? WHERE uuid = ?";
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
 	private static final String FIND_USER_PUBLIC_INFO = "SELECT uuid, nickname, profile_info, profile_image, score, reg_date FROM Users WHERE uuid = ?";
 
@@ -51,11 +52,11 @@ public class UserDao {
 				PreparedStatement pstmt = conn.prepareStatement(CREATE_USER)) {
 
 			pstmt.setString(1, userDto.getUsername());
-			
+
 			String rawPassword = userDto.getPassword();
 			String hashedPassword = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
 			pstmt.setString(2, hashedPassword);
-			
+
 			pstmt.setString(3, userDto.getNickname());
 			pstmt.setString(4, userDto.getPhone());
 			pstmt.setString(5, userDto.getEmail());
@@ -119,6 +120,27 @@ public class UserDao {
 				profileInfo, profileImage, score, apiKey, regDate, modDate);
 	}
 
+	public User findUserByUuid(String uuid) {
+		User user = null;
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_UUID)) {
+
+			pstmt.setString(1, uuid);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					user = mapResultSetToUser(rs);
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return user;
+	}
+
 	public User findUserByUsername(String username) {
 		User user = null;
 
@@ -142,7 +164,7 @@ public class UserDao {
 
 	public User findUserByEmail(String email) {
 		User user = null;
-		
+
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_EMAIL)) {
 
@@ -153,7 +175,7 @@ public class UserDao {
 					user = mapResultSetToUser(rs);
 				}
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -172,7 +194,7 @@ public class UserDao {
 					user = mapResultSetToUser(rs);
 				}
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -206,15 +228,15 @@ public class UserDao {
 
 			int cnt = 0;
 
-			if (userDto.getNickname() != null) {
-				pstmt.setString(++cnt, userDto.getNickname());
+			if (userDto.getPassword() != null) {
+				String hashedPassword = BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt());
+				pstmt.setString(++cnt, hashedPassword);
 			} else {
 				pstmt.setNull(++cnt, Types.VARCHAR);
 			}
 
-			if (userDto.getPassword() != null) {
-				String hashedPassword = BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt());
-				pstmt.setString(++cnt, hashedPassword);
+			if (userDto.getNickname() != null) {
+				pstmt.setString(++cnt, userDto.getNickname());
 			} else {
 				pstmt.setNull(++cnt, Types.VARCHAR);
 			}
@@ -231,11 +253,23 @@ public class UserDao {
 				pstmt.setNull(++cnt, Types.VARCHAR);
 			}
 
-			pstmt.setString(++cnt, userDto.getUsername());
+			if (userDto.getProfileInfo() != null) {
+				pstmt.setString(++cnt, userDto.getProfileInfo());
+			} else {
+				pstmt.setNull(++cnt, Types.VARCHAR);
+			}
+
+			if (userDto.getProfileImage() != null) {
+				pstmt.setBytes(++cnt, userDto.getProfileImage());
+			} else {
+				pstmt.setNull(++cnt, Types.BLOB);
+			}
+
+			pstmt.setString(++cnt, userDto.getUuid());
 
 			int rowsUpdated = pstmt.executeUpdate();
 			if (rowsUpdated > 0) {
-				updatedUser = findUserByUsername(userDto.getUsername());
+				updatedUser = findUserByUuid(userDto.getUuid());
 			} else {
 				System.out.println("업데이트 실패: 유저 정보가 존재하지 않습니다.");
 			}
