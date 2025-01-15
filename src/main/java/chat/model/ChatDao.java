@@ -17,11 +17,12 @@ public class ChatDao {
 	private static final String COL_CHAT_ROOM_CODE = "chat_room_code";
 	private static final String COL_MESSAGE = "message";
 	private static final String COL_REG_DATE = "reg_date";
-	
+
 	private static final String INSERT_MESSAGE_SQL = "INSERT INTO Message(chat_room_code, writer, message) VALUES(?, ?, ?)";
 	private static final String FETCH_USER_CHAT_FOR_ADMIN_SQL = "SELECT CR.chat_room_code, CR.location_type, CR.room_code, CR.ingame_code, M.message, M.reg_date "
 			+ "FROM Message M JOIN ChatRoom CR ON M.chat_room_code = CR.chat_room_code " + "WHERE writer=? "
 			+ "ORDER BY M.reg_date DESC " + "LIMIT 20 OFFSET ?";
+	private static final String FETCH_USER_CHAT_COUNT_SQL = "SELECT COUNT(*) FROM Message WHERE writer=?";
 
 	private ChatDao() {};
 
@@ -34,7 +35,7 @@ public class ChatDao {
 	public boolean insertChat(ChatRequestDto dto) {
 
 		try (Connection conn = DBManager.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement(INSERT_MESSAGE_SQL)) {
+				PreparedStatement pstmt = conn.prepareStatement(INSERT_MESSAGE_SQL)) {
 
 			pstmt.setString(1, dto.getChatRoomCode());
 			pstmt.setString(2, dto.getWriter());
@@ -50,16 +51,18 @@ public class ChatDao {
 	}
 
 	public List<Chat> fetchUserChatsForPage(String userUUID, int page) {
-		List<Chat> list = new ArrayList<>();;
+		List<Chat> list = new ArrayList<>();
+
+		int offset = (page - 1) * 20;
 
 		try (Connection conn = DBManager.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement(FETCH_USER_CHAT_FOR_ADMIN_SQL);) {
-			
+				PreparedStatement pstmt = conn.prepareStatement(FETCH_USER_CHAT_FOR_ADMIN_SQL);) {
+
 			pstmt.setString(1, userUUID);
-			pstmt.setInt(2, page * 20);
-			
+			pstmt.setInt(2, offset);
+
 			list = fetchChatByUserUUID(pstmt);
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -81,7 +84,21 @@ public class ChatDao {
 				list.add(new Chat(location, locationCode, chatRoomCode, message, regDate));
 			}
 		}
-
 		return list;
+	}
+
+	public int fetchUserChatCount(String userUUID) {
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FETCH_USER_CHAT_COUNT_SQL);) {
+
+			pstmt.setString(1, userUUID);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next())
+					return rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }
