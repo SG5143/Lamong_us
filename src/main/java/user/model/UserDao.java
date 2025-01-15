@@ -25,7 +25,7 @@ public class UserDao {
 	private static final String COL_REG_DATE = "reg_date";
 	private static final String COL_MOD_DATE = "mod_date";
 
-	private static final String CREATE_USER = "INSERT INTO Users (uuid, username, password, nickname, phone, email) VALUES (?, ?, ?, ?, ?, ?)";
+	private static final String CREATE_USER = "INSERT INTO Users (username, password, nickname, phone, email, login_type) VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ALL_USERS = "SELECT * FROM Users";
 	private static final String FIND_USER_USERNAME = "SELECT * FROM Users WHERE username=?";
 	private static final String FIND_USER_BY_EMAIL = "SELECT * FROM Users WHERE email=?";
@@ -50,25 +50,25 @@ public class UserDao {
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(CREATE_USER)) {
 
-			pstmt.setString(1, userDto.getUuid());
-			pstmt.setString(2, userDto.getUsername());
-
+			pstmt.setString(1, userDto.getUsername());
+			
 			String rawPassword = userDto.getPassword();
 			String hashedPassword = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
-
-			pstmt.setString(3, hashedPassword);
-			pstmt.setString(4, userDto.getNickname());
-			pstmt.setString(5, userDto.getPhone());
-			pstmt.setString(6, userDto.getEmail());
+			pstmt.setString(2, hashedPassword);
+			
+			pstmt.setString(3, userDto.getNickname());
+			pstmt.setString(4, userDto.getPhone());
+			pstmt.setString(5, userDto.getEmail());
 
 			if (userDto.getLoginType() != null) {
 				if ("kakao".equals(userDto.getLoginType()) || "google".equals(userDto.getLoginType())) {
-					pstmt.setString(7, userDto.getLoginType());
+					pstmt.setString(6, userDto.getLoginType());
 				}
 			} else {
-				pstmt.setNull(7, java.sql.Types.VARCHAR);
+				pstmt.setNull(6, java.sql.Types.VARCHAR);
 			}
 
+			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -142,6 +142,7 @@ public class UserDao {
 
 	public User findUserByEmail(String email) {
 		User user = null;
+		
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_EMAIL)) {
 
@@ -152,6 +153,7 @@ public class UserDao {
 					user = mapResultSetToUser(rs);
 				}
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -170,6 +172,7 @@ public class UserDao {
 					user = mapResultSetToUser(rs);
 				}
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -244,7 +247,7 @@ public class UserDao {
 		return updatedUser;
 	}
 
-	public boolean  deactivateUser(String username) {
+	public boolean deactivateUser(String username) {
 		boolean isDeactivated = false;
 
 		try (Connection conn = DBManager.getConnection();
