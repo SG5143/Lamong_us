@@ -34,7 +34,5 @@ public class LogoutFormAction implements Action {
 		response.getWriter().write(json);
 
 	}
-	
-	
 
 }
