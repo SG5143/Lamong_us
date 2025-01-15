@@ -20,7 +20,7 @@ public class PostChatAction implements Action {
 
 		String authorization = request.getHeader("Authorization");
 
-		if (authorization == null || !isValidAuthorization(authorization)) {
+		if (!isValidAuthorization(authorization)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "인증에 실패했습니다");
 			return;
 		}
@@ -62,9 +62,10 @@ public class PostChatAction implements Action {
 
 	}
 
+	// 인증 검증 로직 구현 임시로 항상 true 반환
 	private boolean isValidAuthorization(String authorization) {
-		// 인증 검증 로직 구현
-		return true; // 임시로 항상 true 반환
+
+		return authorization != null ;
 	}
 
 	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)
