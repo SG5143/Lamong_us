@@ -1,11 +1,13 @@
 package controller;
 
 import chat.action.PostChatAction;
+import user.action.*;
 import util.HttpMethod;
 
 public class ActionFactory {
 
-	private ActionFactory() {}
+	private ActionFactory() {
+	}
 
 	private static ActionFactory instance = new ActionFactory();
 
@@ -16,10 +18,10 @@ public class ActionFactory {
 	public Action getAction(String path, String command, HttpMethod method) {
 		Action action = null;
 
-		if (path == null || command == null)
+		if (path == null && command == null)
 			return action;
 		else if (path.equals("members"))
-			return getUserAction(command, method);
+			return getMemberAction(command, method);
 		else if (path.equals("game-room"))
 			return getGameRoomAction(command, method);
 		else if (path.equals("chat"))
@@ -28,11 +30,11 @@ public class ActionFactory {
 		return action;
 	}
 
-	private Action getUserAction(String command, HttpMethod method) {
+	private Action getMemberAction(String command, HttpMethod method) {
 		Action action = null;
 
-		if (method == HttpMethod.GET)
-			return action;
+		if (method == HttpMethod.POST)
+			return new UpdateFormAction();
 		else if (method == HttpMethod.DELETE)
 			return action;
 
