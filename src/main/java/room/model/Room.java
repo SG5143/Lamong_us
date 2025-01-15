@@ -1,6 +1,7 @@
 package room.model;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 public class Room {
 
@@ -27,9 +28,21 @@ public class Room {
 		this.password = password;
 		this.maxPlayers = maxPlayers;
 		this.roundCount = roundCount;
-		this.state = state;
+		this.state = state; 
 		this.regDate = regDate;
 		this.modDate = modDate;
+	}
+	
+	public Room(String code, String host, int roomNumber, String title, boolean isPrivate, String password,
+			int maxPlayers, int roundCount) {
+		this.code = code;
+		this.host = host;
+		this.roomNumber = roomNumber;
+		this.title = title;
+		this.isPrivate = isPrivate;
+		this.password = password.length() > 4 ? password.substring(0, 4).toCharArray() : password.toCharArray();
+		this.maxPlayers = maxPlayers;
+		this.roundCount = roundCount;
 	}
 
 	public String getCode() {
