@@ -20,10 +20,13 @@ public class RoomDao {
 	private static final String COL_MAXPLAYERS = "max_players";
 	private static final String COL_ROUNDCOUNT = "round_count";
 
-	private static final String CREATE_ROOM = "INSERT INTO GameWatingRoom (host_user, room_title, is_private, "
-			+ "room_password, max_players, round_count) " + "VALUES (?, ?, ?, ?, ?, ?)";
+	private static final String CREATE_ROOM = "INSERT INTO GameWatingRoom (room_number, host_user, room_title, is_private, room_password, max_players, round_count) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String FIND_ALL_ROOM = "SELECT * FROM room_view LIMIT 10 OFFSET ?";
+	private static final String FIND_ROOM_NUMBER = "SELECT room_number FROM GameWatingRoom WHERE room_state != 'delete'";
+	private static final String FIND_ROOM_COUNT = "SELECT COUNT(*) FROM GameWatingRoom WHERE room_state != 'delete'";
+
+	private static final String FIND_ALL_ROOM = "SELECT * FROM GameWatingRoom where room_state != 'delete' ORDER BY room_number ASC LIMIT 10 OFFSET ?";
 
 	private RoomDao() {};
 
@@ -37,18 +40,103 @@ public class RoomDao {
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(CREATE_ROOM)) {
 
-			pstmt.setString(1, roomDto.getHost());
-			pstmt.setString(2, roomDto.getTitle());
-			pstmt.setBoolean(3, roomDto.isPrivate());
-			pstmt.setString(4, roomDto.getPassword());
-			pstmt.setInt(5, roomDto.getMaxPlayers());
-			pstmt.setInt(6, roomDto.getRoundCount());
+			pstmt.setInt(1, roomDto.getRoomNumber());
+			pstmt.setString(2, roomDto.getHost());
+			pstmt.setString(3, roomDto.getTitle());
+			pstmt.setBoolean(4, roomDto.isPrivate());
+			pstmt.setString(5, roomDto.getPassword());
+			pstmt.setInt(6, roomDto.getMaxPlayers());
+			pstmt.setInt(7, roomDto.getRoundCount());
 
 			pstmt.execute();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public int getAvailableRoomNumber() {
+		List<Integer> usedRoomNumbers = new ArrayList<>();
+
+		while (true) {
+			try (Connection conn = DBManager.getConnection();
+					PreparedStatement pstmt = conn.prepareStatement(FIND_ROOM_NUMBER);
+					ResultSet rs = pstmt.executeQuery()) {
+
+				while (rs.next()) {
+					usedRoomNumbers.add(rs.getInt("room_number"));
+				}
+
+				int roomNumber = 1;
+
+				while (usedRoomNumbers.contains(roomNumber)) {
+					roomNumber++;
+				}
+
+				return roomNumber;
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				usedRoomNumbers.clear();
+			}
+		}
+	}
+
+	public int getRoomCount() {
+		int roomCount = 0;
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FIND_ROOM_COUNT);
+				ResultSet rs = pstmt.executeQuery()) {
+
+			if (rs.next()) {
+				roomCount = rs.getInt(1);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return roomCount;
+	}
+
+	public List<Room> fetchRoomsForPage(int page) {
+		List<Room> list = new ArrayList<>();
+
+		int offset = (page - 1) * 10;
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FIND_ALL_ROOM)) {
+
+			pstmt.setInt(1, offset);
+
+			list = fetchRoomsByPage(pstmt);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	private List<Room> fetchRoomsByPage(PreparedStatement pstmt) throws SQLException {
+		List<Room> list = new ArrayList<>();
+
+		try (ResultSet rs = pstmt.executeQuery()) {
+			while (rs.next()) {
+				String code = rs.getString(COL_ROOM_CODE);
+				String host = rs.getString(COL_HOST);
+				int roomNumber = rs.getInt(COL_ROOM_NUMBER);
+				String roomTitle = rs.getString(COL_ROOM_TITLE);
+				boolean isPrivate = rs.getBoolean(COL_ISPRIVATE);
+				String password = rs.getString(COL_ROOM_PASSWORD);
+				int maxPlayers = rs.getInt(COL_MAXPLAYERS);
+				int roundCount = rs.getInt(COL_ROUNDCOUNT);
+
+				list.add(new Room(code, host, roomNumber, roomTitle, isPrivate, password, maxPlayers, roundCount));
+
+			}
+		}
+		return list;
 	}
 
 	public List<RoomResponseDto> findAllRoom(int page) {
