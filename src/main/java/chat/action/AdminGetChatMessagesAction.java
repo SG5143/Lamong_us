@@ -61,7 +61,7 @@ public class AdminGetChatMessagesAction implements Action {
 	// 채팅 개수 가져오기
 	private int getChatCount(String resUser) {
 		ChatDao chatDao = ChatDao.getInstance();
-		return chatDao.fetchUserChatCount(resUser);
+		return chatDao.getUserChatCount(resUser);
 	}
 
 	// 최대 페이지 계산
@@ -83,15 +83,8 @@ public class AdminGetChatMessagesAction implements Action {
 		JSONArray resChatInfo = new JSONArray();
 
 		ChatDao chatDao = ChatDao.getInstance();
-		List<Chat> chatList = chatDao.fetchUserChatsForPage(resUser, page);
-
-		System.out.println(
-				"Fetched chat list for user " + resUser + " and page " + page + ": " + chatList.size() + " items.");
-
-		// 만약 chatList가 비어있다면, 추가적인 디버깅 정보를 출력
-		if (chatList.isEmpty()) {
-			System.out.println("No chats found for the user " + resUser + " on page " + page);
-		}
+		List<Chat> chatList = chatDao.getUserChatsForPage(resUser, page);
+		
 		for (Chat chat : chatList) {
 			JSONObject chatJson = new JSONObject();
 			chatJson.put("room", chat.getChatRoomCode());
