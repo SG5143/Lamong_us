@@ -1,5 +1,6 @@
 package controller;
 
+import chat.action.AdminGetChatMessagesAction;
 import chat.action.PostChatAction;
 import util.HttpMethod;
 
@@ -60,7 +61,7 @@ public class ActionFactory {
 		if (method == HttpMethod.POST)
 			return new PostChatAction();
 		else if (method == HttpMethod.GET)
-			return action;
+			return new AdminGetChatMessagesAction();
 
 		return action;
 	}
