@@ -1,5 +1,6 @@
 package room.action;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 import org.json.JSONObject;
@@ -23,28 +24,51 @@ public class CreateFormAction implements Action {
 			return;
 		}
 
-		String hostUser = request.getParameter("hostUser");
-		String title = request.getParameter("title");
-		String isPrivate = request.getParameter("isPrivate");
-		String password = request.getParameter("password");
-		String maxPlayers = request.getParameter("maxPlayers");
-		String roundCount = request.getParameter("roundCount");
-
-		if (hostUser == null || title == null || maxPlayers == null || roundCount == null) {
-			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 요청 데이터가 누락되었습니다.");
-			return;
-		}
-
-		RoomRequestDto roomDto = new RoomRequestDto(hostUser, title, isPrivate, password, maxPlayers, roundCount);
-		RoomDao roomDao = RoomDao.getInstance();
-
 		try {
-			roomDao.createRoom(roomDto);
-			response.sendRedirect("/");
+			BufferedReader reader = request.getReader();
+			StringBuilder jsonBuilder = new StringBuilder();
+			String line;
+			
+			while ((line = reader.readLine()) != null) {
+				jsonBuilder.append(line);
+			}
+			
+			String requestBody = jsonBuilder.toString();
+
+			JSONObject reqData = new JSONObject(requestBody);
+
+			String hostUser = reqData.optString("host_user", null);
+			String title = reqData.optString("title", null);
+			String isPrivate = reqData.optString("is_private", null);
+			String password = reqData.optString("password", null);
+			String maxPlayers = reqData.optString("max_players", null);
+			String roundCount = reqData.optString("round", null);
+
+			if (hostUser == null || title == null || maxPlayers == null || roundCount == null) {
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 요청 데이터가 누락되었습니다.");
+				return;
+			}
+
+
+			RoomDao roomDao = RoomDao.getInstance();
+			
+			int roomNumber = roomDao.getAvailableRoomNumber();
+
+			RoomRequestDto roomDto = new RoomRequestDto(roomNumber, hostUser, title, isPrivate, password, maxPlayers, roundCount);
+
+			try {
+				roomDao.createRoom(roomDto);
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "게임방이 생성되었습니다.");
+			} catch (Exception e) {
+				e.printStackTrace();
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						"게임방 생성 중 오류가 발생했습니다.");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("게임방 생성 실패..");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
 		}
+
 	}
 
 	private boolean isValidAuthorization(String authorization) {
@@ -56,6 +80,8 @@ public class CreateFormAction implements Action {
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("status", statusCode);
 		jsonResponse.put("message", message);
+		//방 코드 추가하기
+		
 
 		String json = jsonResponse.toString();
 
