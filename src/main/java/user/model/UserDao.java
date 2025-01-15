@@ -28,6 +28,10 @@ public class UserDao {
 	private static final String CREATE_USER = "INSERT INTO Users (uuid, username, password, nickname, phone, email) VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ALL_USERS = "SELECT * FROM Users";
 	private static final String FIND_USER_USERNAME = "SELECT * FROM Users WHERE username=?";
+	private static final String FIND_USER_BY_EMAIL = "SELECT * FROM Users WHERE email=?";
+	private static final String FIND_USER_BY_NICKNAME = "SELECT * FROM Users WHERE nickname=?";
+	private static final String FIND_USER_BY_PHONE = "SELECT * FROM Users WHERE phone=?";
+
 	private static final String UPDATE_USER_INFO = "UPDATE Users SET nickname = ?, password = ?, email = ?, phone = ? WHERE username = ?";
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
 	private static final String FIND_USER_PUBLIC_INFO = "SELECT uuid, nickname, profile_info, profile_image, score, reg_date FROM Users WHERE uuid = ?";
@@ -136,6 +140,60 @@ public class UserDao {
 		return user;
 	}
 
+	public User findUserByEmail(String email) {
+		User user = null;
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_EMAIL)) {
+
+			pstmt.setString(1, email);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					user = mapResultSetToUser(rs);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+
+	public User findUserByNickname(String nickname) {
+		User user = null;
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_NICKNAME)) {
+
+			pstmt.setString(1, nickname);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					user = mapResultSetToUser(rs);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+
+	public User findUserByPhone(String phone) {
+		User user = null;
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_PHONE)) {
+
+			pstmt.setString(1, phone);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					user = mapResultSetToUser(rs);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+
 	public User updateUserInfo(UserRequestDto userDto) {
 		User updatedUser = null;
 
@@ -186,9 +244,8 @@ public class UserDao {
 		return updatedUser;
 	}
 
-	public User deactivateUser(String username) {
-
-		User deactivatedUser = null;
+	public boolean  deactivateUser(String username) {
+		boolean isDeactivated = false;
 
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(UPDATE_DELETE_STATUS)) {
@@ -196,13 +253,13 @@ public class UserDao {
 			int rowsAffected = pstmt.executeUpdate();
 
 			if (rowsAffected > 0) {
-				deactivatedUser = findUserByUsername(username);
+				isDeactivated = true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return deactivatedUser;
+		return isDeactivated;
 	}
 
 	public User getUserPublicInfo(String uuid) {
