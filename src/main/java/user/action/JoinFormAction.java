@@ -34,7 +34,7 @@ public class JoinFormAction implements Action {
 
 			if (username == null || username.isEmpty() || password == null || password.isEmpty() || email == null
 					|| email.isEmpty() || nickname == null || nickname.isEmpty() || phone == null || phone.isEmpty()) {
-				sendResponseStatusAndMessage(response, "필수 데이터가 누락되었습니다.");
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 데이터가 누락되었습니다.");
 				return;
 			}
 
@@ -46,39 +46,41 @@ public class JoinFormAction implements Action {
 			}
 
 			userDao.createUser(userDto);
-			sendResponseStatusAndMessage(response, "회원가입이 완료되었습니다.");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "회원가입이 완료되었습니다.");
 
 		} catch (JSONException e) {
-			sendResponseStatusAndMessage(response, "잘못된 JSON 형식입니다.");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "잘못된 JSON 형식입니다.");
 		} catch (Exception e) {
-			sendResponseStatusAndMessage(response, "서버 오류가 발생했습니다.");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
 		}
 	}
 
 	private boolean isDuplicate(UserDao userDao, String username, String email, String phone, String nickname,
 			HttpServletResponse response) throws IOException {
 		if (userDao.findUserByUsername(username) != null) {
-			sendResponseStatusAndMessage(response, "이미 사용 중인 아이디입니다.");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CONFLICT, "이미 사용 중인 아이디입니다.");
 			return true;
 		}
 		if (userDao.findUserByEmail(email) != null) {
-			sendResponseStatusAndMessage(response, "이미 사용 중인 이메일입니다.");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CONFLICT, "이미 사용 중인 이메일입니다.");
 			return true;
 		}
 		if (userDao.findUserByPhone(phone) != null) {
-			sendResponseStatusAndMessage(response, "이미 사용 중인 전화번호입니다.");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CONFLICT, "이미 사용 중인 전화번호입니다.");
 			return true;
 		}
 		if (userDao.findUserByNickname(nickname) != null) {
-			sendResponseStatusAndMessage(response, "이미 사용 중인 닉네임입니다.");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CONFLICT, "이미 사용 중인 닉네임입니다.");
 			return true;
 		}
 		return false;
 	}
 
-	private void sendResponseStatusAndMessage(HttpServletResponse response, String message) throws IOException {
+	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)
+			throws IOException {
 		JSONObject jsonResponse = new JSONObject();
 
+		jsonResponse.put("status", statusCode);
 		jsonResponse.put("message", message);
 
 		String json = jsonResponse.toString();
