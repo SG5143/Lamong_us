@@ -1,6 +1,8 @@
 package controller;
 
 import chat.action.AdminGetChatMessagesAction;
+import chat.action.CreateChatRoomAction;
+import chat.action.GetChatRoomMessagesAction;
 import chat.action.PostChatAction;
 import util.HttpMethod;
 
@@ -25,6 +27,8 @@ public class ActionFactory {
 			return getGameRoomAction(command, method);
 		else if (path.equals("chat"))
 			return getChatAction(command, method);
+		else if (path.equals("chat-room"))
+			return getChatRoomAction(command, method);
 
 		return action;
 	}
@@ -62,6 +66,17 @@ public class ActionFactory {
 			return new PostChatAction();
 		else if (method == HttpMethod.GET)
 			return new AdminGetChatMessagesAction();
+
+		return action;
+	}
+	
+	private Action getChatRoomAction(String command, HttpMethod method) {
+		Action action = null;
+
+		if (method == HttpMethod.POST)
+			return new CreateChatRoomAction();
+		else if (method == HttpMethod.GET)
+			return new GetChatRoomMessagesAction();
 
 		return action;
 	}
