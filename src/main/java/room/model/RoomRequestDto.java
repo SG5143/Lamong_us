@@ -14,8 +14,9 @@ public class RoomRequestDto {
 
 	public RoomRequestDto() {}
 
-	public RoomRequestDto(String host, String title, String isPrivate, String password, String maxPlayers,
+	public RoomRequestDto(int roomNumber, String host, String title, String isPrivate, String password, String maxPlayers,
 			String roundCount) {
+		this.roomNumber = roomNumber;
 		this.host = host;
 		this.title = title;
 		this.isPrivate = isPrivate.equals("on");

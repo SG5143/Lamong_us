@@ -1,10 +1,9 @@
 package controller;
 
-import chat.action.AdminGetChatMessagesAction;
-import chat.action.CreateChatRoomAction;
-import chat.action.GetChatRoomMessagesAction;
-import chat.action.PostChatAction;
+import chat.action.*;
 import user.action.*;
+import room.action.*;
+
 import util.HttpMethod;
 
 public class ActionFactory {
@@ -50,9 +49,9 @@ public class ActionFactory {
 		Action action = null;
 
 		if (method == HttpMethod.POST)
-			return action;
+			return new CreateFormAction();
 		else if (method == HttpMethod.GET)
-			return action;
+			return new RoomListAction();
 		else if (method == HttpMethod.PATCH)
 			return action;
 		else if (method == HttpMethod.DELETE)
