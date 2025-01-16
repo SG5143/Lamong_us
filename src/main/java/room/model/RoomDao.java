@@ -24,7 +24,6 @@ public class RoomDao {
 	private static final String COL_REG_DATE = "reg_date";
 	private static final String COL_MOD_DATE = "mod_date";
 	
-
 	private static final String CREATE_ROOM_SQL = "INSERT INTO GameWatingRoom (room_number, host_user, room_title, is_private, room_password, max_players, round_count) VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ROOM_NUMBER_SQL = "SELECT room_number FROM GameWatingRoom WHERE room_state != 'delete'";
 	private static final String FIND_ROOM_COUNT_SQL = "SELECT COUNT(*) FROM GameWatingRoom WHERE room_state != 'delete'";
