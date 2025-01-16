@@ -66,15 +66,15 @@ public class JoinFormAction implements Action {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CONFLICT, "이미 사용 중인 아이디입니다.");
 			return true;
 		}
-		if (userDao.findUserByEmail(email) != null) {
+		if (userDao.findUserByUserEmail(email) != null) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CONFLICT, "이미 사용 중인 이메일입니다.");
 			return true;
 		}
-		if (userDao.findUserByPhone(phone) != null) {
+		if (userDao.findUserByUserPhone(phone) != null) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CONFLICT, "이미 사용 중인 전화번호입니다.");
 			return true;
 		}
-		if (userDao.findUserByNickname(nickname) != null) {
+		if (userDao.findUserByUserNickname(nickname) != null) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CONFLICT, "이미 사용 중인 닉네임입니다.");
 			return true;
 		}
