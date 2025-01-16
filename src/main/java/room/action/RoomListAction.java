@@ -7,13 +7,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import controller.Action;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import room.model.Room;
 import room.model.RoomDao;
-import room.model.RoomResponseDto;
 
 public class RoomListAction implements Action {
 
@@ -42,17 +40,6 @@ public class RoomListAction implements Action {
 			e.printStackTrace();
 			sendResponseStatusAndResult(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null);
 		}
-
-//		RoomDao roomDao = RoomDao.getInstance();
-//		List<RoomResponseDto> room = roomDao.findAllRoom(page);
-
-//		try {
-//			RequestDispatcher dispatcher = request.getRequestDispatcher("/game-room");
-//			request.setAttribute("room", room);
-//			dispatcher.forward(request, response);
-//		} catch (ServletException | IOException e) {
-//
-//		}
 
 	}
 
@@ -86,12 +73,6 @@ public class RoomListAction implements Action {
 
 		RoomDao roomDao = RoomDao.getInstance();
 		List<Room> roomList = roomDao.fetchRoomsForPage(page);
-
-		System.out.println("Fetched room list for page " + page + ": " + roomList.size() + " items.");
-
-		if (roomList.isEmpty()) {
-			System.out.println("No room found for the on page " + page);
-		}
 
 		for (Room room : roomList) {
 			JSONObject roomJson = new JSONObject();

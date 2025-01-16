@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,23 +12,25 @@ import util.DBManager;
 
 public class RoomDao {
 
-	private static final String COL_ROOM_CODE = "code";
-	private static final String COL_HOST = "host";
+	private static final String COL_ROOM_CODE = "room_code";
+	private static final String COL_HOST = "host_user";
 	private static final String COL_ROOM_NUMBER = "room_number";
 	private static final String COL_ROOM_TITLE = "room_title";
-	private static final String COL_ISPRIVATE = "is_private";
+	private static final String COL_IS_PRIVATE = "is_private";
 	private static final String COL_ROOM_PASSWORD = "room_password";
-	private static final String COL_MAXPLAYERS = "max_players";
-	private static final String COL_ROUNDCOUNT = "round_count";
-
-	private static final String CREATE_ROOM = "INSERT INTO GameWatingRoom (room_number, host_user, room_title, is_private, room_password, max_players, round_count) "
-			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-	private static final String FIND_ROOM_NUMBER = "SELECT room_number FROM GameWatingRoom WHERE room_state != 'delete'";
-	private static final String FIND_ROOM_COUNT = "SELECT COUNT(*) FROM GameWatingRoom WHERE room_state != 'delete'";
-
-	private static final String FIND_ALL_ROOM = "SELECT * FROM GameWatingRoom where room_state != 'delete' ORDER BY room_number ASC LIMIT 10 OFFSET ?";
-
+	private static final String COL_MAX_PLAYERS = "max_players";
+	private static final String COL_ROUND_COUNT = "round_count";
+	private static final String COL_ROOM_STATE = "room_state";
+	private static final String COL_REG_DATE = "reg_date";
+	private static final String COL_MOD_DATE = "mod_date";
+	
+	private static final String CREATE_ROOM_SQL = "INSERT INTO GameWatingRoom (room_number, host_user, room_title, is_private, room_password, max_players, round_count) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	private static final String FIND_ROOM_NUMBER_SQL = "SELECT room_number FROM GameWatingRoom WHERE room_state != 'delete'";
+	private static final String FIND_ROOM_COUNT_SQL = "SELECT COUNT(*) FROM GameWatingRoom WHERE room_state != 'delete'";
+	private static final String FIND_ALL_ROOM_SQL = "SELECT * FROM GameWatingRoom where room_state != 'delete' ORDER BY room_number ASC LIMIT 10 OFFSET ?";
+	private static final String FIND_ONE_ROOM_SQL = "SELECT * FROM GameWatingRoom WHERE room_number = ? AND room_state != 'delete'";
+	private static final String DELETE_ROOM_SQL= "UPDATE GameWatingRoom SET room_state = 'delete' WHERE room_code = ?";
+	
 	private RoomDao() {};
 
 	private static RoomDao instance = new RoomDao();
@@ -38,7 +41,7 @@ public class RoomDao {
 
 	public void createRoom(RoomRequestDto roomDto) {
 		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(CREATE_ROOM)) {
+				PreparedStatement pstmt = conn.prepareStatement(CREATE_ROOM_SQL)) {
 
 			pstmt.setInt(1, roomDto.getRoomNumber());
 			pstmt.setString(2, roomDto.getHost());
@@ -60,7 +63,7 @@ public class RoomDao {
 
 		while (true) {
 			try (Connection conn = DBManager.getConnection();
-					PreparedStatement pstmt = conn.prepareStatement(FIND_ROOM_NUMBER);
+					PreparedStatement pstmt = conn.prepareStatement(FIND_ROOM_NUMBER_SQL);
 					ResultSet rs = pstmt.executeQuery()) {
 
 				while (rs.next()) {
@@ -86,7 +89,7 @@ public class RoomDao {
 		int roomCount = 0;
 
 		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_ROOM_COUNT);
+				PreparedStatement pstmt = conn.prepareStatement(FIND_ROOM_COUNT_SQL);
 				ResultSet rs = pstmt.executeQuery()) {
 
 			if (rs.next()) {
@@ -106,7 +109,7 @@ public class RoomDao {
 		int offset = (page - 1) * 10;
 
 		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_ALL_ROOM)) {
+				PreparedStatement pstmt = conn.prepareStatement(FIND_ALL_ROOM_SQL)) {
 
 			pstmt.setInt(1, offset);
 
@@ -126,14 +129,17 @@ public class RoomDao {
 				String code = rs.getString(COL_ROOM_CODE);
 				String host = rs.getString(COL_HOST);
 				int roomNumber = rs.getInt(COL_ROOM_NUMBER);
-				String roomTitle = rs.getString(COL_ROOM_TITLE);
-				boolean isPrivate = rs.getBoolean(COL_ISPRIVATE);
+				String title = rs.getString(COL_ROOM_TITLE);
+				boolean isPrivate = rs.getBoolean(COL_IS_PRIVATE);
 				String password = rs.getString(COL_ROOM_PASSWORD);
-				int maxPlayers = rs.getInt(COL_MAXPLAYERS);
-				int roundCount = rs.getInt(COL_ROUNDCOUNT);
+				int maxPlayers = rs.getInt(COL_MAX_PLAYERS);
+				int roundCount = rs.getInt(COL_ROUND_COUNT);
+				String state = rs.getString(COL_ROOM_STATE);
+				Timestamp regDate = rs.getTimestamp(COL_REG_DATE);
+				Timestamp modDate = rs.getTimestamp(COL_MOD_DATE);
 
-				list.add(new Room(code, host, roomNumber, roomTitle, isPrivate, password, maxPlayers, roundCount));
-
+				Room room = new Room(code, host, roomNumber, title, isPrivate, password, maxPlayers, roundCount, state, regDate, modDate);
+				list.add(room);
 			}
 		}
 		return list;
@@ -144,7 +150,7 @@ public class RoomDao {
 		List<RoomResponseDto> list = new ArrayList<>();
 
 		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_ALL_ROOM);
+				PreparedStatement pstmt = conn.prepareStatement(FIND_ALL_ROOM_SQL);
 				ResultSet rs = pstmt.executeQuery()) {
 
 			pstmt.setInt(1, (page - 1) * 10);
@@ -154,16 +160,15 @@ public class RoomDao {
 				String host = rs.getString(COL_HOST);
 				int roomNumber = rs.getInt(COL_ROOM_NUMBER);
 				String title = rs.getString(COL_ROOM_TITLE);
-				boolean isPrivate = rs.getBoolean(COL_ISPRIVATE);
+				boolean isPrivate = rs.getBoolean(COL_IS_PRIVATE);
 				String password = rs.getString(COL_ROOM_PASSWORD);
-				int maxPlayers = rs.getInt(COL_MAXPLAYERS);
-				int roundCount = rs.getInt(COL_ROUNDCOUNT);
+				int maxPlayers = rs.getInt(COL_MAX_PLAYERS);
+				int roundCount = rs.getInt(COL_ROUND_COUNT);
 
-				RoomResponseDto roomDto = new RoomResponseDto(code, host, roomNumber, title, isPrivate, password,
-						maxPlayers, roundCount);
+				RoomResponseDto roomDto = new RoomResponseDto(code, host, roomNumber, title, isPrivate, 
+						password, maxPlayers, roundCount);
 
 				list.add(roomDto);
-
 			}
 
 		} catch (SQLException e) {
@@ -173,4 +178,47 @@ public class RoomDao {
 		return list;
 	}
 
+	public Room getByRoomNumber(int num) {
+		Room room = null;
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(FIND_ONE_ROOM_SQL)) {
+			pstmt.setInt(1, num);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					String code = rs.getString(COL_ROOM_CODE);
+					String host = rs.getString(COL_HOST);
+					int roomNumber = rs.getInt(COL_ROOM_NUMBER);
+					String title = rs.getString(COL_ROOM_TITLE);
+					boolean isPrivate = rs.getBoolean(COL_IS_PRIVATE);
+					String password = rs.getString(COL_ROOM_PASSWORD);
+					int maxPlayers = rs.getInt(COL_MAX_PLAYERS);
+					int roundCount = rs.getInt(COL_ROUND_COUNT);
+					String state = rs.getString(COL_ROOM_STATE);
+					Timestamp regDate = rs.getTimestamp(COL_REG_DATE);
+					Timestamp modDate = rs.getTimestamp(COL_MOD_DATE);
+
+					room = new Room(code, host, roomNumber, title, isPrivate, password, 
+							maxPlayers, roundCount, state, regDate, modDate);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return room;
+	}
+	
+	public void deleteRoomByCode(String roomCode) {
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(DELETE_ROOM_SQL)) {
+
+			pstmt.setString(1, roomCode);
+			pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

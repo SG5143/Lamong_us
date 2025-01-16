@@ -10,9 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import room.model.RoomDao;
-import room.model.RoomRequestDto;
 
-public class CreateFormAction implements Action {
+public class DeleteRoomAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,50 +27,41 @@ public class CreateFormAction implements Action {
 			BufferedReader reader = request.getReader();
 			StringBuilder jsonBuilder = new StringBuilder();
 			String line;
-			
+
 			while ((line = reader.readLine()) != null) {
 				jsonBuilder.append(line);
 			}
-			
+
 			String requestBody = jsonBuilder.toString();
+
+			if (requestBody == null || requestBody.isEmpty()) {
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "빈 요청 본문이 전송되었습니다.");
+				return;
+			}
 
 			JSONObject reqData = new JSONObject(requestBody);
 
-			String hostUser = reqData.optString("host_user", null);
-			String title = reqData.optString("title", null);
-			String isPrivate = reqData.optString("is_private", null);
-			String password = reqData.optString("password", null);
-			String maxPlayers = reqData.optString("max_players", null);
-			String roundCount = reqData.optString("round", null);
+			String roomCode = reqData.optString("room_code", null);
 
-			if (hostUser == null || title == null || maxPlayers == null || roundCount == null) {
+			if (roomCode == null) {
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 요청 데이터가 누락되었습니다.");
 				return;
 			}
 
 			RoomDao roomDao = RoomDao.getInstance();
-			
-			int roomNumber = roomDao.getAvailableRoomNumber();
+			roomDao.deleteRoomByCode(roomCode);
 
-			RoomRequestDto roomDto = new RoomRequestDto(roomNumber, hostUser, title, isPrivate, password, maxPlayers, roundCount);
-
-			try {
-				roomDao.createRoom(roomDto);
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "게임방이 생성되었습니다.");
-			} catch (Exception e) {
-				e.printStackTrace();
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"게임방 생성 중 오류가 발생했습니다.");
-			}
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "방이 성공적으로 삭제되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다????.");
 		}
 
 	}
 
 	private boolean isValidAuthorization(String authorization) {
-		return true;
+
+		return authorization != null;
 	}
 
 	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)
@@ -79,7 +69,7 @@ public class CreateFormAction implements Action {
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("status", statusCode);
 		jsonResponse.put("message", message);
-		
+
 		String json = jsonResponse.toString();
 
 		response.setContentType("application/json");
