@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.mindrot.jbcrypt.*;
 
+import jakarta.servlet.http.*;
 import util.*;
 
 public class UserDao {
@@ -37,10 +38,7 @@ public class UserDao {
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
 	private static final String FIND_USER_PUBLIC_INFO = "SELECT uuid, nickname, profile_info, profile_image, score, reg_date FROM Users WHERE uuid = ?";
 
-	private static final String INSERT_BLOCKED_USER = "INSERT INTO BlockedUsers (blocking_user, blocked_user) VALUES (?, ?)";
-	private static final String CHECK_BLOCKED_USER = "SELECT * FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
-
-	private UserDao() {
+	public UserDao() {
 	}
 
 	private static UserDao instance = new UserDao();
@@ -116,6 +114,17 @@ public class UserDao {
 				profileInfo, profileImage, score, apiKey, regDate, modDate);
 	}
 
+	public String getCurrentUserUUID(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			String currentUserUUID = (String) session.getAttribute("userUUID");
+			if (currentUserUUID != null) {
+				return currentUserUUID;
+			}
+		}
+		return null;
+	}
+
 	private User findUserBy(String query, String parameter) {
 		User user = null;
 		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -145,8 +154,8 @@ public class UserDao {
 		return findUserBy(FIND_USER_BY_EMAIL, email);
 	}
 
-	public User FIND_USER_BY_NICKNAME(String nickname) {
-		return findUserBy(FIND_USER_BY_PHONE, nickname);
+	public User findUserByUserNickname(String nickname) {
+		return findUserBy(FIND_USER_BY_NICKNAME, nickname);
 	}
 
 	public User findUserByUserPhone(String phone) {
@@ -284,35 +293,4 @@ public class UserDao {
 		return userPublicInfo;
 	}
 
-	public boolean banUser(String blockingUser, String blockedUser) {
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(INSERT_BLOCKED_USER)) {
-			pstmt.setString(1, blockingUser);
-			pstmt.setString(2, blockedUser);
-
-			int rowsAffected = pstmt.executeUpdate();
-			return rowsAffected > 0;
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	public boolean isUserBlocked(String blockingUser, String blockedUser) {
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(CHECK_BLOCKED_USER)) {
-			pstmt.setString(1, blockingUser);
-			pstmt.setString(2, blockedUser);
-
-			ResultSet rs = pstmt.executeQuery();
-			return rs.next();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
 }
