@@ -64,4 +64,14 @@ public class Service extends HttpServlet {
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
+
+	@Override
+	protected void service(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		if ("PATCH".equalsIgnoreCase(request.getMethod()))
+			doGet(request, response);
+		else
+			super.service(request, response);
+	}
+
 }
