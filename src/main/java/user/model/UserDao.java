@@ -33,9 +33,12 @@ public class UserDao {
 	private static final String FIND_USER_BY_NICKNAME = "SELECT * FROM Users WHERE nickname=?";
 	private static final String FIND_USER_BY_PHONE = "SELECT * FROM Users WHERE phone=?";
 
-	private static final String UPDATE_USER_INFO = "UPDATE Users SET password = ?, nickname = ?, email = ?, phone = ?, profile_info = ?, profile_image = ? WHERE uuid = ?";
+	private static final String UPDATE_USER_INFO = "UPDATE Users SET password = ?, nickname = ?, email = ?, phone = ?, profile_info = ?, profile_image = ?, login_type = ? WHERE uuid = ?";
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
 	private static final String FIND_USER_PUBLIC_INFO = "SELECT uuid, nickname, profile_info, profile_image, score, reg_date FROM Users WHERE uuid = ?";
+
+	private static final String INSERT_BLOCKED_USER = "INSERT INTO BlockedUsers (blocking_user, blocked_user) VALUES (?, ?)";
+	private static final String CHECK_BLOCKED_USER = "SELECT * FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
 
 	private UserDao() {
 	}
@@ -60,14 +63,7 @@ public class UserDao {
 			pstmt.setString(3, userDto.getNickname());
 			pstmt.setString(4, userDto.getPhone());
 			pstmt.setString(5, userDto.getEmail());
-
-			if (userDto.getLoginType() != null) {
-				if ("kakao".equals(userDto.getLoginType()) || "google".equals(userDto.getLoginType())) {
-					pstmt.setString(6, userDto.getLoginType());
-				}
-			} else {
-				pstmt.setNull(6, java.sql.Types.VARCHAR);
-			}
+			pstmt.setString(6, userDto.getLoginType());
 
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -121,6 +117,8 @@ public class UserDao {
 	}
 
 	public User findUserByUuid(String uuid) {
+		System.out.println("쿼리 실행 전 UUID: " + uuid);
+
 		User user = null;
 
 		try (Connection conn = DBManager.getConnection();
@@ -226,52 +224,69 @@ public class UserDao {
 
 		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+			User existingUser = findUserByUuid(userDto.getUuid());
+			if (existingUser == null) {
+				System.out.println("업데이트 실패: 유저 정보가 존재하지 않습니다. UUID: " + userDto.getUuid());
+				return null;
+			}
+
 			int cnt = 0;
 
 			if (userDto.getPassword() != null) {
 				String hashedPassword = BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt());
 				pstmt.setString(++cnt, hashedPassword);
 			} else {
-				pstmt.setNull(++cnt, Types.VARCHAR);
+	            pstmt.setString(++cnt, existingUser.getPassword()); 
 			}
 
 			if (userDto.getNickname() != null) {
 				pstmt.setString(++cnt, userDto.getNickname());
 			} else {
-				pstmt.setNull(++cnt, Types.VARCHAR);
+				pstmt.setString(++cnt, existingUser.getNickname()); 
 			}
 
 			if (userDto.getEmail() != null) {
 				pstmt.setString(++cnt, userDto.getEmail());
 			} else {
-				pstmt.setNull(++cnt, Types.VARCHAR);
+				pstmt.setString(++cnt, existingUser.getEmail());
 			}
 
 			if (userDto.getPhone() != null) {
 				pstmt.setString(++cnt, userDto.getPhone());
 			} else {
-				pstmt.setNull(++cnt, Types.VARCHAR);
+				pstmt.setString(++cnt, existingUser.getPhone());
 			}
 
 			if (userDto.getProfileInfo() != null) {
 				pstmt.setString(++cnt, userDto.getProfileInfo());
 			} else {
-				pstmt.setNull(++cnt, Types.VARCHAR);
+				pstmt.setString(++cnt, existingUser.getProfileInfo());
 			}
 
 			if (userDto.getProfileImage() != null) {
 				pstmt.setBytes(++cnt, userDto.getProfileImage());
 			} else {
-				pstmt.setNull(++cnt, Types.BLOB);
+				pstmt.setBytes(++cnt, existingUser.getProfileImage());
+			}
+
+			if (userDto.getLoginType() != null) {
+				pstmt.setString(++cnt, userDto.getLoginType());
+			} else {
+				pstmt.setString(++cnt, existingUser.getLoginType());
 			}
 
 			pstmt.setString(++cnt, userDto.getUuid());
 
+			conn.setAutoCommit(false);
+
 			int rowsUpdated = pstmt.executeUpdate();
+
 			if (rowsUpdated > 0) {
+				conn.commit();
 				updatedUser = findUserByUuid(userDto.getUuid());
 			} else {
 				System.out.println("업데이트 실패: 유저 정보가 존재하지 않습니다.");
+				conn.rollback();
 			}
 
 		} catch (SQLException e) {
@@ -333,4 +348,35 @@ public class UserDao {
 		return userPublicInfo;
 	}
 
+	public boolean banUser(String blockingUser, String blockedUser) {
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(INSERT_BLOCKED_USER)) {
+			pstmt.setString(1, blockingUser);
+			pstmt.setString(2, blockedUser);
+
+			int rowsAffected = pstmt.executeUpdate();
+			return rowsAffected > 0;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	public boolean isUserBlocked(String blockingUser, String blockedUser) {
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(CHECK_BLOCKED_USER)) {
+			pstmt.setString(1, blockingUser);
+			pstmt.setString(2, blockedUser);
+
+			ResultSet rs = pstmt.executeQuery();
+			return rs.next();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
 }

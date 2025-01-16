@@ -71,6 +71,10 @@ public class User {
 		return isChecked;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
 	public String getNickname() {
 		return nickname;
 	}
@@ -93,6 +97,10 @@ public class User {
 
 	public Boolean getBanStatus() {
 		return banStatus;
+	}
+
+	public void setBanStatus(Boolean banStatus) {
+		this.banStatus = banStatus;
 	}
 
 	public String getProfileInfo() {

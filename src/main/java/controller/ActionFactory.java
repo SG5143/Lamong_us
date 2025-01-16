@@ -42,9 +42,11 @@ public class ActionFactory {
 		Action action = null;
 
 		if (method == HttpMethod.POST)
+			return new LoginFormAction();
+		else if (method == HttpMethod.PATCH)
 			return new UpdateFormAction();
 		else if (method == HttpMethod.DELETE)
-			return action;
+			return new DeleteFormAction();
 
 		return action;
 	}

@@ -6,8 +6,11 @@ import controller.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import user.model.*;
+import java.util.logging.*;
 
 public class LoginFormAction implements Action {
+
+	private static final Logger logger = Logger.getLogger(LoginFormAction.class.getName());
 
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -37,6 +40,11 @@ public class LoginFormAction implements Action {
 		}
 
 		if (user.checkPassword(password)) {
+
+			HttpSession session = request.getSession();
+			session.setAttribute("log", user);
+
+			logger.info("로그인 성공: 사용자 " + username + " 세션 생성됨. 세션 ID: " + session.getId());
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "로그인 성공");
 		} else {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");

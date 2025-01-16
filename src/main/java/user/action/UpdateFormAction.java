@@ -14,6 +14,28 @@ public class UpdateFormAction implements Action {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		String apiKeyFromHeader = request.getHeader("Authorization");
+
+		if (apiKeyFromHeader == null || !apiKeyFromHeader.startsWith("Bearer ")) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "API 키가 제공되지 않았습니다.");
+			return;
+		}
+
+		String apiKey = apiKeyFromHeader.substring(7);
+
+		HttpSession session = request.getSession();
+		User loggedInUser = (User) session.getAttribute("log");
+
+		if (loggedInUser == null) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "로그인 상태가 아닙니다.");
+			return;
+		}
+
+		if (!loggedInUser.getApiKey().equals(apiKey)) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "API 키가 유효하지 않습니다.");
+			return;
+		}
+
 		BufferedReader reader = request.getReader();
 		StringBuilder sb = new StringBuilder();
 		String line;
@@ -32,6 +54,8 @@ public class UpdateFormAction implements Action {
 			String phone = jsonObject.optString("phone", null);
 			String profileInfo = jsonObject.optString("profile_info", null);
 			String profileImage = jsonObject.optString("profile_image", null);
+			String loginType = jsonObject.optString("loginType", null);
+			
 
 			UserRequestDto userDto = new UserRequestDto();
 			userDto.setUuid(uuid);
@@ -41,6 +65,7 @@ public class UpdateFormAction implements Action {
 			userDto.setPhone(phone);
 			userDto.setProfileInfo(profileInfo);
 			userDto.setProfileImage(profileImage != null ? profileImage.getBytes() : null);
+			userDto.setLoginType(loginType);
 
 			boolean isUpdated = updateUserInfo(userDto);
 
@@ -57,8 +82,15 @@ public class UpdateFormAction implements Action {
 	}
 
 	private boolean updateUserInfo(UserRequestDto userDto) {
-		System.out.println("사용자 정보 업데이트: " + userDto.getUuid());
-		return true;
+		UserDao userDao = UserDao.getInstance();
+		User updatedUser = userDao.updateUserInfo(userDto);
+		if (updatedUser != null) {
+			System.out.println("사용자 정보 업데이트 성공: " + updatedUser.getUuid());
+			return true;
+		} else {
+			System.out.println("사용자 정보 업데이트 실패: " + userDto.getUuid());
+			return false;
+		}
 	}
 
 	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)
