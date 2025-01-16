@@ -11,7 +11,6 @@ public class DeleteFormAction implements Action {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		// 삭제 상태 활성화
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 
