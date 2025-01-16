@@ -42,7 +42,7 @@ public class ActionFactory {
 		Action action = null;
 
 		if (method == HttpMethod.POST)
-			return new LoginFormAction();
+			return new BanServiceAction();
 		else if (method == HttpMethod.PATCH)
 			return new UpdateFormAction();
 		else if (method == HttpMethod.DELETE)
