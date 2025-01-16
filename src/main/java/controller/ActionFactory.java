@@ -50,12 +50,15 @@ public class ActionFactory {
 
 		if (method == HttpMethod.POST)
 			return new CreateFormAction();
-		else if (method == HttpMethod.GET)
+		else if (method == HttpMethod.GET && command != null && command.equals("all"))
 			return new RoomListAction();
+		else if (method == HttpMethod.GET)
+			return new GetRoomAction();
 		else if (method == HttpMethod.PATCH)
 			return action;
 		else if (method == HttpMethod.DELETE)
-			return action;
+			return new DeleteRoomAction();
+		
 
 		return action;
 	}
@@ -70,7 +73,7 @@ public class ActionFactory {
 
 		return action;
 	}
-	
+
 	private Action getChatRoomAction(String command, HttpMethod method) {
 		Action action = null;
 
