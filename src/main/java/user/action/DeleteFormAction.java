@@ -1,10 +1,7 @@
 package user.action;
 
 import java.io.*;
-
-import org.apache.catalina.User;
 import org.json.*;
-
 import controller.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
