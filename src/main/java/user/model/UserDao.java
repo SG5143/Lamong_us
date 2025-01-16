@@ -27,8 +27,8 @@ public class UserDao {
 
 	private static final String CREATE_USER = "INSERT INTO Users (username, password, nickname, phone, email, login_type) VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ALL_USERS = "SELECT * FROM Users";
-	private static final String FIND_USER_UUID = "SELECT * FROM Users WHERE uuid=?";
-	private static final String FIND_USER_USERNAME = "SELECT * FROM Users WHERE username=?";
+	private static final String FIND_USER_BY_UUID = "SELECT * FROM Users WHERE uuid=?";
+	private static final String FIND_USER_BY_USERNAME = "SELECT * FROM Users WHERE username=?";
 	private static final String FIND_USER_BY_EMAIL = "SELECT * FROM Users WHERE email=?";
 	private static final String FIND_USER_BY_NICKNAME = "SELECT * FROM Users WHERE nickname=?";
 	private static final String FIND_USER_BY_PHONE = "SELECT * FROM Users WHERE phone=?";
@@ -116,105 +116,41 @@ public class UserDao {
 				profileInfo, profileImage, score, apiKey, regDate, modDate);
 	}
 
-	public User findUserByUuid(String uuid) {
-		System.out.println("쿼리 실행 전 UUID: " + uuid);
-
+	private User findUserBy(String query, String parameter) {
 		User user = null;
+		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_UUID)) {
-
-			pstmt.setString(1, uuid);
+			pstmt.setString(1, parameter);
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
 					user = mapResultSetToUser(rs);
 				}
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return user;
+	}
+
+	public User findUserByUuid(String uuid) {
+		return findUserBy(FIND_USER_BY_UUID, uuid);
 	}
 
 	public User findUserByUsername(String username) {
-		User user = null;
-
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_USERNAME)) {
-
-			pstmt.setString(1, username);
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = mapResultSetToUser(rs);
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return user;
+		return findUserBy(FIND_USER_BY_USERNAME, username);
 	}
 
-	public User findUserByEmail(String email) {
-		User user = null;
-
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_EMAIL)) {
-
-			pstmt.setString(1, email);
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = mapResultSetToUser(rs);
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return user;
+	public User findUserByUserEmail(String email) {
+		return findUserBy(FIND_USER_BY_EMAIL, email);
 	}
 
-	public User findUserByNickname(String nickname) {
-		User user = null;
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_NICKNAME)) {
-
-			pstmt.setString(1, nickname);
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = mapResultSetToUser(rs);
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return user;
+	public User FIND_USER_BY_NICKNAME(String nickname) {
+		return findUserBy(FIND_USER_BY_PHONE, nickname);
 	}
 
-	public User findUserByPhone(String phone) {
-		User user = null;
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_PHONE)) {
-
-			pstmt.setString(1, phone);
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = mapResultSetToUser(rs);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return user;
+	public User findUserByUserPhone(String phone) {
+		return findUserBy(FIND_USER_BY_PHONE, phone);
 	}
 
 	public User updateUserInfo(UserRequestDto userDto) {
@@ -236,13 +172,13 @@ public class UserDao {
 				String hashedPassword = BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt());
 				pstmt.setString(++cnt, hashedPassword);
 			} else {
-	            pstmt.setString(++cnt, existingUser.getPassword()); 
+				pstmt.setString(++cnt, existingUser.getPassword());
 			}
 
 			if (userDto.getNickname() != null) {
 				pstmt.setString(++cnt, userDto.getNickname());
 			} else {
-				pstmt.setString(++cnt, existingUser.getNickname()); 
+				pstmt.setString(++cnt, existingUser.getNickname());
 			}
 
 			if (userDto.getEmail() != null) {
