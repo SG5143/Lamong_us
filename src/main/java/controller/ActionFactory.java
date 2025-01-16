@@ -1,15 +1,15 @@
 package controller;
 
-import chat.action.*;
 import user.action.*;
 import room.action.*;
+import chat.action.*;
+import ingame.action.*;
 
 import util.HttpMethod;
 
 public class ActionFactory {
 
-	private ActionFactory() {
-	}
+	private ActionFactory() {}
 
 	private static ActionFactory instance = new ActionFactory();
 
@@ -30,6 +30,10 @@ public class ActionFactory {
 			return getChatAction(command, method);
 		else if (path.equals("chat-room"))
 			return getChatRoomAction(command, method);
+		else if (path.equals("in-game"))
+			return getInGameAction(command, method);
+		else if (path.equals("record-game"))
+			return getRecordGameAction(command, method);
 
 		return action;
 	}
@@ -78,6 +82,30 @@ public class ActionFactory {
 			return new CreateChatRoomAction();
 		else if (method == HttpMethod.GET)
 			return new GetChatRoomMessagesAction();
+
+		return action;
+	}
+
+	private Action getInGameAction(String command, HttpMethod method) {
+		Action action = null;
+
+		if (method == HttpMethod.POST)
+			return new CreateGameAction();
+		else if (method == HttpMethod.GET)
+			return action;
+		else if (method == HttpMethod.PATCH)
+			return action;
+
+		return action;
+	}
+
+	private Action getRecordGameAction(String command, HttpMethod method) {
+		Action action = null;
+
+		if (method == HttpMethod.POST)
+			return action;
+		else if (method == HttpMethod.GET)
+			return action;
 
 		return action;
 	}
