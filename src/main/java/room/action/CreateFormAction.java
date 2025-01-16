@@ -49,7 +49,6 @@ public class CreateFormAction implements Action {
 				return;
 			}
 
-
 			RoomDao roomDao = RoomDao.getInstance();
 			
 			int roomNumber = roomDao.getAvailableRoomNumber();
@@ -80,9 +79,7 @@ public class CreateFormAction implements Action {
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("status", statusCode);
 		jsonResponse.put("message", message);
-		//방 코드 추가하기
 		
-
 		String json = jsonResponse.toString();
 
 		response.setContentType("application/json");
