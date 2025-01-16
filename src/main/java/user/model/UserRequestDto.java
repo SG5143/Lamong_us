@@ -18,12 +18,14 @@ public class UserRequestDto {
 	public UserRequestDto() {
 	}
 
-	public UserRequestDto(String username, String password, String email, String nickname, String phone) {
+	public UserRequestDto(String username, String password, String email, String nickname, String phone,
+			String loginType) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
 		this.nickname = nickname;
 		this.phone = phone;
+		this.loginType = loginType;
 	}
 
 	public String getUuid() {
