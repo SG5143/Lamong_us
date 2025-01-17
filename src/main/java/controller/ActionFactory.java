@@ -97,9 +97,9 @@ public class ActionFactory {
 		if (method == HttpMethod.POST)
 			return new CreateGameAction();
 		else if (method == HttpMethod.GET)
-			return action;
+			return new GetGameAction();
 		else if (method == HttpMethod.PATCH)
-			return action;
+			return new UpdateGameAction();
 
 		return action;
 	}
@@ -108,9 +108,9 @@ public class ActionFactory {
 		Action action = null;
 
 		if (method == HttpMethod.POST)
-			return action;
+			return new InsertUserRecordAction();
 		else if (method == HttpMethod.GET)
-			return action;
+			return new GetGameRecordAction();
 
 		return action;
 	}
