@@ -34,6 +34,15 @@
 		<url-pattern>/header</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>gameLobby</servlet-name>
+		<jsp-file>/views/game/gameLobby.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>gameLobby</servlet-name>
+		<url-pattern>/lobby</url-pattern>
+	</servlet-mapping>
+
 	<!-- 404 에러 페이지 매핑 -->
 	<error-page>
 		<error-code>404</error-code>
