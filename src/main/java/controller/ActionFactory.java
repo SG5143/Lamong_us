@@ -9,7 +9,8 @@ import util.HttpMethod;
 
 public class ActionFactory {
 
-	private ActionFactory() {}
+	private ActionFactory() {
+	}
 
 	private static ActionFactory instance = new ActionFactory();
 
@@ -61,10 +62,9 @@ public class ActionFactory {
 		else if (method == HttpMethod.GET)
 			return new GetRoomAction();
 		else if (method == HttpMethod.PATCH)
-			return action;
+			return new UpdateSettingsAction();
 		else if (method == HttpMethod.DELETE)
 			return new DeleteRoomAction();
-		
 
 		return action;
 	}
