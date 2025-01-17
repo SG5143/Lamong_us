@@ -7,7 +7,7 @@ public class RoomResponseDto {
 	private int roomNumber;
 	private String title;
 	private boolean isPrivate;
-	private char[] password; // 4자리
+	private String password; // 4자리
 	private int maxPlayers;
 	private int roundCount;
 
@@ -20,7 +20,10 @@ public class RoomResponseDto {
 		this.roomNumber = roomNumber;
 		this.title = title;
 		this.isPrivate = isPrivate;
-		this.password = password.length() > 4 ? password.substring(0, 4).toCharArray() : password.toCharArray();
+
+		if (password != null)
+			this.password = password.length() > 4 ? password.substring(0, 4) : password;
+
 		this.maxPlayers = maxPlayers;
 		this.roundCount = roundCount;
 	}
@@ -65,11 +68,12 @@ public class RoomResponseDto {
 		this.isPrivate = isPrivate;
 	}
 
+	
 	public String getPassword() {
-		return new String(password);
+		return password;
 	}
 
-	public void setPassword(char[] password) {
+	public void setPassword(String password) {
 		this.password = password;
 	}
 
