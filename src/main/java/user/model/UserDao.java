@@ -26,6 +26,7 @@ public class UserDao {
 	private static final String COL_REG_DATE = "reg_date";
 	private static final String COL_MOD_DATE = "mod_date";
 
+    private static final String COUNT_USERS = "SELECT COUNT(*) FROM users";
 	private static final String CREATE_USER = "INSERT INTO Users (username, password, nickname, phone, email, login_type) VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ALL_USERS = "SELECT * FROM Users";
 	private static final String FIND_USER_BY_UUID = "SELECT * FROM Users WHERE uuid=?";
@@ -33,6 +34,7 @@ public class UserDao {
 	private static final String FIND_USER_BY_EMAIL = "SELECT * FROM Users WHERE email=?";
 	private static final String FIND_USER_BY_NICKNAME = "SELECT * FROM Users WHERE nickname=?";
 	private static final String FIND_USER_BY_PHONE = "SELECT * FROM Users WHERE phone=?";
+	private static final String FIND_USER_BY_USERKEY = "SELECT * FROM Users WHERE phone=?";
 
 	private static final String UPDATE_USER_INFO = "UPDATE Users SET password = ?, nickname = ?, email = ?, phone = ?, profile_info = ?, profile_image = ?, login_type = ? WHERE uuid = ?";
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
@@ -45,6 +47,23 @@ public class UserDao {
 
 	public static UserDao getInstance() {
 		return instance;
+	}
+	
+	public int countAllUsers() {
+	    int totalCount = 0;
+
+	    try (Connection conn = DBManager.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(COUNT_USERS);
+	         ResultSet rs = pstmt.executeQuery()) {
+
+	        if (rs.next()) {
+	            totalCount = rs.getInt(1); 
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+		return totalCount;
 	}
 
 	public void createUser(UserRequestDto userDto) {
@@ -87,7 +106,7 @@ public class UserDao {
 		return list;
 	}
 
-	private User mapResultSetToUser(ResultSet rs) throws SQLException {
+	private static User mapResultSetToUser(ResultSet rs) throws SQLException {
 		String uuid = rs.getString(COL_UUID);
 		String username = rs.getString(COL_USERNAME);
 		String password = rs.getString(COL_PASSWORD);
@@ -125,7 +144,7 @@ public class UserDao {
 		return null;
 	}
 
-	private User findUserBy(String query, String parameter) {
+	private static User findUserBy(String query, String parameter) {
 		User user = null;
 		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -140,6 +159,15 @@ public class UserDao {
 			e.printStackTrace();
 		}
 		return user;
+	}
+
+	public static String getUuidByNickname(String nickname) {
+		User user = findUserBy(FIND_USER_BY_NICKNAME, nickname);
+		return user != null ? user.getUuid() : null; 
+	}
+
+	public static User findUserByUserkey(String apiKey) {
+		return findUserBy(FIND_USER_BY_USERKEY, apiKey);
 	}
 
 	public User findUserByUuid(String uuid) {
@@ -241,7 +269,7 @@ public class UserDao {
 		return updatedUser;
 	}
 
-	public boolean deactivateUser(String username) {
+	public static boolean deactivateUser(String username) {
 		boolean isDeactivated = false;
 
 		try (Connection conn = DBManager.getConnection();
@@ -259,7 +287,7 @@ public class UserDao {
 		return isDeactivated;
 	}
 
-	public User getUserPublicInfo(String uuid) {
+	public static User getUserPublicInfo(String uuid) {
 		User userPublicInfo = null;
 
 		try (Connection conn = DBManager.getConnection();
