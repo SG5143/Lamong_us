@@ -11,8 +11,14 @@ public class InGameRequestDto {
 	
 	public InGameRequestDto() {}
 
-	public InGameRequestDto(String code, String topic, String keyword, int round) {
+	public InGameRequestDto(String code, String endType, String winType) {
 		this.code = code;
+		this.endType = endType;
+		this.winType = winType;
+	}
+
+	public InGameRequestDto(String roomCode, String topic, String keyword, int round) {
+		this.roomCode = roomCode;
 		this.topic = topic;
 		this.keyword = keyword;
 		this.round = round;
