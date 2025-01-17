@@ -30,6 +30,8 @@ public class RoomDao {
 	private static final String FIND_ALL_ROOM_SQL = "SELECT * FROM GameWatingRoom where room_state != 'delete' ORDER BY room_number ASC LIMIT 10 OFFSET ?";
 	private static final String FIND_ONE_ROOM_SQL = "SELECT * FROM GameWatingRoom WHERE room_number = ? AND room_state != 'delete'";
 	private static final String DELETE_ROOM_SQL= "UPDATE GameWatingRoom SET room_state = 'delete' WHERE room_code = ?";
+	private static final String UPDATE_ROOM_SQL = "UPDATE GameWatingRoom SET room_title = ?, is_private = ?, room_password = ?, max_players = ?, round_count = ? WHERE room_code = ? AND room_state != 'delete'";
+
 	
 	private RoomDao() {};
 
@@ -138,7 +140,8 @@ public class RoomDao {
 				Timestamp regDate = rs.getTimestamp(COL_REG_DATE);
 				Timestamp modDate = rs.getTimestamp(COL_MOD_DATE);
 
-				Room room = new Room(code, host, roomNumber, title, isPrivate, password, maxPlayers, roundCount, state, regDate, modDate);
+				Room room = new Room(code, host, roomNumber, title, isPrivate, password,
+						maxPlayers, roundCount, state, regDate, modDate);
 				list.add(room);
 			}
 		}
@@ -209,7 +212,7 @@ public class RoomDao {
 
 		return room;
 	}
-	
+
 	public void deleteRoomByCode(String roomCode) {
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(DELETE_ROOM_SQL)) {
@@ -221,4 +224,23 @@ public class RoomDao {
 			e.printStackTrace();
 		}
 	}
+
+	public void updateRoomSettings(RoomRequestDto roomDto) {
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(UPDATE_ROOM_SQL)) {
+
+			pstmt.setString(1, roomDto.getTitle());
+			pstmt.setBoolean(2, roomDto.isPrivate());
+			pstmt.setString(3, roomDto.getPassword());
+			pstmt.setInt(4, roomDto.getMaxPlayers());
+			pstmt.setInt(5, roomDto.getRoundCount());
+			pstmt.setString(6, roomDto.getCode());
+			pstmt.execute();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
