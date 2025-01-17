@@ -14,8 +14,8 @@ public class RoomRequestDto {
 
 	public RoomRequestDto() {}
 
-	public RoomRequestDto(int roomNumber, String host, String title, String isPrivate, String password, String maxPlayers,
-			String roundCount) {
+	public RoomRequestDto(int roomNumber, String host, String title, String isPrivate, String password,
+			String maxPlayers, String roundCount) {
 		this.roomNumber = roomNumber;
 		this.host = host;
 		this.title = title;
@@ -23,6 +23,16 @@ public class RoomRequestDto {
 		this.password = password.length() > 4 ? password.substring(0, 4).toCharArray() : password.toCharArray();
 		this.maxPlayers = Integer.parseInt(maxPlayers);
 		this.roundCount = Integer.parseInt(roundCount);
+	}
+
+	public RoomRequestDto(String title, String isPrivate, String password, String maxPlayers, String roundCount,
+			String code) {
+		this.title = title;
+		this.isPrivate = isPrivate.equals("on");
+		this.password = password.length() > 4 ? password.substring(0, 4).toCharArray() : password.toCharArray();
+		this.maxPlayers = Integer.parseInt(maxPlayers);
+		this.roundCount = Integer.parseInt(roundCount);
+		this.code = code;
 	}
 
 	public String getCode() {
