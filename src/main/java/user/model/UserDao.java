@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.mindrot.jbcrypt.*;
 
+import jakarta.servlet.http.*;
 import util.*;
 
 public class UserDao {
@@ -25,28 +26,44 @@ public class UserDao {
 	private static final String COL_REG_DATE = "reg_date";
 	private static final String COL_MOD_DATE = "mod_date";
 
+    private static final String COUNT_USERS = "SELECT COUNT(*) FROM users";
 	private static final String CREATE_USER = "INSERT INTO Users (username, password, nickname, phone, email, login_type) VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ALL_USERS = "SELECT * FROM Users";
-	private static final String FIND_USER_UUID = "SELECT * FROM Users WHERE uuid=?";
-	private static final String FIND_USER_USERNAME = "SELECT * FROM Users WHERE username=?";
+	private static final String FIND_USER_BY_UUID = "SELECT * FROM Users WHERE uuid=?";
+	private static final String FIND_USER_BY_USERNAME = "SELECT * FROM Users WHERE username=?";
 	private static final String FIND_USER_BY_EMAIL = "SELECT * FROM Users WHERE email=?";
 	private static final String FIND_USER_BY_NICKNAME = "SELECT * FROM Users WHERE nickname=?";
 	private static final String FIND_USER_BY_PHONE = "SELECT * FROM Users WHERE phone=?";
+	private static final String FIND_USER_BY_USERKEY = "SELECT * FROM Users WHERE phone=?";
 
 	private static final String UPDATE_USER_INFO = "UPDATE Users SET password = ?, nickname = ?, email = ?, phone = ?, profile_info = ?, profile_image = ?, login_type = ? WHERE uuid = ?";
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
 	private static final String FIND_USER_PUBLIC_INFO = "SELECT uuid, nickname, profile_info, profile_image, score, reg_date FROM Users WHERE uuid = ?";
 
-	private static final String INSERT_BLOCKED_USER = "INSERT INTO BlockedUsers (blocking_user, blocked_user) VALUES (?, ?)";
-	private static final String CHECK_BLOCKED_USER = "SELECT * FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
-
-	private UserDao() {
+	public UserDao() {
 	}
 
 	private static UserDao instance = new UserDao();
 
 	public static UserDao getInstance() {
 		return instance;
+	}
+	
+	public int countAllUsers() {
+	    int totalCount = 0;
+
+	    try (Connection conn = DBManager.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(COUNT_USERS);
+	         ResultSet rs = pstmt.executeQuery()) {
+
+	        if (rs.next()) {
+	            totalCount = rs.getInt(1); 
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+		return totalCount;
 	}
 
 	public void createUser(UserRequestDto userDto) {
@@ -89,7 +106,7 @@ public class UserDao {
 		return list;
 	}
 
-	private User mapResultSetToUser(ResultSet rs) throws SQLException {
+	private static User mapResultSetToUser(ResultSet rs) throws SQLException {
 		String uuid = rs.getString(COL_UUID);
 		String username = rs.getString(COL_USERNAME);
 		String password = rs.getString(COL_PASSWORD);
@@ -116,105 +133,61 @@ public class UserDao {
 				profileInfo, profileImage, score, apiKey, regDate, modDate);
 	}
 
-	public User findUserByUuid(String uuid) {
-		System.out.println("쿼리 실행 전 UUID: " + uuid);
+	public String getCurrentUserUUID(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			String currentUserUUID = (String) session.getAttribute("userUUID");
+			if (currentUserUUID != null) {
+				return currentUserUUID;
+			}
+		}
+		return null;
+	}
 
+	private static User findUserBy(String query, String parameter) {
 		User user = null;
+		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_UUID)) {
-
-			pstmt.setString(1, uuid);
+			pstmt.setString(1, parameter);
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
 					user = mapResultSetToUser(rs);
 				}
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return user;
+	}
+
+	public static String getUuidByNickname(String nickname) {
+		User user = findUserBy(FIND_USER_BY_NICKNAME, nickname);
+		return user != null ? user.getUuid() : null; 
+	}
+
+	public static User findUserByUserkey(String apiKey) {
+		return findUserBy(FIND_USER_BY_USERKEY, apiKey);
+	}
+
+	public User findUserByUuid(String uuid) {
+		return findUserBy(FIND_USER_BY_UUID, uuid);
 	}
 
 	public User findUserByUsername(String username) {
-		User user = null;
-
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_USERNAME)) {
-
-			pstmt.setString(1, username);
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = mapResultSetToUser(rs);
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return user;
+		return findUserBy(FIND_USER_BY_USERNAME, username);
 	}
 
-	public User findUserByEmail(String email) {
-		User user = null;
-
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_EMAIL)) {
-
-			pstmt.setString(1, email);
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = mapResultSetToUser(rs);
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return user;
+	public User findUserByUserEmail(String email) {
+		return findUserBy(FIND_USER_BY_EMAIL, email);
 	}
 
-	public User findUserByNickname(String nickname) {
-		User user = null;
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_NICKNAME)) {
-
-			pstmt.setString(1, nickname);
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = mapResultSetToUser(rs);
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return user;
+	public User findUserByUserNickname(String nickname) {
+		return findUserBy(FIND_USER_BY_NICKNAME, nickname);
 	}
 
-	public User findUserByPhone(String phone) {
-		User user = null;
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(FIND_USER_BY_PHONE)) {
-
-			pstmt.setString(1, phone);
-
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					user = mapResultSetToUser(rs);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return user;
+	public User findUserByUserPhone(String phone) {
+		return findUserBy(FIND_USER_BY_PHONE, phone);
 	}
 
 	public User updateUserInfo(UserRequestDto userDto) {
@@ -236,13 +209,13 @@ public class UserDao {
 				String hashedPassword = BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt());
 				pstmt.setString(++cnt, hashedPassword);
 			} else {
-	            pstmt.setString(++cnt, existingUser.getPassword()); 
+				pstmt.setString(++cnt, existingUser.getPassword());
 			}
 
 			if (userDto.getNickname() != null) {
 				pstmt.setString(++cnt, userDto.getNickname());
 			} else {
-				pstmt.setString(++cnt, existingUser.getNickname()); 
+				pstmt.setString(++cnt, existingUser.getNickname());
 			}
 
 			if (userDto.getEmail() != null) {
@@ -296,7 +269,7 @@ public class UserDao {
 		return updatedUser;
 	}
 
-	public boolean deactivateUser(String username) {
+	public static boolean deactivateUser(String username) {
 		boolean isDeactivated = false;
 
 		try (Connection conn = DBManager.getConnection();
@@ -314,7 +287,7 @@ public class UserDao {
 		return isDeactivated;
 	}
 
-	public User getUserPublicInfo(String uuid) {
+	public static User getUserPublicInfo(String uuid) {
 		User userPublicInfo = null;
 
 		try (Connection conn = DBManager.getConnection();
@@ -348,35 +321,4 @@ public class UserDao {
 		return userPublicInfo;
 	}
 
-	public boolean banUser(String blockingUser, String blockedUser) {
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(INSERT_BLOCKED_USER)) {
-			pstmt.setString(1, blockingUser);
-			pstmt.setString(2, blockedUser);
-
-			int rowsAffected = pstmt.executeUpdate();
-			return rowsAffected > 0;
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	public boolean isUserBlocked(String blockingUser, String blockedUser) {
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(CHECK_BLOCKED_USER)) {
-			pstmt.setString(1, blockingUser);
-			pstmt.setString(2, blockedUser);
-
-			ResultSet rs = pstmt.executeQuery();
-			return rs.next();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
 }
