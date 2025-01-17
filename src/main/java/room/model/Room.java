@@ -1,10 +1,8 @@
 package room.model;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 public class Room {
-
 	private String code;
 	private String host;
 	private int roomNumber;

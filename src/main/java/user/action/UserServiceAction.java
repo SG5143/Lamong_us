@@ -69,9 +69,7 @@ public class UserServiceAction implements Action {
 	}
 
 	private String getUserPublicInfo(String uuid) {
-		if (uuid == null || uuid.isEmpty()) {
-			return null;
-		}
+		if (uuid == null || uuid.isEmpty()) return null;
 
 		JSONObject userInfo = new JSONObject();
 
@@ -80,7 +78,6 @@ public class UserServiceAction implements Action {
 
 			pstmt.setString(1, uuid);
 			ResultSet rs = pstmt.executeQuery();
-
 			if (rs.next()) {
 				userInfo.put("reg_date", rs.getTimestamp("reg_date").toInstant().toString());
 				userInfo.put("score", rs.getInt("score"));
@@ -88,14 +85,12 @@ public class UserServiceAction implements Action {
 				userInfo.put("profile_info", rs.getString("profile_info"));
 				userInfo.put("nickname", rs.getString("nickname"));
 				userInfo.put("uuid", rs.getString("uuid"));
-			} else {
-				return null;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
-
 		return userInfo.toString();
 	}
+	
 }

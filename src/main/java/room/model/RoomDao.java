@@ -11,7 +11,6 @@ import java.util.List;
 import util.DBManager;
 
 public class RoomDao {
-
 	private static final String COL_ROOM_CODE = "room_code";
 	private static final String COL_HOST = "host_user";
 	private static final String COL_ROOM_NUMBER = "room_number";
@@ -31,7 +30,6 @@ public class RoomDao {
 	private static final String FIND_ONE_ROOM_SQL = "SELECT * FROM GameWatingRoom WHERE room_number = ? AND room_state != 'delete'";
 	private static final String DELETE_ROOM_SQL= "UPDATE GameWatingRoom SET room_state = 'delete' WHERE room_code = ?";
 	private static final String UPDATE_ROOM_SQL = "UPDATE GameWatingRoom SET room_title = ?, is_private = ?, room_password = ?, max_players = ?, round_count = ? WHERE room_code = ? AND room_state != 'delete'";
-
 	
 	private RoomDao() {};
 
@@ -44,7 +42,6 @@ public class RoomDao {
 	public void createRoom(RoomRequestDto roomDto) {
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(CREATE_ROOM_SQL)) {
-
 			pstmt.setInt(1, roomDto.getRoomNumber());
 			pstmt.setString(2, roomDto.getHost());
 			pstmt.setString(3, roomDto.getTitle());
@@ -54,7 +51,6 @@ public class RoomDao {
 			pstmt.setInt(7, roomDto.getRoundCount());
 
 			pstmt.execute();
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -73,13 +69,10 @@ public class RoomDao {
 				}
 
 				int roomNumber = 1;
-
 				while (usedRoomNumbers.contains(roomNumber)) {
 					roomNumber++;
 				}
-
 				return roomNumber;
-
 			} catch (SQLException e) {
 				e.printStackTrace();
 				usedRoomNumbers.clear();
@@ -93,15 +86,12 @@ public class RoomDao {
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(FIND_ROOM_COUNT_SQL);
 				ResultSet rs = pstmt.executeQuery()) {
-
-			if (rs.next()) {
+			if (rs.next()) 
 				roomCount = rs.getInt(1);
-			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return roomCount;
 	}
 
@@ -112,11 +102,9 @@ public class RoomDao {
 
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(FIND_ALL_ROOM_SQL)) {
-
 			pstmt.setInt(1, offset);
 
 			list = fetchRoomsByPage(pstmt);
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -148,9 +136,8 @@ public class RoomDao {
 		return list;
 	}
 
-	public List<RoomResponseDto> findAllRoom(int page) {
-
-		List<RoomResponseDto> list = new ArrayList<>();
+	public List<Room> findAllRoom(int page) {
+		List<Room> list = new ArrayList<>();
 
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(FIND_ALL_ROOM_SQL);
@@ -167,17 +154,17 @@ public class RoomDao {
 				String password = rs.getString(COL_ROOM_PASSWORD);
 				int maxPlayers = rs.getInt(COL_MAX_PLAYERS);
 				int roundCount = rs.getInt(COL_ROUND_COUNT);
+				String state = rs.getString(COL_ROOM_STATE);
+				Timestamp regDate = rs.getTimestamp(COL_REG_DATE);
+				Timestamp modDate = rs.getTimestamp(COL_MOD_DATE);
 
-				RoomResponseDto roomDto = new RoomResponseDto(code, host, roomNumber, title, isPrivate, 
-						password, maxPlayers, roundCount);
-
-				list.add(roomDto);
+				Room room = new Room(code, host, roomNumber, title, isPrivate, password,
+						maxPlayers, roundCount, state, regDate, modDate);
+				list.add(room);
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return list;
 	}
 

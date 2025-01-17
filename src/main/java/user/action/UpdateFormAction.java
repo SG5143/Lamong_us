@@ -22,7 +22,6 @@ public class UpdateFormAction implements Action {
 		}
 
 		String apiKey = apiKeyFromHeader.substring(7);
-
 		HttpSession session = request.getSession();
 		User loggedInUser = (User) session.getAttribute("log");
 
@@ -69,12 +68,10 @@ public class UpdateFormAction implements Action {
 
 			boolean isUpdated = updateUserInfo(userDto);
 
-			if (isUpdated) {
+			if (isUpdated) 
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "회원 정보가 성공적으로 업데이트되었습니다.");
-			} else {
+			else 
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "회원 정보 업데이트에 실패했습니다.");
-			}
-
 		} catch (JSONException e) {
 			e.printStackTrace();
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "잘못된 JSON 형식입니다.");

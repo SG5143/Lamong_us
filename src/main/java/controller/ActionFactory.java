@@ -9,8 +9,7 @@ import util.HttpMethod;
 
 public class ActionFactory {
 
-	private ActionFactory() {
-	}
+	private ActionFactory() {}
 
 	private static ActionFactory instance = new ActionFactory();
 
@@ -43,7 +42,7 @@ public class ActionFactory {
 		Action action = null;
 
 		if (method == HttpMethod.POST)
-			return new BanServiceAction();
+			return new BlockServiceAction();
 		else if (method == HttpMethod.PATCH)
 			return new UpdateFormAction();
 		else if (method == HttpMethod.DELETE)

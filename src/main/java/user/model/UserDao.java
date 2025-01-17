@@ -40,8 +40,7 @@ public class UserDao {
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
 	private static final String FIND_USER_PUBLIC_INFO = "SELECT uuid, nickname, profile_info, profile_image, score, reg_date FROM Users WHERE uuid = ?";
 
-	public UserDao() {
-	}
+	public UserDao() {}
 
 	private static UserDao instance = new UserDao();
 
@@ -67,7 +66,6 @@ public class UserDao {
 	}
 
 	public void createUser(UserRequestDto userDto) {
-
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(CREATE_USER)) {
 
@@ -137,9 +135,8 @@ public class UserDao {
 		HttpSession session = request.getSession(false);
 		if (session != null) {
 			String currentUserUUID = (String) session.getAttribute("userUUID");
-			if (currentUserUUID != null) {
+			if (currentUserUUID != null) 
 				return currentUserUUID;
-			}
 		}
 		return null;
 	}
@@ -147,7 +144,6 @@ public class UserDao {
 	private static User findUserBy(String query, String parameter) {
 		User user = null;
 		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
-
 			pstmt.setString(1, parameter);
 
 			try (ResultSet rs = pstmt.executeQuery()) {
@@ -193,11 +189,11 @@ public class UserDao {
 	public User updateUserInfo(UserRequestDto userDto) {
 		User updatedUser = null;
 
-		String sql = UPDATE_USER_INFO;
-
-		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(UPDATE_USER_INFO)) {
 
 			User existingUser = findUserByUuid(userDto.getUuid());
+			
 			if (existingUser == null) {
 				System.out.println("업데이트 실패: 유저 정보가 존재하지 않습니다. UUID: " + userDto.getUuid());
 				return null;
@@ -265,11 +261,10 @@ public class UserDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return updatedUser;
 	}
 
-	public static boolean deactivateUser(String username) {
+	public boolean deactivateUser(String username) {
 		boolean isDeactivated = false;
 
 		try (Connection conn = DBManager.getConnection();
@@ -277,13 +272,12 @@ public class UserDao {
 			pstmt.setString(1, username);
 			int rowsAffected = pstmt.executeUpdate();
 
-			if (rowsAffected > 0) {
+			if (rowsAffected > 0) 
 				isDeactivated = true;
-			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return isDeactivated;
 	}
 
@@ -303,9 +297,10 @@ public class UserDao {
 
 					byte[] profileImage = null;
 					Blob blob = rs.getBlob("profile_image");
-					if (blob != null) {
+					
+					if (blob != null) 
 						profileImage = blob.getBytes(1, (int) blob.length());
-					}
+					
 
 					int score = rs.getInt("score");
 					Timestamp regDate = rs.getTimestamp("reg_date");
@@ -317,7 +312,6 @@ public class UserDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return userPublicInfo;
 	}
 

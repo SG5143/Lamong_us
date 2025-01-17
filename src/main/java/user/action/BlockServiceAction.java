@@ -48,19 +48,17 @@ public class BlockServiceAction implements Action {
 					sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "존재하지 않는 사용자입니다.");
 					return;
 				}
+
 				switch (request.getMethod().toUpperCase()) {
 				case POST:
 					handlePostRequest(response, blockingUser, blockedUser);
 					break;
-
 				case GET:
 					handleGetRequest(request, response, blockingUser);
 					break;
-
 				case DELETE:
 					handleDeleteRequest(response, blockingUser, blockedUser);
 					break;
-
 				default:
 					sendResponseStatusAndMessage(response, HttpServletResponse.SC_METHOD_NOT_ALLOWED,
 							"지원하지 않는 메서드입니다.");
@@ -147,11 +145,7 @@ public class BlockServiceAction implements Action {
 	private void sendResponse(HttpServletResponse response, String message, int totalCount, boolean isEnd)
 			throws IOException {
 		JSONObject result = new JSONObject();
-		result.put("meta",
-				new JSONObject()
-				.put("total_count", totalCount)
-				.put("pageable_count", totalCount)
-				.put("is_end", isEnd));
+		result.put("meta", new JSONObject().put("total_count", totalCount).put("pageable_count", totalCount).put("is_end", isEnd));
 		result.put("message", message);
 
 		response.setContentType("application/json");

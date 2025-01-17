@@ -16,7 +16,6 @@ public class CreateFormAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		String authorization = request.getHeader("Authorization");
 
 		if (authorization == null || !isValidAuthorization(authorization)) {
@@ -52,7 +51,6 @@ public class CreateFormAction implements Action {
 			RoomDao roomDao = RoomDao.getInstance();
 			
 			int roomNumber = roomDao.getAvailableRoomNumber();
-
 			RoomRequestDto roomDto = new RoomRequestDto(roomNumber, hostUser, title, isPrivate, password, maxPlayers, roundCount);
 
 			try {
@@ -60,18 +58,16 @@ public class CreateFormAction implements Action {
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "게임방이 생성되었습니다.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"게임방 생성 중 오류가 발생했습니다.");
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "게임방 생성 중 오류가 발생했습니다.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
 		}
-
 	}
 
 	private boolean isValidAuthorization(String authorization) {
-		return true;
+        return authorization != null;
 	}
 
 	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)

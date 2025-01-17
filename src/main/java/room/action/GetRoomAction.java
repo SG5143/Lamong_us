@@ -14,7 +14,6 @@ public class GetRoomAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		int roomNum = parseRoomNumber(request.getParameter("room_number"));
 
 		if (roomNum <= 0) {
@@ -33,12 +32,10 @@ public class GetRoomAction implements Action {
 
 			JSONObject resData = createGameRoom(room);
 			sendResponseStatusAndResult(response, HttpServletResponse.SC_OK, resData);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			sendResponseStatusAndResult(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null);
 		}
-
 	}
 
 	private int parseRoomNumber(String roomNumber) {

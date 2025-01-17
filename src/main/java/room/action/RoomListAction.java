@@ -17,7 +17,6 @@ public class RoomListAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		int page = parsePage(request.getParameter("page"));
 		int roomCount = getRoomCount();
 		int maxPage = calculateMaxPage(roomCount);
@@ -88,11 +87,9 @@ public class RoomListAction implements Action {
 		}
 
 		return resGameRoom;
-
 	}
 
-	private void sendResponseStatusAndResult(HttpServletResponse response, int statuscode, JSONArray resData)
-			throws IOException {
+	private void sendResponseStatusAndResult(HttpServletResponse response, int statuscode, JSONArray resData) throws IOException {
 		JSONObject jsonResponse = new JSONObject();
 
 		if (resData == null)

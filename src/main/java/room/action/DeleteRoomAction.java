@@ -15,7 +15,6 @@ public class DeleteRoomAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		String authorization = request.getHeader("Authorization");
 
 		if (authorization == null || !isValidAuthorization(authorization)) {
@@ -40,9 +39,8 @@ public class DeleteRoomAction implements Action {
 			}
 
 			JSONObject reqData = new JSONObject(requestBody);
-
+			
 			String roomCode = reqData.optString("room_code", null);
-
 			if (roomCode == null) {
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 요청 데이터가 누락되었습니다.");
 				return;
@@ -56,11 +54,9 @@ public class DeleteRoomAction implements Action {
 			e.printStackTrace();
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다????.");
 		}
-
 	}
 
 	private boolean isValidAuthorization(String authorization) {
-
 		return authorization != null;
 	}
 

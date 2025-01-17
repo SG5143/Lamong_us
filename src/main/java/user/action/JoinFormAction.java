@@ -23,7 +23,6 @@ public class JoinFormAction implements Action {
 			}
 
 			String requestBody = jsonBuilder.toString();
-
 			JSONObject reqData = new JSONObject(requestBody);
 
 			String username = reqData.optString("username", null);
@@ -52,7 +51,6 @@ public class JoinFormAction implements Action {
 
 			userDao.createUser(userDto);
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "회원가입이 완료되었습니다.");
-
 		} catch (JSONException e) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "잘못된 JSON 형식입니다.");
 		} catch (Exception e) {

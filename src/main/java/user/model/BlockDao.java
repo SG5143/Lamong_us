@@ -46,9 +46,8 @@ public class BlockDao {
 				PreparedStatement pstmt = conn.prepareStatement(GET_TOTAL_BLOCKED_USERS_COUNT)) {
 			pstmt.setString(1, blockingUser);
 			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) {
+			if (rs.next()) 
 				count = rs.getInt(1);
-			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -63,10 +62,12 @@ public class BlockDao {
 			pstmt.setString(1, blockingUser);
 			pstmt.setInt(2, PAGE_SIZE);
 			pstmt.setInt(3, offset);
+			
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				blockedUsers.add(rs.getString("blocked_user"));
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -78,13 +79,14 @@ public class BlockDao {
 				PreparedStatement pstmt = conn.prepareStatement(FIND_BLOCKED_USER)) {
 			pstmt.setString(1, blockingUser);
 			pstmt.setString(2, blockedUser);
+			
 			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) {
-				return rs.getInt(1) > 0;
-			}
+			
+			if (rs.next()) return rs.getInt(1) > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
+	
 }

@@ -15,8 +15,7 @@ public class UserRequestDto {
 	private int score;
 	private String apiKey;
 
-	public UserRequestDto() {
-	}
+	public UserRequestDto() {}
 
 	public UserRequestDto(String username, String password, String email, String nickname, String phone,
 			String loginType) {

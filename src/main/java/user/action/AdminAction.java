@@ -13,7 +13,6 @@ public class AdminAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		String authorization = request.getHeader("Authorization");
 
 		if (!isValidAuthorization(authorization)) {
@@ -23,14 +22,12 @@ public class AdminAction implements Action {
 
 		String method = request.getMethod();
 
-		if ("GET".equals(method)) {
+		if ("GET".equals(method)) 
 			getAllUser(request, response, authorization);
-		} else if ("DELETE".equals(method)) {
+		 else if ("DELETE".equals(method)) 
 			deleteInactiveUser(request, response, authorization);
-		} else {
+		else 
 			sendResponseStatusAndResult(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid HTTP method");
-
-		}
 	}
 
 	private void deleteInactiveUser(HttpServletRequest request, HttpServletResponse response, String authorization)
@@ -50,12 +47,9 @@ public class AdminAction implements Action {
 		apiResponse.put("message", "회원 삭제처리가 완료됬습니다.");
 
 		sendResponseStatusAndResult(response, apiResponse.getInt("status"), apiResponse.getString("message"));
-
 	}
 
-	private void getAllUser(HttpServletRequest request, HttpServletResponse response, String authorization)
-			throws IOException {
-
+	private void getAllUser(HttpServletRequest request, HttpServletResponse response, String authorization) throws IOException {
 		int totalCount = getUserCount();
 		String pageParam = request.getParameter("page");
 		int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
@@ -86,12 +80,10 @@ public class AdminAction implements Action {
 	}
 
 	private boolean isValidAuthorization(String authorization) {
-
 		return authorization != null;
 	}
 
-	private void sendResponseStatusAndResult(HttpServletResponse response, int status, String result)
-			throws IOException {
+	private void sendResponseStatusAndResult(HttpServletResponse response, int status, String result) throws IOException {
 		response.setStatus(status);
 		response.setContentType("application/json");
 

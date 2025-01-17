@@ -16,7 +16,6 @@ public class UpdateSettingsAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		String authorization = request.getHeader("Authorization");
 
 		if (authorization == null || !isValidAuthorization(authorization)) {
@@ -36,7 +35,6 @@ public class UpdateSettingsAction implements Action {
 			String requestBody = jsonBuilder.toString();
 
 			JSONObject reqData = new JSONObject(requestBody);
-
 			String title = reqData.optString("title", null);
 			String password = reqData.optString("password", null);
 			String isPrivate = !password.equals("") ? "on" : "off";
@@ -57,19 +55,16 @@ public class UpdateSettingsAction implements Action {
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "방 설정이 정상적으로 업데이트되었습니다.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"방 설정 업데이트 중 오류가 발생했습니다.");
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "방 설정 업데이트 중 오류가 발생했습니다.");
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
 		}
-
 	}
 
 	private boolean isValidAuthorization(String authorization) {
-		return true;
+        return authorization != null;
 	}
 
 	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)
