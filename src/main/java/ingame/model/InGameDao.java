@@ -5,8 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.*;
 
 import util.DBManager;
@@ -14,7 +16,7 @@ import util.DBManager;
 public class InGameDao {
 	private static final Logger LOGGER = Logger.getLogger(InGameDao.class.getName());
 	
-	private static final String COL_INGAME_CODE = "in_game_code";
+	private static final String COL_INGAME_CODE = "ingame_code";
 	private static final String COL_ROOM_CODE = "room_code";
 	private static final String COL_TOPIC = "topic";
 	private static final String COL_KEYWORD = "game_keyword";
@@ -27,15 +29,17 @@ public class InGameDao {
 	private static final String COL_GAME_CODE = "game_code";
 	private static final String COL_IS_LYING = "is_lying";
 	private static final String COL_IS_VOTE_CORRECT = "is_vote_correct";
+	private static final String COL_BEFORE_SCORE = "before_score";
 	private static final String COL_SCORE_CHANGE = "score_change";
 	private static final String COL_IS_QUIT = "is_quit";
 	private static final String COL_IS_WIN = "is_win";
 
-	private static final String CREATE_INGAME_SQL="INSERT INTO InGame(room_code, topic, game_keyword, round_count) VALUES (?, ?, ?, ?)";
-	private static final String GET_INGAME_SQL="SELECT * FROM InGame WHERE in_game_code = ?";
-	private static final String UPDATE_INGAME_SQL="UPDATE InGame SET end_type = ?, win_type = ? WHERE in_game_code = ?";
-	private static final String CREATE_INGAME_RECORD_SQL = "INSERT INTO ActivePlayers(play_user, game_code, is_lying, is_vote_correct, score_change, is_quit, is_win) VALUES (?, ?, ?, ?, ?, ?, ?)";
-	private static final String GET_INGAME_RECORD_SQL = "SELECT * FROM ActivePlayers WHERE game_code = ?";
+
+	private static final String CREATE_INGAME_SQL="INSERT INTO InGame(ingame_code, room_code, topic, game_keyword, round_count) VALUES (?, ?, ?, ?, ?)";
+	private static final String GET_INGAME_SQL="SELECT * FROM InGame WHERE ingame_code = ?";
+	private static final String UPDATE_INGAME_SQL="UPDATE InGame SET end_type = ?, win_type = ? WHERE ingame_code = ?";
+	private static final String CREATE_INGAME_RECORD_SQL = "INSERT INTO ActivePlayers(play_user, game_code, is_lying, is_vote_correct, before_score, score_change, is_quit, is_win) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String GET_INGAME_RECORD_SQL = "SELECT ap.*, u.score FROM ActivePlayers ap JOIN Users u ON ap.play_user = u.uuid WHERE ap.game_code = ?";
 
 	private InGameDao() {}
 
@@ -46,27 +50,22 @@ public class InGameDao {
 	}
 
 	public String createInGame(InGameRequestDto dto) {
+
 		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(
-						CREATE_INGAME_SQL,
-						PreparedStatement.RETURN_GENERATED_KEYS)) {
-			// PreparedStatement.RETURN_GENERATED_KEYS 옵션을 사용하면 자동 생성 키를 반환 받을 수 있음
+				PreparedStatement pstmt = conn.prepareStatement(CREATE_INGAME_SQL)) {
+			String inGameCode = UUID.randomUUID().toString();
 
-			pstmt.setString(1, dto.getRoomCode());
-			pstmt.setString(2, dto.getTopic());
-			pstmt.setString(3, dto.getKeyword());
-			pstmt.setInt(4, dto.getRound());
+			pstmt.setString(1, inGameCode);
+			pstmt.setString(2, dto.getRoomCode());
+			pstmt.setString(3, dto.getTopic());
+			pstmt.setString(4, dto.getKeyword());
+			pstmt.setInt(5, dto.getRound());
 
-			int affectedRows = pstmt.executeUpdate();
-
-			if (affectedRows > 0) {
-				try (ResultSet rs = pstmt.getGeneratedKeys()) {
-					if (rs.next())
-						return rs.getString(1);
-				}
-			}
+			pstmt.executeUpdate();
+			
+			return inGameCode;
 		} catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "SQLException 에러 발생 : createInGame()", e);
+			LOGGER.log(Level.SEVERE, "SQLException 에러 발생 : createInGame()", e);
 		}
 		return null;
 	}
@@ -102,7 +101,12 @@ public class InGameDao {
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(UPDATE_INGAME_SQL)) {
 			pstmt.setString(1, dto.getEndType());
-			pstmt.setString(2, dto.getWinType());
+			
+	        if (dto.getWinType() != null) 
+	            pstmt.setString(2, dto.getWinType());
+	         else 
+	            pstmt.setNull(2, Types.VARCHAR);
+	        
 			pstmt.setString(3, dto.getCode());
 			
 			pstmt.executeUpdate();
@@ -110,8 +114,8 @@ public class InGameDao {
 			return true;
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "SQLException 에러 발생 : updateInGameResult()", e);
-			return false;
 		}
+		return false;
 	}
 
 	// 유저별 게임 기록 생성시 사용할 메소드
@@ -122,9 +126,10 @@ public class InGameDao {
 			pstmt.setString(2, dto.getGameCode());
 			pstmt.setBoolean(3, dto.isLying());
 			pstmt.setBoolean(4, dto.isVoteCorrect());
-			pstmt.setInt(5, dto.getScoreChange());
-			pstmt.setBoolean(6, dto.isQuit());
-			pstmt.setBoolean(7, dto.getIsWin());
+			pstmt.setInt(5, getUserScore(dto.getPlayUser()));
+			pstmt.setInt(6, dto.getScoreChange());
+			pstmt.setBoolean(7, dto.isQuit());
+			pstmt.setBoolean(8, dto.isWin());
 
 			int affectedRows = pstmt.executeUpdate();
 
@@ -149,11 +154,12 @@ public class InGameDao {
 					String gameCode = rs.getString(COL_GAME_CODE);
 					boolean isLying = rs.getBoolean(COL_IS_LYING);
 					boolean isVoteCorrect = rs.getBoolean(COL_IS_VOTE_CORRECT);
+					int beforeScore = rs.getInt(COL_BEFORE_SCORE);
 					int scoreChange = rs.getInt(COL_SCORE_CHANGE);
 					boolean isQuit = rs.getBoolean(COL_IS_QUIT);
 					Boolean isWin = rs.getBoolean(COL_IS_WIN);
 
-					records.add(new UserGameRecord(playUser, gameCode, isLying, isVoteCorrect, scoreChange, isQuit, isWin));
+					records.add(new UserGameRecord(playUser, gameCode, isLying, isVoteCorrect, beforeScore, scoreChange, isQuit, isWin));
 				}
 			}
 		} catch (SQLException e) {
@@ -162,4 +168,20 @@ public class InGameDao {
 		return records;
 	}
 	
+	private int getUserScore(String user){
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement("SELECT score FROM Users WHERE uuid = ?")) {
+			pstmt.setString(1, user);
+			
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt("score");
+				}
+			}
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "SQLException 에러 발생 : getUserScore()", e);
+		}
+		return -1;
+	}
+
 }

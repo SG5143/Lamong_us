@@ -5,16 +5,18 @@ public class UserGameRecord {
 	private String gameCode;
 	private boolean isLying;
 	private boolean isVoteCorrect;
+	private int beforeScore;
 	private int scoreChange;
 	private boolean isQuit;
 	private Boolean isWin;
 
-	public UserGameRecord(String playUser, String gameCode, boolean isLying, boolean isVoteCorrect, int scoreChange,
-			boolean isQuit, Boolean isWin) {
+	public UserGameRecord(String playUser, String gameCode, boolean isLying, boolean isVoteCorrect,
+			int beforeScore, int scoreChange, boolean isQuit, Boolean isWin) {
 		this.playUser = playUser;
 		this.gameCode = gameCode;
 		this.isLying = isLying;
 		this.isVoteCorrect = isVoteCorrect;
+		this.beforeScore = beforeScore;
 		this.scoreChange = scoreChange;
 		this.isQuit = isQuit;
 		this.isWin = isWin;
@@ -36,6 +38,10 @@ public class UserGameRecord {
 		return isVoteCorrect;
 	}
 
+	public int getBeforeScore() {
+		return beforeScore;
+	}
+	
 	public int getScoreChange() {
 		return scoreChange;
 	}
@@ -44,7 +50,7 @@ public class UserGameRecord {
 		return isQuit;
 	}
 
-	public Boolean getIsWin() {
+	public Boolean isWin() {
 		return isWin;
 	}
 
