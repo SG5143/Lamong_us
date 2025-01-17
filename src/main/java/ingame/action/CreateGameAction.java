@@ -19,7 +19,7 @@ public class CreateGameAction implements Action {
         String authorization = request.getHeader("Authorization");
 
         if (!isValidAuthorization(authorization)) {
-            sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, null);
+            sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "인증에 실패했습니다");
             return;
         }
 
@@ -37,7 +37,7 @@ public class CreateGameAction implements Action {
             String reqRoomCode = reqData.optString("room", null);
             String reqRound = reqData.optString("round_count", null);
             String reqTopic = reqData.optString("topic", null);
-            String reqKeyword = reqData.optString("game_keyword", null);
+            String reqKeyword = reqData.optString("keyword", null);
             
             int round = 0;
             try{
@@ -49,6 +49,7 @@ public class CreateGameAction implements Action {
             // 입력값 검증
             if (reqRoomCode == null || reqTopic == null || reqKeyword == null) {
                 sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "입력값이 잘못되었습니다");
+                return;
             }
 
             InGameDao inGameDao = InGameDao.getInstance();
@@ -58,16 +59,14 @@ public class CreateGameAction implements Action {
             if (gameCode != null)
                 sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "게임방을 생성했습니다", gameCode);
             else
-                sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "게임방 생성에 실패했습니다");
+                sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "게임방 생성에 실패했습니다");
 
         } catch (Exception e) {
             sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
         }
     }
 
-    // 인증 검증 로직 구현 임시로 항상 true 반환
     private boolean isValidAuthorization(String authorization) {
-
         return authorization != null;
     }
 
