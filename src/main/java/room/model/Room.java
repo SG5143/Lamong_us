@@ -12,6 +12,7 @@ public class Room {
 	private int maxPlayers;
 	private int roundCount;
 	private String state;
+	private int curPlayers;
 	
 	private Timestamp regDate;
 	private Timestamp modDate;
@@ -68,6 +69,15 @@ public class Room {
 
 	public String getState() {
 		return state;
+	}
+	
+	
+	public int getCurPlayers() {
+		return curPlayers;
+	}
+
+	public void setCurPlayers(int curPlayers) {
+		this.curPlayers = curPlayers;
 	}
 
 	public Timestamp getRegDate() {
