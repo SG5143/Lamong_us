@@ -11,6 +11,7 @@ public class RoomRequestDto {
 	private int maxPlayers;
 	private int roundCount;
 	private String state;
+	private String userCode;
 
 	public RoomRequestDto() {}
 
@@ -32,6 +33,11 @@ public class RoomRequestDto {
 		this.password = password.length() > 4 ? password.substring(0, 4).toCharArray() : password.toCharArray();
 		this.maxPlayers = Integer.parseInt(maxPlayers);
 		this.roundCount = Integer.parseInt(roundCount);
+		this.code = code;
+	}
+	
+	public RoomRequestDto(String userCode, String code) {
+		this.userCode = userCode;
 		this.code = code;
 	}
 
@@ -106,5 +112,15 @@ public class RoomRequestDto {
 	public void setState(String state) {
 		this.state = state;
 	}
+
+	public String getUserCode() {
+		return userCode;
+	}
+
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
+	}
+	
+	
 
 }
