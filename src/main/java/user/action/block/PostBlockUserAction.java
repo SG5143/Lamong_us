@@ -1,0 +1,71 @@
+package user.action.block;
+
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import user.model.block.BlockDao;
+import org.json.JSONObject;
+import controller.Action;
+
+public class PostBlockUserAction implements Action {
+
+	private BlockDao blockDao = new BlockDao();
+
+	@Override
+	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String authorization = request.getHeader("Authorization");
+
+		if (!isValidAuthorization(authorization)) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, null);
+			return;
+		}
+
+		JSONObject requestBody = getRequestBody(request);
+		String blockingUser = requestBody.optString("blocking_user");
+		String blockedUser = requestBody.optString("blocked_user");
+
+		if (blockingUser == null || blockedUser == null) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "유효하지 않은 사용자 정보입니다.");
+			return;
+		}
+
+		if (blockDao.isBlocked(blockingUser, blockedUser)) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "이미 차단된 사용자입니다.");
+			return;
+		}
+
+		boolean result = blockDao.blockUser(blockingUser, blockedUser);
+		sendResponse(response, result ? "User blocked successfully." : "Failed to block user.",
+				result ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	}
+
+	private JSONObject getRequestBody(HttpServletRequest request) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		String line;
+		while ((line = request.getReader().readLine()) != null) {
+			sb.append(line);
+		}
+		return new JSONObject(sb.toString());
+	}
+
+	// Authorization 유효성 검사
+	private boolean isValidAuthorization(String authorization) {
+		return authorization != null && !authorization.trim().isEmpty();
+	}
+
+	private void sendResponse(HttpServletResponse response, String message, int statusCode) throws IOException {
+		JSONObject result = new JSONObject();
+		result.put("status", statusCode);
+		result.put("message", message);
+
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(result.toString());
+	}
+
+	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)
+			throws IOException {
+		sendResponse(response, message, statusCode);
+	}
+}
