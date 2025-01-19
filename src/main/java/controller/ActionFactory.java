@@ -54,12 +54,18 @@ public class ActionFactory {
 	private Action getGameRoomAction(String command, HttpMethod method) {
 		Action action = null;
 
-		if (method == HttpMethod.POST)
+		if (method == HttpMethod.POST && command != null && command.equals("attend-log"))
+			return new CreateAttendanceLog();
+		else if (method == HttpMethod.POST)
 			return new CreateFormAction();
 		else if (method == HttpMethod.GET && command != null && command.equals("all"))
 			return new RoomListAction();
 		else if (method == HttpMethod.GET)
 			return new GetRoomAction();
+		else if (method == HttpMethod.PATCH && command != null && command.equals("update-leave"))
+			return new LeaveRoomAction();
+		else if (method == HttpMethod.PATCH && command != null && command.equals("update-join"))
+			return new JoinRoomAction();
 		else if (method == HttpMethod.PATCH)
 			return new UpdateSettingsAction();
 		else if (method == HttpMethod.DELETE)
