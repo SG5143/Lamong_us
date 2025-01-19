@@ -83,13 +83,19 @@ public class RoomListAction implements Action {
 			roomJson.put("password", room.getPassword());
 			roomJson.put("max_players", room.getMaxPlayers());
 			roomJson.put("round_count", room.getRoundCount());
+			roomJson.put("state", room.getState());
+
+			int curPlayers = roomDao.getCurrentPlayers(room.getCode());
+			roomJson.put("current_players", curPlayers);
+
 			resGameRoom.put(roomJson);
 		}
 
 		return resGameRoom;
 	}
 
-	private void sendResponseStatusAndResult(HttpServletResponse response, int statuscode, JSONArray resData) throws IOException {
+	private void sendResponseStatusAndResult(HttpServletResponse response, int statuscode, JSONArray resData)
+			throws IOException {
 		JSONObject jsonResponse = new JSONObject();
 
 		if (resData == null)
