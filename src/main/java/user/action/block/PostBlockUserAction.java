@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import user.model.block.BlockDao;
 import user.model.user.*;
 
+import org.apache.catalina.User;
 import org.json.JSONObject;
 import controller.Action;
 
@@ -30,9 +31,10 @@ public class PostBlockUserAction implements Action {
 		}
 
 		BlockDao blockDao = BlockDao.getInstance();
+		UserDao userDao = new UserDao();
 
-		String blockingUserUuid = UserDao.getUuidByNickname(blockingUserNickname);
-		String blockedUserUuid = UserDao.getUuidByNickname(blockedUserNickname);
+		String blockingUserUuid = userDao.getUuidByNickname(blockingUserNickname);
+		String blockedUserUuid = userDao.getUuidByNickname(blockedUserNickname);
 
 		if (blockDao.isBlocked(blockingUserUuid, blockedUserUuid)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "이미 차단된 사용자입니다.");
