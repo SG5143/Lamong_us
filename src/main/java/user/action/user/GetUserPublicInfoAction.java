@@ -9,7 +9,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import user.model.user.*;
 
-public class UserServiceAction implements Action {
+public class GetUserPublicInfoAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
