@@ -20,8 +20,11 @@ public class RoomRequestDto {
 		this.roomNumber = roomNumber;
 		this.host = host;
 		this.title = title;
-		this.isPrivate = isPrivate.equals("on");
-		this.password = password.length() > 4 ? password.substring(0, 4).toCharArray() : password.toCharArray();
+		this.isPrivate = isPrivate.equals("true");
+		
+		if(password != null)
+			this.password = password.length() > 4 ? password.substring(0, 4).toCharArray() : password.toCharArray();
+			
 		this.maxPlayers = Integer.parseInt(maxPlayers);
 		this.roundCount = Integer.parseInt(roundCount);
 	}
@@ -82,6 +85,7 @@ public class RoomRequestDto {
 	}
 
 	public String getPassword() {
+		if(password == null) return null;
 		return new String(password);
 	}
 
