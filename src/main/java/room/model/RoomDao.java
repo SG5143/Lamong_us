@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +53,11 @@ public class RoomDao {
 			pstmt.setString(2, roomDto.getHost());
 			pstmt.setString(3, roomDto.getTitle());
 			pstmt.setBoolean(4, roomDto.isPrivate());
-			pstmt.setString(5, roomDto.getPassword());
+			if (roomDto.getPassword() == null) {
+				pstmt.setNull(5, Types.VARCHAR);
+			} else {
+				pstmt.setString(5, roomDto.getPassword());
+			}
 			pstmt.setInt(6, roomDto.getMaxPlayers());
 			pstmt.setInt(7, roomDto.getRoundCount());
 
