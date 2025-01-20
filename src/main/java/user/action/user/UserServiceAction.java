@@ -1,4 +1,4 @@
-package user.action;
+package user.action.user;
 
 import java.io.*;
 import java.sql.*;
@@ -9,6 +9,7 @@ import controller.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import user.model.*;
+import user.model.user.*;
 import util.*;
 
 public class UserServiceAction implements Action {
@@ -34,7 +35,7 @@ public class UserServiceAction implements Action {
 					return;
 				}
 
-				String publicInfo = getUserPublicInfo(userUuid);
+				 String publicInfo = UserDao.getUserPublicInfo(userUuid);
 
 				if (publicInfo == null) {
 					sendResponseStatusAndMessage(response, HttpServletResponse.SC_NOT_FOUND, "사용자 정보를 찾을 수 없습니다.");
@@ -68,29 +69,5 @@ public class UserServiceAction implements Action {
 		response.getWriter().write(jsonResponse.toString());
 	}
 
-	private String getUserPublicInfo(String uuid) {
-		if (uuid == null || uuid.isEmpty()) return null;
-
-		JSONObject userInfo = new JSONObject();
-
-		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM Users WHERE uuid = ?")) {
-
-			pstmt.setString(1, uuid);
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) {
-				userInfo.put("reg_date", rs.getTimestamp("reg_date").toInstant().toString());
-				userInfo.put("score", rs.getInt("score"));
-				userInfo.put("profile_image", rs.getString("profile_image"));
-				userInfo.put("profile_info", rs.getString("profile_info"));
-				userInfo.put("nickname", rs.getString("nickname"));
-				userInfo.put("uuid", rs.getString("uuid"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return userInfo.toString();
-	}
 	
 }

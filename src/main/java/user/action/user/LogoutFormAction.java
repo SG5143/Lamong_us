@@ -1,4 +1,4 @@
-package user.action;
+package user.action.user;
 
 import java.io.*;
 

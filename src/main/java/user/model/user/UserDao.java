@@ -1,4 +1,4 @@
-package user.model;
+package user.model.user;
 
 import java.sql.*;
 import java.util.*;
@@ -281,7 +281,7 @@ public class UserDao {
 		return isDeactivated;
 	}
 
-	public static User getUserPublicInfo(String uuid) {
+	public static String getUserPublicInfo(String uuid) {
 		User userPublicInfo = null;
 
 		try (Connection conn = DBManager.getConnection();
@@ -312,7 +312,7 @@ public class UserDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return userPublicInfo;
+		return userPublicInfo.toString();
 	}
 
 }

@@ -1,0 +1,108 @@
+[1mdiff --git a/src/main/java/user/action/history/GetGameHistoryAction.java b/src/main/java/user/action/history/GetGameHistoryAction.java[m
+[1mindex b5d0e92..1383f08 100644[m
+[1m--- a/src/main/java/user/action/history/GetGameHistoryAction.java[m
+[1m+++ b/src/main/java/user/action/history/GetGameHistoryAction.java[m
+[36m@@ -1,5 +1,101 @@[m
+[31m-package user.action;[m
+[32m+[m[32mpackage user.action.history;[m
+ [m
+[31m-public class GameHistory {[m
+[32m+[m[32mimport java.io.*;[m
+[32m+[m[32mimport java.util.*;[m
+ [m
+[32m+[m[32mimport org.json.*;[m
+[32m+[m
+[32m+[m[32mimport controller.*;[m
+[32m+[m[32mimport jakarta.servlet.*;[m
+[32m+[m[32mimport jakarta.servlet.http.*;[m
+[32m+[m[32mimport user.model.history.*;[m
+[32m+[m[32mimport user.model.user.*;[m
+[32m+[m
+[32m+[m[32mpublic class GetGameHistoryAction implements Action {[m
+[32m+[m
+[32m+[m	[32mprivate static final int PAGE_SIZE = 10;[m
+[32m+[m	[32mprivate final HistoryDao historyDao = HistoryDao.getInstance();[m
+[32m+[m
+[32m+[m	[32m@Override[m
+[32m+[m	[32mpublic void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {[m
+[32m+[m		[32mString authorization = request.getHeader("Authorization");[m
+[32m+[m
+[32m+[m		[32mif (!isValidAuthorization(authorization)) {[m
+[32m+[m			[32msendJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, null, "인증되지 않은 사용자입니다.");[m
+[32m+[m			[32mreturn;[m
+[32m+[m		[32m}[m
+[32m+[m
+[32m+[m		[32mString userKey = authorization.substring(5).trim();[m
+[32m+[m
+[32m+[m		[32mUser user = UserDao.findUserByUserkey(userKey);[m
+[32m+[m		[32mif (user == null) {[m
+[32m+[m			[32msendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, null, "유효하지 않은 userKey입니다.");[m
+[32m+[m			[32mreturn;[m
+[32m+[m		[32m}[m
+[32m+[m
+[32m+[m		[32mString playerUUID = user.getUuid();[m
+[32m+[m
+[32m+[m		[32mint pageNumber = parsePageParameter(request.getParameter("page"));[m
+[32m+[m
+[32m+[m		[32mList<History> gameHistoryList = historyDao.getPlayerGames(playerUUID, pageNumber);[m
+[32m+[m		[32mint totalGamesCount = historyDao.getPlayerGameCount(playerUUID);[m
+[32m+[m
+[32m+[m		[32mboolean isLastPage = gameHistoryList.size() < PAGE_SIZE || totalGamesCount == gameHistoryList.size();[m
+[32m+[m
+[32m+[m		[32mJSONObject responseJson = new JSONObject();[m
+[32m+[m		[32mresponseJson.put("meta", createMeta(totalGamesCount, gameHistoryList.size(), isLastPage));[m
+[32m+[m		[32mresponseJson.put("data", createPlayHistoryInfo(gameHistoryList));[m
+[32m+[m
+[32m+[m		[32mresponse.setContentType("application/json");[m
+[32m+[m		[32mresponse.getWriter().write(responseJson.toString());[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mprivate int parsePageParameter(String pageParam) {[m
+[32m+[m		[32mtry {[m
+[32m+[m			[32mreturn Integer.parseInt(pageParam);[m
+[32m+[m		[32m} catch (NumberFormatException e) {[m
+[32m+[m			[32mreturn 1;[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mprivate JSONObject createMeta(int totalCount, int gamesOnPage, boolean isEnd) {[m
+[32m+[m		[32mJSONObject resMeta = new JSONObject();[m
+[32m+[m		[32mresMeta.put("total_count", totalCount);[m
+[32m+[m		[32mresMeta.put("games_on_page", gamesOnPage);[m
+[32m+[m		[32mresMeta.put("is_end", isEnd);[m
+[32m+[m		[32mreturn resMeta;[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mprivate JSONArray createPlayHistoryInfo(List<History> gameHistoryList) {[m
+[32m+[m		[32mJSONArray resHistoryInfo = new JSONArray();[m
+[32m+[m
+[32m+[m		[32mfor (History history : gameHistoryList) {[m
+[32m+[m			[32mJSONObject historyJson = new JSONObject();[m
+[32m+[m
+[32m+[m			[32mhistoryJson.put("game_uuid", history.getGameUuid());[m
+[32m+[m			[32mhistoryJson.put("play_date", history.getPlayDate().toString());[m
+[32m+[m			[32mhistoryJson.put("is_lying", history.isLying());[m
+[32m+[m			[32mhistoryJson.put("is_win", history.isWin());[m
+[32m+[m			[32mhistoryJson.put("score", history.getScore());[m
+[32m+[m
+[32m+[m			[32mresHistoryInfo.put(historyJson);[m
+[32m+[m		[32m}[m
+[32m+[m
+[32m+[m		[32mreturn resHistoryInfo;[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mprivate boolean isValidAuthorization(String authorization) {[m
+[32m+[m		[32mreturn authorization != null;[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mprivate void sendJsonResponse(HttpServletResponse response, int statusCode, JSONObject resData, String message)[m
+[32m+[m			[32mthrows IOException {[m
+[32m+[m		[32mresponse.setStatus(statusCode);[m
+[32m+[m		[32mJSONObject responseJson = new JSONObject();[m
+[32m+[m		[32mresponseJson.put("message", message);[m
+[32m+[m		[32mif (resData != null) {[m
+[32m+[m			[32mresponseJson.put("data", resData);[m
+[32m+[m		[32m}[m
+[32m+[m		[32mresponse.getWriter().write(responseJson.toString());[m
+[32m+[m	[32m}[m
+ }[m

@@ -1,8 +1,10 @@
-package user.model;
+package user.model.block;
 
 import java.sql.*;
 import java.util.*;
 
+import chat.model.*;
+import user.model.user.*;
 import util.*;
 
 public class BlockDao {
@@ -10,9 +12,19 @@ public class BlockDao {
 	private static final String CREATE_BLOCK = "INSERT INTO BlockedUsers (blocking_user, blocked_user) VALUES (?, ?)";
 	private static final String DELETE_BLOCK = "DELETE FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
 	private static final String GET_TOTAL_BLOCKED_USERS_COUNT = "SELECT COUNT(*) FROM BlockedUsers WHERE blocking_user = ?";
-	private static final String FIND_BLOCKED_USER = "SELECT COUNT(*) FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
+	private static final String FIND_BLOCKED_USER = "SELECT COUNT(*) FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ? LIMIT 1";
+	private static final String CANCEL_BLOCKED_USER = "DELETE FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
 
 	private static final int PAGE_SIZE = 10;
+
+	private static BlockDao instance = new BlockDao();
+
+	public static BlockDao getInstance() {
+		return instance;
+	}
+
+	private BlockDao() {
+	}
 
 	public boolean blockUser(String blockingUser, String blockedUser) {
 		try (Connection conn = DBManager.getConnection();
@@ -29,7 +41,7 @@ public class BlockDao {
 
 	public boolean cancelBlock(String blockingUser, String blockedUser) {
 		try (Connection conn = DBManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(DELETE_BLOCK)) {
+				PreparedStatement pstmt = conn.prepareStatement(CANCEL_BLOCKED_USER)) {
 			pstmt.setString(1, blockingUser);
 			pstmt.setString(2, blockedUser);
 			int result = pstmt.executeUpdate();
@@ -46,7 +58,7 @@ public class BlockDao {
 				PreparedStatement pstmt = conn.prepareStatement(GET_TOTAL_BLOCKED_USERS_COUNT)) {
 			pstmt.setString(1, blockingUser);
 			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) 
+			if (rs.next())
 				count = rs.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -54,20 +66,26 @@ public class BlockDao {
 		return count;
 	}
 
-	public List<String> getBlockedUser(String blockingUser, int page) {
-		List<String> blockedUsers = new ArrayList<>();
+	public List<Block> getBlockedUser(String blockingUser, int page) {
+		List<Block> blockedUsers = new ArrayList<>();
 		int offset = (page - 1) * PAGE_SIZE;
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(GET_BLOCKED_USERS)) {
+
 			pstmt.setString(1, blockingUser);
 			pstmt.setInt(2, PAGE_SIZE);
 			pstmt.setInt(3, offset);
-			
+
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
-				blockedUsers.add(rs.getString("blocked_user"));
+				Block block = new Block();
+				block.setBlockingUser(blockingUser);
+				block.setBlockedUser(rs.getString("blocked_user"));
+				block.setRegDate(rs.getTimestamp("reg_date"));
+
+				blockedUsers.add(block);
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -79,14 +97,15 @@ public class BlockDao {
 				PreparedStatement pstmt = conn.prepareStatement(FIND_BLOCKED_USER)) {
 			pstmt.setString(1, blockingUser);
 			pstmt.setString(2, blockedUser);
-			
+
 			ResultSet rs = pstmt.executeQuery();
-			
-			if (rs.next()) return rs.getInt(1) > 0;
+
+			if (rs.next())
+				return rs.getInt(1) > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
-	
+
 }
