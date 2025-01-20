@@ -18,7 +18,7 @@ public class CreateFormAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String authorization = request.getHeader("Authorization");
 
-		if (authorization == null || !isValidAuthorization(authorization)) {
+		if (!isValidAuthorization(authorization)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "인증에 실패했습니다.");
 			return;
 		}
@@ -27,11 +27,11 @@ public class CreateFormAction implements Action {
 			BufferedReader reader = request.getReader();
 			StringBuilder jsonBuilder = new StringBuilder();
 			String line;
-			
+
 			while ((line = reader.readLine()) != null) {
 				jsonBuilder.append(line);
 			}
-			
+
 			String requestBody = jsonBuilder.toString();
 
 			JSONObject reqData = new JSONObject(requestBody);
@@ -49,16 +49,18 @@ public class CreateFormAction implements Action {
 			}
 
 			RoomDao roomDao = RoomDao.getInstance();
-			
+
 			int roomNumber = roomDao.getAvailableRoomNumber();
-			RoomRequestDto roomDto = new RoomRequestDto(roomNumber, hostUser, title, isPrivate, password, maxPlayers, roundCount);
+			RoomRequestDto roomDto = new RoomRequestDto(roomNumber, hostUser, title, isPrivate, password, maxPlayers,
+					roundCount);
 
 			try {
 				roomDao.createRoom(roomDto);
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "게임방이 생성되었습니다.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "게임방 생성 중 오류가 발생했습니다.");
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						"게임방 생성 중 오류가 발생했습니다.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,7 +69,7 @@ public class CreateFormAction implements Action {
 	}
 
 	private boolean isValidAuthorization(String authorization) {
-        return authorization != null;
+		return authorization != null;
 	}
 
 	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)
@@ -75,7 +77,7 @@ public class CreateFormAction implements Action {
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("status", statusCode);
 		jsonResponse.put("message", message);
-		
+
 		String json = jsonResponse.toString();
 
 		response.setContentType("application/json");
