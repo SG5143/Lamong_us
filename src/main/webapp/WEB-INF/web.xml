@@ -40,7 +40,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>LoginFormAction</servlet-name>
-		<url-pattern>/LoginFormAction</url-pattern>
+		<url-pattern>/login</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
