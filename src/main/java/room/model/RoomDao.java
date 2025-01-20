@@ -30,7 +30,13 @@ public class RoomDao {
 	private static final String FIND_ONE_ROOM_SQL = "SELECT * FROM GameWatingRoom WHERE room_number = ? AND room_state != 'delete'";
 	private static final String DELETE_ROOM_SQL= "UPDATE GameWatingRoom SET room_state = 'delete' WHERE room_code = ?";
 	private static final String UPDATE_ROOM_SQL = "UPDATE GameWatingRoom SET room_title = ?, is_private = ?, room_password = ?, max_players = ?, round_count = ? WHERE room_code = ? AND room_state != 'delete'";
-	
+	private static final String INSERT_GAME_ROOM_ATTENDANCE_SQL = "INSERT INTO GameRoomAttendance (user_code, room_code) VALUES (?, ?)";
+	private static final String UPDATE_LEAVE_TIME_SQL = "UPDATE GameRoomAttendance SET leave_time = CURRENT_TIMESTAMP WHERE user_code = ? AND room_code = ?";
+	private static final String UPDATE_JOIN_TIME_SQL = "UPDATE GameRoomAttendance SET join_time = CURRENT_TIMESTAMP, leave_time = NULL WHERE user_code = ? AND room_code = ?";
+	private static final String PLAYERS_COUNT_SQL = "SELECT COUNT(*) AS current_players FROM GameRoomAttendance WHERE room_code = ? AND leave_time IS NULL";
+
+
+
 	private RoomDao() {};
 
 	private static RoomDao instance = new RoomDao();
@@ -105,6 +111,11 @@ public class RoomDao {
 			pstmt.setInt(1, offset);
 
 			list = fetchRoomsByPage(pstmt);
+			
+			for (Room room : list) {
+				int currentPlayers = getCurrentPlayers(room.getCode());
+				room.setCurPlayers(currentPlayers);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -228,6 +239,99 @@ public class RoomDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void userToGameRoomAttendance(String userCode, RoomRequestDto roomDto) {
+		
+		try(Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(INSERT_GAME_ROOM_ATTENDANCE_SQL)) {
+			pstmt.setString(1, userCode);
+			pstmt.setString(2, roomDto.getCode());
+			
+			pstmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void userLeaveRoom(RoomRequestDto roomDto) {
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(UPDATE_LEAVE_TIME_SQL)) {
+			pstmt.setString(1, roomDto.getUserCode());
+			pstmt.setString(2, roomDto.getCode());
+
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void userJoinRoom(RoomRequestDto roomDto) {
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(UPDATE_JOIN_TIME_SQL)) {
+			pstmt.setString(1, roomDto.getUserCode());
+			pstmt.setString(2, roomDto.getCode());
+
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int getCurrentPlayers(String roomCode) {
+
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(PLAYERS_COUNT_SQL)) {
+			pstmt.setString(1, roomCode);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt("current_players");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+	
+	public Room getRoomByCode(String roomCode) {
+	    Room room = null;
+
+	    String query = "SELECT * FROM GameWatingRoom WHERE room_code = ? AND room_state != 'delete'";
+
+	    try (Connection conn = DBManager.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(query)) {
+	        pstmt.setString(1, roomCode);
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                String code = rs.getString(COL_ROOM_CODE);
+	                String host = rs.getString(COL_HOST);
+	                int roomNumber = rs.getInt(COL_ROOM_NUMBER);
+	                String title = rs.getString(COL_ROOM_TITLE);
+	                boolean isPrivate = rs.getBoolean(COL_IS_PRIVATE);
+	                String password = rs.getString(COL_ROOM_PASSWORD);
+	                int maxPlayers = rs.getInt(COL_MAX_PLAYERS);
+	                int roundCount = rs.getInt(COL_ROUND_COUNT);
+	                String state = rs.getString(COL_ROOM_STATE);
+	                Timestamp regDate = rs.getTimestamp(COL_REG_DATE);
+	                Timestamp modDate = rs.getTimestamp(COL_MOD_DATE);
+
+	                room = new Room(code, host, roomNumber, title, isPrivate, password, 
+	                        maxPlayers, roundCount, state, regDate, modDate);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return room;
 	}
 
 }
