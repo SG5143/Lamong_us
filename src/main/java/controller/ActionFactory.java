@@ -1,6 +1,9 @@
 package controller;
 
 import user.action.*;
+import user.action.block.*;
+import user.action.history.*;
+import user.action.user.*;
 import room.action.*;
 import chat.action.*;
 import ingame.action.*;
@@ -42,7 +45,9 @@ public class ActionFactory {
 		Action action = null;
 
 		if (method == HttpMethod.POST)
-			return new BlockServiceAction();
+			return new PostBlockUserAction();
+		else if (method == HttpMethod.GET)
+			return new GetGameHistoryAction();
 		else if (method == HttpMethod.PATCH)
 			return new UpdateFormAction();
 		else if (method == HttpMethod.DELETE)
