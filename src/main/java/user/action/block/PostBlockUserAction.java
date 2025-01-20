@@ -5,12 +5,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import user.model.block.BlockDao;
+import user.model.user.*;
+
 import org.json.JSONObject;
 import controller.Action;
 
 public class PostBlockUserAction implements Action {
-
-	private BlockDao blockDao = new BlockDao();
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -21,32 +21,27 @@ public class PostBlockUserAction implements Action {
 			return;
 		}
 
-		JSONObject requestBody = getRequestBody(request);
-		String blockingUser = requestBody.optString("blocking_user");
-		String blockedUser = requestBody.optString("blocked_user");
+		String blockingUserNickname = request.getParameter("blocking_user");
+		String blockedUserNickname = request.getParameter("blocked_user");
 
-		if (blockingUser == null || blockedUser == null) {
+		if (blockingUserNickname == null || blockedUserNickname == null) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "유효하지 않은 사용자 정보입니다.");
 			return;
 		}
 
-		if (blockDao.isBlocked(blockingUser, blockedUser)) {
+		BlockDao blockDao = BlockDao.getInstance();
+
+		String blockingUserUuid = UserDao.getUuidByNickname(blockingUserNickname);
+		String blockedUserUuid = UserDao.getUuidByNickname(blockedUserNickname);
+
+		if (blockDao.isBlocked(blockingUserUuid, blockedUserUuid)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "이미 차단된 사용자입니다.");
 			return;
 		}
 
-		boolean result = blockDao.blockUser(blockingUser, blockedUser);
-		sendResponse(response, result ? "User blocked successfully." : "Failed to block user.",
+		boolean result = blockDao.blockUser(blockingUserUuid, blockedUserUuid);
+		sendResponse(response, result ? "차단 성공" : "차단 싫패",
 				result ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	}
-
-	private JSONObject getRequestBody(HttpServletRequest request) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = request.getReader().readLine()) != null) {
-			sb.append(line);
-		}
-		return new JSONObject(sb.toString());
 	}
 
 	// Authorization 유효성 검사
