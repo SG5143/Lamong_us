@@ -6,7 +6,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="/resources/styles/main.css">
+<link rel="stylesheet" href="/resources/styles/ui/main.css">
+<script type="module" src="resources/script/main-modul.js"></script>
+
+
 <title>Insert title here</title>
 </head>
 <body>
@@ -33,7 +36,15 @@
 				<span class="close" data-close>x</span>
 				<h2>플레이 방법</h2>
 				<p>
-					게임 방법:<br> 1. 제시어 전달: 사회자가 라이어를 제외한 모든 참가자에게 제시어를 전달합니다.<br> 2. 설명 단계: 각 참가자는 차례대로 제시어를 설명합니다. 설명은 한 문장으로 간단하게 진행하며, 라이어는 제시어를 모릅니다.<br> 3. 질문 및 투표: 설명 후, 참가자들은 서로 질문을 주고받습니다. 이후, 라이어를 지목하는 투표를 진행합니다.<br> 4. 결과 확인: 가장 많은 표를 받은 사람이 라이어로 지목되며, 라이어가 제시어를 맞추지 못하면 시민들이 승리합니다. 반대로, 라이어가 제시어를 맞추면 라이어가 승리합니다.<br>
+					게임 방법:
+					<br>
+					1. 제시어 전달: 사회자가 라이어를 제외한 모든 참가자에게 제시어를 전달합니다.
+					<br>
+					2. 설명 단계: 각 참가자는 차례대로 제시어를 설명합니다. 설명은 한 문장으로 간단하게 진행하며, 라이어는 제시어를 모릅니다.
+					<br>
+					3. 질문 및 투표: 설명 후, 참가자들은 서로 질문을 주고받습니다. 이후, 라이어를 지목하는 투표를 진행합니다.
+					<br>
+					4. 결과 확인: 가장 많은 표를 받은 사람이 라이어로 지목되며, 라이어가 제시어를 맞추지 못하면 시민들이 승리합니다. 반대로, 라이어가 제시어를 맞추면 라이어가 승리합니다.
 				</p>
 			</div>
 		</div>
@@ -42,9 +53,9 @@
 		<div class="modal" id="login-modal">
 			<div class="modal-content">
 				<span class="close" data-close>x</span>
-				<form id="login-form">
-					<input id="username" type="text" placeholder="아이디" required> 
-					<input id="password" type="password" placeholder="비밀번호" required> 
+				<form method="POST" action="/login">
+					<input id="username" type="text" placeholder="아이디" required>
+					<input id="password" type="password" placeholder="비밀번호" required>
 
 					<ul class="error-msg-group">
 						<li id="error-msg-username-empty" class="error-msg">아이디: 필수 정보입니다.</li>
@@ -64,7 +75,8 @@
 			<div class="modal-content">
 				<span class="close" data-close>x</span>
 				<form>
-					<input type="text" placeholder="아이디" required> <input type="password" placeholder="비밀번호" required>
+					<input type="text" placeholder="아이디" required>
+					<input type="password" placeholder="비밀번호" required>
 					<button type="submit">회원가입</button>
 				</form>
 			</div>
