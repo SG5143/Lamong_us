@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+
+#chat-area {
+	width: 500px;
+	height: 800px;
+	background-color: var(--color-theme-04);
+}
+
+#chat {
+	display: flex;
+	flex-direction: column;
+}
+
+#chat>div {
+	color: white;
+}
+
+#chat-area #message{
+	width:400px;
+	height: 40px;
+}
+
+#chat-area #send{
+	padding: 10px;
+	outline:none;
+	height: 40px;
+}
