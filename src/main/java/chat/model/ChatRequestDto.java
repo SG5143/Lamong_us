@@ -1,12 +1,18 @@
 package chat.model;
 
-public class ChatRequestDto {
+import java.sql.Timestamp;
 
+public class ChatRequestDto {
 	private String chatRoomCode;
 	private String writer;
 	private String message;
+	private Timestamp sentTime;
 
-	public ChatRequestDto() {}
+	public ChatRequestDto(String writer, String message) {
+        this.writer = writer;
+        this.message = message;
+        this.sentTime = new Timestamp(System.currentTimeMillis());
+	}
 
 	public ChatRequestDto(String chatRoomCode, String writer, String message) {
 		this.chatRoomCode = chatRoomCode;
@@ -37,5 +43,13 @@ public class ChatRequestDto {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
+	
+	public Timestamp getSentTime() {
+		return sentTime;
+	}
+	
+    @Override
+    public String toString() {
+    	return String.format("Message{Writer=%s, Message='%s', sentTime=%s}\n", writer, message, sentTime);
+    }
 }

@@ -43,6 +43,15 @@
 		<url-pattern>/lobby</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>chat</servlet-name>
+		<jsp-file>/views/chat/chat.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>chat</servlet-name>
+		<url-pattern>/chat</url-pattern>
+	</servlet-mapping>
+
 	<!-- 404 에러 페이지 매핑 -->
 	<error-page>
 		<error-code>404</error-code>
