@@ -26,8 +26,9 @@ public class GetGameHistoryAction implements Action {
 		}
 
 		String userKey = authorization.substring(5).trim();
+		UserDao userDao = new UserDao();
+		User user = userDao.findUserByUserkey(userKey);
 
-		User user = UserDao.findUserByUserkey(userKey);
 		if (user == null) {
 			sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, null, "유효하지 않은 userKey입니다.");
 			return;
