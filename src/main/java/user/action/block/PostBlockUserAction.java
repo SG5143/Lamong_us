@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import user.model.block.BlockDao;
 import user.model.user.*;
 
-import org.apache.catalina.User;
 import org.json.JSONObject;
 import controller.Action;
 

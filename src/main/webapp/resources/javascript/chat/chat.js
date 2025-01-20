@@ -164,15 +164,12 @@ function handleRoundEnd() {
 }
 
 function displayRoundInfo(currentRound) {
-    round = currentRound;
+	round = currentRound;
 
-    const roundInfoContainer = document.createElement('div');
-    const roundHeader = document.createElement("h4");
+	const roundInfoContainer = document.createElement('div');
+	const roundHeader = document.createElement("h4");
 
-    roundHeader.textContent = `<< Round ${currentRound} >>`;
-    roundInfoContainer.appendChild(roundHeader);
-    chat.appendChild(roundInfoContainer);
+	roundHeader.textContent = `<< Round ${currentRound} >>`;
+	roundInfoContainer.appendChild(roundHeader);
+	chat.appendChild(roundInfoContainer);
 }
-
-
-

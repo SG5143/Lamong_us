@@ -86,7 +86,6 @@ public class GetBlockUserListAction implements Action {
 
 			resBlockInfo.put(blockJson);
 		}
-
 		return resBlockInfo;
 	}
 

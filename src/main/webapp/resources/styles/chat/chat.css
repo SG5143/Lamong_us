@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-
 #chat-area {
 	width: 500px;
 	height: 800px;
@@ -16,13 +15,14 @@
 	color: white;
 }
 
-#chat-area #message{
-	width:400px;
+#chat-area #message {
+	width: 400px;
 	height: 40px;
 }
 
-#chat-area #send{
+#chat-area #send {
 	padding: 10px;
-	outline:none;
+	outline: none;
 	height: 40px;
+	outline: none;
 }

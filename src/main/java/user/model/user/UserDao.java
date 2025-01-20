@@ -282,7 +282,7 @@ public class UserDao {
 		return isDeactivated;
 	}
 
-	public static String getUserPublicInfo(String uuid) {
+	public String getUserPublicInfo(String uuid) {
 		User userPublicInfo = null;
 
 		try (Connection conn = DBManager.getConnection();

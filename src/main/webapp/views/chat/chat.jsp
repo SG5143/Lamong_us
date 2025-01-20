@@ -10,10 +10,10 @@
 <title>채팅 테스트</title>
 </head>
 <body>
-<div id="chat-area">
-	<div id="chat"></div>
-	<input type="text" id="message">
-	<button id="send">보내기</button>
-</div>
+	<div id="chat-area">
+		<div id="chat"></div>
+		<input type="text" id="message">
+		<button id="send">보내기</button>
+	</div>
 </body>
 </html>
