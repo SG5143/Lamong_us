@@ -26,7 +26,7 @@ public class UserDao {
 	private static final String COL_REG_DATE = "reg_date";
 	private static final String COL_MOD_DATE = "mod_date";
 
-    private static final String COUNT_USERS = "SELECT COUNT(*) FROM users";
+	private static final String COUNT_USERS = "SELECT COUNT(*) FROM users";
 	private static final String CREATE_USER = "INSERT INTO Users (username, password, nickname, phone, email, login_type) VALUES (?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ALL_USERS = "SELECT * FROM Users";
 	private static final String FIND_USER_BY_UUID = "SELECT * FROM Users WHERE uuid=?";
@@ -40,28 +40,29 @@ public class UserDao {
 	private static final String UPDATE_DELETE_STATUS = "UPDATE Users SET delete_status = TRUE WHERE username = ?";
 	private static final String FIND_USER_PUBLIC_INFO = "SELECT uuid, nickname, profile_info, profile_image, score, reg_date FROM Users WHERE uuid = ?";
 
-	public UserDao() {}
+	public UserDao() {
+	}
 
 	private static UserDao instance = new UserDao();
 
 	public static UserDao getInstance() {
 		return instance;
 	}
-	
+
 	public int countAllUsers() {
-	    int totalCount = 0;
+		int totalCount = 0;
 
-	    try (Connection conn = DBManager.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(COUNT_USERS);
-	         ResultSet rs = pstmt.executeQuery()) {
+		try (Connection conn = DBManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(COUNT_USERS);
+				ResultSet rs = pstmt.executeQuery()) {
 
-	        if (rs.next()) {
-	            totalCount = rs.getInt(1); 
-	        }
+			if (rs.next()) {
+				totalCount = rs.getInt(1);
+			}
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return totalCount;
 	}
 
@@ -135,13 +136,13 @@ public class UserDao {
 		HttpSession session = request.getSession(false);
 		if (session != null) {
 			String currentUserUUID = (String) session.getAttribute("userUUID");
-			if (currentUserUUID != null) 
+			if (currentUserUUID != null)
 				return currentUserUUID;
 		}
 		return null;
 	}
 
-	private static User findUserBy(String query, String parameter) {
+	public User findUserBy(String query, String parameter) {
 		User user = null;
 		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 			pstmt.setString(1, parameter);
@@ -157,12 +158,12 @@ public class UserDao {
 		return user;
 	}
 
-	public static String getUuidByNickname(String nickname) {
+	public String getUuidByNickname(String nickname) {
 		User user = findUserBy(FIND_USER_BY_NICKNAME, nickname);
-		return user != null ? user.getUuid() : null; 
+		return user != null ? user.getUuid() : null;
 	}
 
-	public static User findUserByUserkey(String apiKey) {
+	public User findUserByUserkey(String apiKey) {
 		return findUserBy(FIND_USER_BY_USERKEY, apiKey);
 	}
 
@@ -193,7 +194,7 @@ public class UserDao {
 				PreparedStatement pstmt = conn.prepareStatement(UPDATE_USER_INFO)) {
 
 			User existingUser = findUserByUuid(userDto.getUuid());
-			
+
 			if (existingUser == null) {
 				System.out.println("업데이트 실패: 유저 정보가 존재하지 않습니다. UUID: " + userDto.getUuid());
 				return null;
@@ -272,9 +273,9 @@ public class UserDao {
 			pstmt.setString(1, username);
 			int rowsAffected = pstmt.executeUpdate();
 
-			if (rowsAffected > 0) 
+			if (rowsAffected > 0)
 				isDeactivated = true;
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -297,10 +298,9 @@ public class UserDao {
 
 					byte[] profileImage = null;
 					Blob blob = rs.getBlob("profile_image");
-					
-					if (blob != null) 
+
+					if (blob != null)
 						profileImage = blob.getBytes(1, (int) blob.length());
-					
 
 					int score = rs.getInt("score");
 					Timestamp regDate = rs.getTimestamp("reg_date");
