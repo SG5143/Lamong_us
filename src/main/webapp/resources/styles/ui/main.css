@@ -2,21 +2,21 @@
 
 @font-face {
 	font-family: 'SB_Aggro_Bold';
-	src: url('../fonts/SB_aggro_B.ttf') format('truetype');
+	src: url('../../fonts/SB_aggro_B.ttf') format('truetype');
 	font-weight: bold;
 	font-style: normal;
 }
 
 @font-face {
 	font-family: 'SB_Aggro_Light';
-	src: url('../fonts/SB_aggro_L.ttf') format('truetype');
+	src: url('../../fonts/SB_aggro_L.ttf') format('truetype');
 	font-weight: lighter;
 	font-style: normal;
 }
 
 @font-face {
 	font-family: 'SB_Aggro_Medium';
-	src: url('../fonts/SB_aggro_M.ttf') format('truetype');
+	src: url('../../fonts/SB_aggro_M.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -71,6 +71,17 @@ body {
 #play-method-modal {
 	background: #484F5E;
 	color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start; /* 세로 방향으로 시작 위치에 정렬 */
+	padding-top: 30px; /* 상단 여백 */
+}
+
+#play-method-modal>h2 {
+	font-size: 32px;
+	margin: 0;
+	text-align: center;
+	width: 100%; /* 가운데 정렬을 위해 전체 너비 차지 */
 }
 
 h1 {
@@ -80,6 +91,7 @@ h1 {
 	font-family: 'SB_Aggro_Medium';
 	font-weight: normal;
 	font-style: normal;
+	margin-top: 100px;
 }
 
 h2 {
@@ -99,8 +111,9 @@ h2 {
 
 .btn {
 	font-size: 18px;
-	padding: 15px 30px;
-	text-align: center; /* 텍스트 정렬 */
+	padding: 15px 10px;
+	text-align: center;
+	font-family: 'SB_Aggro_Light';
 	border: none;
 	border-radius: 8px;
 	background-color: #484F5E;
@@ -118,10 +131,10 @@ h2 {
 }
 
 .btn-bottom {
-	width: 200px;
+	width: 150px;
 }
 
-.btn-top:hover, .btn-mid:hover, .btn-bttom:hover {
+.btn-top:hover, .btn-mid:hover, .btn-bottom:hover {
 	background-color: #DE3A86;
 }
 
