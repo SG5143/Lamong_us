@@ -1,5 +1,6 @@
 package controller;
 
+import user.action.admin.*;
 import user.action.block.*;
 import user.action.history.*;
 import user.action.user.*;
@@ -11,7 +12,8 @@ import util.HttpMethod;
 
 public class ActionFactory {
 
-	private ActionFactory() {}
+	private ActionFactory() {
+	}
 
 	private static ActionFactory instance = new ActionFactory();
 
@@ -41,19 +43,35 @@ public class ActionFactory {
 	}
 
 	private Action getMemberAction(String command, HttpMethod method) {
-		Action action = null;
-
-		if (method == HttpMethod.POST)
-			return new PostBlockUserAction();
-		else if (method == HttpMethod.GET)
-			return new GetGameHistoryAction();
-		else if (method == HttpMethod.PATCH)
-			return new UpdateFormAction();
-		else if (method == HttpMethod.DELETE)
-			return new DeleteFormAction();
-
-		return action;
+	    return switch (method) {
+	        case POST -> switch (command) {
+	            case "login" -> new LoginFormAction();
+	            case "logout" -> new LogoutFormAction();
+	            case "join" -> new JoinFormAction();
+	            case "block" -> new PostBlockUserAction();
+	            default -> null;
+	        };
+	        case GET -> switch (command) {
+	            case "all_users_info" -> new GetAllUserAction();
+	            case "history" -> new GetGameHistoryAction();
+	            case "user_info" -> new GetUserPublicInfoAction();
+	            case "Blocked_list" -> new GetBlockUserListAction();
+	            default -> null;
+	        };
+	        case PATCH -> switch (command) {
+	            case "update" -> new UpdateFormAction();
+	            default -> null;
+	        };
+	        case DELETE -> switch (command) {
+	            case "delete" -> new DeleteFormAction();
+	            case "cancelAllBlock" -> new DeleteBlockedAllUserAction();
+	            case "deleteALlInactive" -> new DeleteInactiveUserAction();
+	            default -> null;
+	        };
+	        default -> null; 
+	    };
 	}
+
 
 	private Action getGameRoomAction(String command, HttpMethod method) {
 		Action action = null;
