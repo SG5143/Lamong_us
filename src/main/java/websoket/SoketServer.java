@@ -54,16 +54,16 @@ public class SoketServer {
             return;
         }
 
-        if ("GET_CHAT_HISTORY".equals(message)) {
-            sendChatHistory(session, roomType, roomUUID);
-            return;
-        }
+        // if ("GET_CHAT_HISTORY".equals(message)) {
+        //     sendChatHistory(session, roomType, roomUUID);
+        //     return;
+        // }
 
         JSONObject jsonObject = new JSONObject(message);
         String extractedMessage = jsonObject.getString("message");
         
         if ("playing".equals(roomType)) {
-            if(liarGameManager.handleGameMessage(roomKey, session, extractedMessage)){
+            if(liarGameManager.processGameMessage(roomKey, session, extractedMessage)){
                 ChatRequestDto chatRequest = new ChatRequestDto(session.getId(), extractedMessage);
                 chatRoomManager.addChatToRoomHistory(roomType, roomUUID, chatRequest);
             }
@@ -87,7 +87,7 @@ public class SoketServer {
         String keyword = "사과";
         int rounds = 3;
         GameStartDto gameStartDto = new GameStartDto(roomKey, clients, topic, keyword, rounds);
-        liarGameManager.runGame(gameStartDto);
+        liarGameManager.startGame(gameStartDto);
     }
 
     private void closeSession(Session session) {
