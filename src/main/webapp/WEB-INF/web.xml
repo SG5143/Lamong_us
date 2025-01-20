@@ -35,6 +35,15 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>LoginFormAction</servlet-name>
+		<servlet-class>user.action.user.LoginFormAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LoginFormAction</servlet-name>
+		<url-pattern>/LoginFormAction</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>gameLobby</servlet-name>
 		<jsp-file>/views/game/gameLobby.jsp</jsp-file>
 	</servlet>
