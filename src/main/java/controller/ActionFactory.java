@@ -1,6 +1,5 @@
 package controller;
 
-import user.action.*;
 import user.action.block.*;
 import user.action.history.*;
 import user.action.user.*;

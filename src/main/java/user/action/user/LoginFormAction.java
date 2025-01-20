@@ -5,7 +5,6 @@ import org.json.*;
 import controller.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import user.model.*;
 import user.model.user.*;
 
 import java.util.logging.*;

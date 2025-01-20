@@ -7,7 +7,6 @@ import org.json.*;
 import controller.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import user.model.*;
 import user.model.user.*;
 
 public class JoinFormAction implements Action {

@@ -1,16 +1,13 @@
 package user.action.user;
 
 import java.io.*;
-import java.sql.*;
 
 import org.json.*;
 
 import controller.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import user.model.*;
 import user.model.user.*;
-import util.*;
 
 public class UserServiceAction implements Action {
 

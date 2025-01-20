@@ -9,11 +9,8 @@ import controller.Action;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import room.model.Room;
 import room.model.RoomDao;
 import room.model.RoomRequestDto;
-import user.model.User;
 
 public class CreateAttendanceLog implements Action {
 

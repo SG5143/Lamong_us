@@ -3,14 +3,12 @@ package user.model.block;
 import java.sql.*;
 import java.util.*;
 
-import chat.model.*;
-import user.model.user.*;
 import util.*;
 
 public class BlockDao {
 	private static final String GET_BLOCKED_USERS = "SELECT blocked_user FROM BlockedUsers WHERE blocking_user = ? LIMIT ? OFFSET ?";
 	private static final String CREATE_BLOCK = "INSERT INTO BlockedUsers (blocking_user, blocked_user) VALUES (?, ?)";
-	private static final String DELETE_BLOCK = "DELETE FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
+	//private static final String DELETE_BLOCK = "DELETE FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
 	private static final String GET_TOTAL_BLOCKED_USERS_COUNT = "SELECT COUNT(*) FROM BlockedUsers WHERE blocking_user = ?";
 	private static final String FIND_BLOCKED_USER = "SELECT COUNT(*) FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ? LIMIT 1";
 	private static final String CANCEL_BLOCKED_USER = "DELETE FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";

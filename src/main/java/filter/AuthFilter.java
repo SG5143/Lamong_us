@@ -9,7 +9,6 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -32,7 +31,7 @@ public class AuthFilter extends HttpFilter implements Filter {
 			return;
 		}
 
-		HttpSession session = req.getSession();
+		//HttpSession session = req.getSession();
 		// 인증 처리
 
 		chain.doFilter(request, response);
