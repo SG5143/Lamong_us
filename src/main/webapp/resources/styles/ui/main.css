@@ -76,11 +76,17 @@ body {
 h1 {
 	font-size: 100px;
 	margin-top: 100px;
+	margin-bottom: 0;
+	font-family: 'SB_Aggro_Medium';
+	font-weight: normal;
+	font-style: normal;
 }
 
 h2 {
 	font-size: 20px;
+	margin: 0;
 	margin-bottom: 150px;
+	font-family: 'SB_Aggro_Light';
 	color: #A9AEBA;
 }
 
@@ -94,24 +100,28 @@ h2 {
 .btn {
 	font-size: 18px;
 	padding: 15px 30px;
+	text-align: center; /* 텍스트 정렬 */
 	border: none;
 	border-radius: 8px;
 	background-color: #484F5E;
 	color: white;
 	cursor: pointer;
 	transition: background-color 0.3s;
-	color: white;
 }
 
-.btn-main {
+.btn-top {
+	width: 400px;
+}
+
+.btn-mid {
 	width: 200px;
 }
 
-.btn-sub {
-	width: 150px;
+.btn-bottom {
+	width: 200px;
 }
 
-.btn-sub:hover {
+.btn-top:hover, .btn-mid:hover, .btn-bttom:hover {
 	background-color: #DE3A86;
 }
 
