@@ -141,7 +141,7 @@ public class UserDao {
 		return null;
 	}
 
-	private static User findUserBy(String query, String parameter) {
+	private User findUserBy(String query, String parameter) {
 		User user = null;
 		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 			pstmt.setString(1, parameter);
@@ -157,12 +157,12 @@ public class UserDao {
 		return user;
 	}
 
-	public static String getUuidByNickname(String nickname) {
+	public String getUuidByNickname(String nickname) {
 		User user = findUserBy(FIND_USER_BY_NICKNAME, nickname);
 		return user != null ? user.getUuid() : null; 
 	}
 
-	public static User findUserByUserkey(String apiKey) {
+	public User findUserByUserkey(String apiKey) {
 		return findUserBy(FIND_USER_BY_USERKEY, apiKey);
 	}
 
