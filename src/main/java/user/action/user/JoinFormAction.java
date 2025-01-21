@@ -32,14 +32,21 @@ public class JoinFormAction implements Action {
 			String phone = reqData.optString("phone", null);
 			String loginType = reqData.optString("login_type", null);
 
+			System.out.println(username);
+			System.out.println(password);
+			System.out.println(email);
+			System.out.println(nickname);
+			System.out.println(phone);
+			System.out.println(loginType);
+
 			if (username == null || username.isEmpty() || password == null || password.isEmpty() || email == null
 					|| email.isEmpty() || nickname == null || nickname.isEmpty() || phone == null || phone.isEmpty()) {
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 데이터가 누락되었습니다.");
 				return;
 			}
-			
+
 			if (loginType == null || loginType.isEmpty()) {
-				loginType = "NULL"; 
+				loginType = "NULL";
 			}
 
 			UserRequestDto userDto = new UserRequestDto(username, password, email, nickname, phone, loginType);
