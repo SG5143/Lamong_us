@@ -81,8 +81,6 @@ export const createRoom = async (currentPage, fetchRoomList) => {
 	const isPrivate = document.getElementById('isPrivate').checked;
 	const password = document.getElementById('password').value;
 
-	console.log('isPrivate (checked):', isPrivate);
-
 	if (!isRoomDataValid(roomTitle, maxPlayers, roundCount, isPrivate, password)) {
 		return;
 	}
@@ -99,7 +97,6 @@ export const createRoom = async (currentPage, fetchRoomList) => {
 			body: JSON.stringify(requestBody)
 		});
 
-		console.log(requestBody);
 		const result = await response.json();
 		handleRoomCreationResponse(result, currentPage, fetchRoomList);
 	} catch (error) {
