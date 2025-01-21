@@ -111,11 +111,38 @@ public class LiarGameManager {
 		gameSessions.put(roomKey, createGameSession(liar.getId(), gameStartDto.getTopic(), gameStartDto.getKeyword(),
 				gameStartDto.getRounds(), clients));
 
+		sendClientInfo(clients);
 		assignTurns(clients);
 		distributeWords(clients, liar, gameStartDto.getTopic(), gameStartDto.getKeyword());
 		sendTurnInfo(clients, 1);
 		sendChangeRound(clients, 1);
 	}
+
+	// 유저 기본 정보 전달 -> 추후 로그인한 유저 uud, 닉네임, 프로필 이미지 정보로 변경
+	private boolean sendClientInfo(List<Session> clients) {
+		List<Map<String, Object>> playersInfo =  new ArrayList<>();
+		
+		for (Session client : clients) {
+			Map<String, Object> clientInfo = new HashMap<>();
+			clientInfo.put("uuid", client.getId());
+			clientInfo.put("nickname", "nickname");
+			clientInfo.put("image", "profileImage");
+		
+			playersInfo.add(clientInfo);
+		}
+		
+		for (Session client : clients) {
+			try {
+				JSONObject jsonObject = createJsonMessage("CLIENT_INFO", "clientInfo", playersInfo);
+				sendJsonMessage(client, jsonObject);
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 	// 라운드 정보 전송
 	private boolean sendRoundInfo(Map<String, Object> gameSession, String roomKey, int currentTurn) {
