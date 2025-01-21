@@ -49,6 +49,9 @@ public class ActionFactory {
 		case "logout" -> new LogoutFormAction();
 		case "join" -> new JoinFormAction();
 		case "block" -> new PostBlockUserAction();
+		case "search-username" -> new SearchUsernameAction();
+		case "search-phone" -> new SearchUserPhoneAction();
+		case "search-email" -> new SearchUserEmailAction();
 		default -> null;
 		};
 		case GET -> switch (command) {
