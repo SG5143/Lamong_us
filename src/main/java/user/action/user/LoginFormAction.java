@@ -37,7 +37,7 @@ public class LoginFormAction implements Action {
 
 		if (user == null) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_NOT_FOUND, "사용자를 찾을 수 없습니다.");
-			return;
+			 return;
 		}
 
 		if (user.checkPassword(password)) {
@@ -47,8 +47,11 @@ public class LoginFormAction implements Action {
 
 			logger.info("로그인 성공: 사용자 " + username + " 세션 생성됨. 세션 ID: " + session.getId());
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "로그인 성공");
+			return;
 		} else {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+			return;
+
 		}
 	}
 
