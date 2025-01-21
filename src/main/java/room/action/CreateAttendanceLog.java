@@ -9,6 +9,7 @@ import controller.Action;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import room.model.Room;
 import room.model.RoomDao;
 import room.model.RoomRequestDto;
 
@@ -18,7 +19,7 @@ public class CreateAttendanceLog implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String authorization = request.getHeader("Authorization");
 
-		if (authorization == null || !isValidAuthorization(authorization)) {
+		if (!isValidAuthorization(authorization)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "인증에 실패했습니다.");
 			return;
 		}
@@ -47,13 +48,13 @@ public class CreateAttendanceLog implements Action {
 			String roomCode = reqData.optString("room_code", null);
 
 			if (roomCode == null) {
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 요청 데이터가 누락되었습니다.!!");
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 요청 데이터가 누락되었습니다.");
 				return;
 			}
 
 			RoomDao roomDao = RoomDao.getInstance();
-			
-			String userCode = reqData.optString("user_code",null);
+
+			String userCode = reqData.optString("user_code", null);
 			// String userCode = log.getUuid();
 			RoomRequestDto roomDto = new RoomRequestDto(userCode, roomCode);
 
