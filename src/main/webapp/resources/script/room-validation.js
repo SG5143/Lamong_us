@@ -74,6 +74,23 @@ export const validatePassword = (password) => {
 	}
 };
 
+export const validateRoomNumber = (roomNumber) => {
+	const errEmpty = document.getElementById("roomNumError");
+
+	if (roomNumber === "") {
+		errEmpty.textContent = "방 번호를 입력해주세요.";
+		updateErrorElementStyle(errEmpty, true);
+		return false;
+	} else if (!/^\d+$/.test(roomNumber)) {
+		errEmpty.textContent = "숫자만 입력 가능합니다.";
+		updateErrorElementStyle(errEmpty, true);
+		return false;
+	} else {
+		updateErrorElementStyle(errEmpty, false);
+		return true;
+	}
+};
+
 function updateErrorElementStyle(element, visible) {
 	if (visible) {
 		element.style.display = "block";
