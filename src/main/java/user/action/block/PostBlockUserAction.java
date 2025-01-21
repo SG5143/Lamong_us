@@ -1,14 +1,14 @@
 package user.action.block;
 
-import java.io.IOException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import user.model.block.BlockDao;
-import user.model.user.*;
+import java.io.*;
 
-import org.json.JSONObject;
-import controller.Action;
+import org.json.*;
+
+import controller.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import user.model.block.*;
+import user.model.user.*;
 
 public class PostBlockUserAction implements Action {
 
@@ -28,11 +28,11 @@ public class PostBlockUserAction implements Action {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "유효하지 않은 사용자 정보입니다.");
 			return;
 		}
+		UserDao userDao = UserDao.getInstance();
+		String blockingUserUuid = userDao.getUuidByNickname(blockingUserNickname);
+		String blockedUserUuid = userDao.getUuidByNickname(blockedUserNickname);
 
 		BlockDao blockDao = BlockDao.getInstance();
-
-		String blockingUserUuid = UserDao.getUuidByNickname(blockingUserNickname);
-		String blockedUserUuid = UserDao.getUuidByNickname(blockedUserNickname);
 
 		if (blockDao.isBlocked(blockingUserUuid, blockedUserUuid)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "이미 차단된 사용자입니다.");
