@@ -6,11 +6,15 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="/resources/styles/globals.css">
 <link rel="stylesheet" href="/resources/styles/ui/main.css">
+
 <script type="module" src="resources/script/main-modul.js"></script>
+<script type="module" src="resources/script/validation/validation-login.js"></script>
+<script type="module" src="resources/script/validation/validation-join.js"></script>
 
 
-<title>Insert title here</title>
+<title>LAMONG US MAIN PAGE</title>
 </head>
 <body>
 	<div class="container">
@@ -53,9 +57,9 @@
 		<div class="modal" id="login-modal">
 			<div class="modal-content">
 				<span class="close" data-close>x</span>
-				<form method="POST" action="/login">
-					<input id="username" type="text" placeholder="아이디" required>
-					<input id="password" type="password" placeholder="비밀번호" required>
+				<form method="POST" action="/v1/login">
+					<input id="username-login" name="username" type="text" placeholder="아이디" required>
+					<input id="password-login" name="password" type="password" placeholder="비밀번호" required>
 
 					<ul class="error-msg-group">
 						<li id="error-msg-username-empty" class="error-msg">아이디: 필수 정보입니다.</li>
@@ -71,17 +75,42 @@
 			</div>
 		</div>
 
+		<!-- 회원가입 Modal -->
 		<div class="modal" id="join-modal">
 			<div class="modal-content">
 				<span class="close" data-close>x</span>
-				<form>
-					<input type="text" placeholder="아이디" required>
-					<input type="password" placeholder="비밀번호" required>
+				<form method="POST" action="/v1/join">
+					<input id="username-join" name="username" type="text" placeholder="아이디" required>
+					<input id="password-join" name="password" type="text" placeholder="비밀번호" required>
+					<input id="nickname-join" name="nickname" type="text" placeholder="닉네임" required>
+					<input id="phone-join" name="phone" type="text" placeholder="전화번호" required>
+					<input id="email-join" name="email" type="text" placeholder="이메일" required>
+					<select id="login_type-join" name="login_type">
+						<option value="" >소셜 계정</option>
+						<option value="1">kakao</option>
+						<option value="2">google</option>
+					</select>
+
+					<ul class="error-msg-group">
+						<li id="error-msg-username-pattern">아이디: 5~20자의 영문 소문자, 숫자와 최소 1개의 특수기호(-_!@#$%^&*.)만 사용 가능합니다.</li>
+						<li id="error-msg-username">아이디: 사용할 수 없는 아이디입니다. 다른 아이디를 입력해 주세요.</li>
+						<li id="error-msg-username-empty">아이디: 필수 정보입니다.</li>
+						<li id="error-msg-password-pattern">비밀번호: 8~20자의 영문 대/소문자, 숫자, 특수문자를 사용해 주세요.</li>
+						<li id="error-msg-password-empty">비밀번호: 필수 정보입니다.</li>
+						<li id="error-msg-nickname">닉네임: 사용할 수 없는 닉네임입니다. 다른 닉네임을 입력해 주세요.</li>
+						<li id="error-msg-nickname-empty">닉네임: 필수 정보입니다.</li>
+						<li id="error-msg-phone">전화번호: 사용할 수 없는 전화번호입니다. 다른 전화번호를 입력해 주세요.</li>
+						<li id="error-msg-phone-empty">전화번호: 필수 정보입니다.</li>
+						<li id="error-msg-email">이메일: 사용할 수 없는 이메일입니다. 다른 이메일을 입력해 주세요.</li>
+						<li id="error-msg-email-empty">이메일: 필수 정보입니다.</li>
+					</ul>
+
 					<button type="submit">회원가입</button>
 				</form>
 			</div>
 		</div>
 
+		<!-- 아이디 찾기 Modal -->
 		<div class="modal" id="find-id-modal">
 			<div class="modal-content">
 				<span class="close" data-close>x</span>
@@ -89,6 +118,7 @@
 			</div>
 		</div>
 
+		<!-- 비밀번호 찾기 Modal -->
 		<div class="modal" id="find-pw-modal">
 			<div class="modal-content">
 				<span class="close" data-close>x</span>
