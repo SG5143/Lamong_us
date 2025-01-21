@@ -25,14 +25,15 @@ public class GetUserPublicInfoAction implements Action {
 				JSONObject jsonObject = new JSONObject(sb.toString());
 				String userNickname = jsonObject.getString("userNickname");
 
-				String userUuid = UserDao.getUuidByNickname(userNickname);
+				UserDao userDao = new UserDao(); 
+				String userUuid = userDao.getUuidByNickname(userNickname);
 
 				if (userUuid == null) {
 					sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "존재하지 않는 사용자입니다.");
 					return;
 				}
 
-				 String publicInfo = UserDao.getUserPublicInfo(userUuid);
+				String publicInfo = UserDao.getUserPublicInfo(userUuid);
 
 				if (publicInfo == null) {
 					sendResponseStatusAndMessage(response, HttpServletResponse.SC_NOT_FOUND, "사용자 정보를 찾을 수 없습니다.");
@@ -66,5 +67,4 @@ public class GetUserPublicInfoAction implements Action {
 		response.getWriter().write(jsonResponse.toString());
 	}
 
-	
 }
