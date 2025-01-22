@@ -16,7 +16,7 @@ export const validatePassword = (password) => {
 	return passwordPattern.test(password);
 };
 
-export const validateName = (nickname) => {
+export const validateNickname = (nickname) => {
 	const nicknamePattern = /^[a-zA-Z0-9가-힣]{2,12}$/;
 	return nicknamePattern.test(nickname);
 };
