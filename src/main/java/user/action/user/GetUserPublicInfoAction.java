@@ -26,6 +26,7 @@ public class GetUserPublicInfoAction implements Action {
 				String userNickname = jsonObject.getString("userNickname");
 
 				UserDao userDao = UserDao.getInstance();
+
 				String userUuid = userDao.getUuidByNickname(userNickname);
 
 				if (userUuid == null) {
@@ -33,7 +34,7 @@ public class GetUserPublicInfoAction implements Action {
 					return;
 				}
 
-				 String publicInfo = userDao.getUserPublicInfo(userUuid);
+				String publicInfo = userDao.getUserPublicInfo(userUuid);
 
 				if (publicInfo == null) {
 					sendResponseStatusAndMessage(response, HttpServletResponse.SC_NOT_FOUND, "사용자 정보를 찾을 수 없습니다.");
@@ -67,5 +68,4 @@ public class GetUserPublicInfoAction implements Action {
 		response.getWriter().write(jsonResponse.toString());
 	}
 
-	
 }

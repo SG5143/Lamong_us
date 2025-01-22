@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	modalButtons.forEach((button) => {
 		button.addEventListener("click", () => {
 			const modalId = button.getAttribute("data-modal");
-			const modal = document.getElementById(modalId); 
+			const modal = document.getElementById(modalId);
 
 			if (modal) {
-				modalOverlay.style.display = "flex"; 
-				modal.style.display = "block"; 
+				modalOverlay.style.display = "flex";
+				modal.style.display = "block";
 			}
 		});
 	});
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// 모달 닫기
 	closeButtons.forEach((button) => {
 		button.addEventListener("click", () => {
-			modalOverlay.style.display = "none"; 
+			modalOverlay.style.display = "none";
 			document.querySelectorAll(".modal").forEach((modal) => {
 				modal.style.display = "none";
 			});
