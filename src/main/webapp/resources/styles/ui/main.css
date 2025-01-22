@@ -56,73 +56,10 @@ body {
 }
 
 #play-method-modal>h2 {
-	font-size: 50px;
+	font-size: 32px;
 	margin: 0;
 	text-align: center;
 	width: 100%;
-}
-
-#login-modal {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	height: auto;
-	padding: 30px;
-}
-
-#login-modal h2 {
-	display: flex;
-	justify-content: center;
-	color: black;
-	font-family: 'SB_Aggro_Medium';
-	margin: 0 0 20px 0;
-	font-size: 24px;
-	color: black;
-	justify-content: center;
-}
-
-#login-modal p {
-	display: flex;
-	justify-content: center;
-	font-size: 20px;
-	color: #484F5E;
-	font-family: 'SB_Aggro_Medium';
-	margin: 20px;
-	justify-content: center;
-}
-
-#login-modal form, #login-modal .social-login {
-	width: 100%;
-	margin: 10px; display : flex;
-	flex-direction: column;
-	align-items: center;
-	display: flex;
-}
-
-#login-modal input, #login-modal>#social-login {
-	width: 100%;
-	margin-bottom: 20px;
-}
-
-#join-modal h2 {
-	text-align: center;
-	margin-bottom: 500px;
-	color: black;
-	font-family: 'SB_Aggro_Medium';
-	margin: 0;
-	font-size: 24px;
-	color: black;
-}
-
-#join-modal h2 {
-	text-align: center;
-	margin-bottom: 500px;
-	color: black;
-	font-family: 'SB_Aggro_Medium';
-	margin: 0;
-	font-size: 24px;
-	color: black;
 }
 
 h1 {
@@ -137,8 +74,8 @@ h1 {
 
 h2 {
 	font-size: 20px;
-	text-align: center;
 	margin: 0;
+	margin-bottom: 150px;
 	font-family: 'SB_Aggro_Light';
 	color: #A9AEBA;
 }
@@ -163,13 +100,11 @@ h2 {
 }
 
 .btn-top {
-	width: 100%;
-	background-color: #427ef9;
+	width: 400px;
 }
 
 .btn-mid {
-	width: 195px;
-	background-color: #484F5E;
+	width: 200px;
 }
 
 .btn-bottom {
@@ -195,10 +130,6 @@ h2 {
 	width: 50px;
 }
 
-.error-msg-group {
+#error-msg-group {
 	display: none;
-}
-
-.close {
-	cursor: pointer;
 }

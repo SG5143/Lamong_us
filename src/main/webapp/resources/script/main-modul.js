@@ -10,12 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const modal = document.getElementById(modalId);
 
 			if (modal) {
-				document.querySelectorAll(".modal").forEach((modal) => {
-					modal.style.display = "none";
-				});
-
 				modalOverlay.style.display = "flex";
-
 				modal.style.display = "block";
 			}
 		});
