@@ -2,7 +2,7 @@ import {
 	updateErrorElementStyle,
 	validateUsername,
 	validatePassword,
-	validateName,
+	validateNickname,
 	validatePhone,
 	validateEmail,
 	checkDuplUsername,
@@ -14,9 +14,9 @@ import {
 document.addEventListener("DOMContentLoaded", () => {
 	const username = document.getElementById("username-join");
 	const password = document.getElementById("password-join");
-	const nickname = document.getElementById("nickname-join");
-	const phone = document.getElementById("phone-join");
 	const email = document.getElementById("email-join");
+	const phone = document.getElementById("phone-join");
+	const nickname = document.getElementById("nickname-join");
 	const loginType = document.getElementById("login_type-join");
 
 	const form = document.querySelector("form");
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	nickname.addEventListener("change", async (e) => {
 		isValid.nickname = await handleValidation(
 			e.target,
-			validateName,
+			validateNickname,
 			checkDuplnickname,
 			{
 				emptyId: "error-msg-nickname-empty",
@@ -98,8 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			checkDuplPhone,
 			{
 				emptyId: "error-msg-phone-empty",
-				patternId: "error-msg-phone-pattern",
-				duplicateId: "error-msg-phone-pattern",
+				patternId: "error-msg-phone",
+				duplicateId: "error-msg-phone",
 			}
 		);
 	});
@@ -111,14 +111,40 @@ document.addEventListener("DOMContentLoaded", () => {
 			checkDuplEmail,
 			{
 				emptyId: "error-msg-email-empty",
-				patternId: "error-msg-email-pattern",
-				duplicateId: "error-msg-email-pattern",
+				patternId: "error-msg-email",
+				duplicateId: "error-msg-email",
 			}
 		);
 	});
 
+
+
 	joinButton.addEventListener("click", async (e) => {
 		e.preventDefault();
+
+		console.log("Login button clicked");
+		resetErrorMessages();
+
+		let loginTypeValue = null;
+		if (loginType.value === "1") {
+			loginTypeValue = "kakao";
+		} else if (loginType.value === "2") {
+			loginTypeValue = "google";
+		}
+
+		const payload = {
+			username: username.value,
+			password: password.value,
+			nickname: nickname.value,
+			phone: phone.value,
+			email: email.value,
+			login_type: loginTypeValue,
+		};
+
+		console.log("Sending payload:", JSON.stringify(payload));
+		console.log("URL:", "/members?command=join");
+
+		console.log(JSON.stringify(requestData));
 
 		if (Object.values(isValid).every((value) => value)) {
 			try {
@@ -128,16 +154,17 @@ document.addEventListener("DOMContentLoaded", () => {
 					body: JSON.stringify({
 						username: username.value,
 						password: password.value,
-						email: email.value,
 						nickname: nickname.value,
 						phone: phone.value,
-						login_type: loginType.value,
+						email: email.value,
+						login_type: loginTypeValue,
 					}),
 				});
 
 				const data = await response.json();
+				console.log("Response data:", data);
 
-				if (response.ok) {
+				if (data.status === 200) {
 					alert("회원가입 성공!");
 					window.location.href = "/lobby";
 				} else {
