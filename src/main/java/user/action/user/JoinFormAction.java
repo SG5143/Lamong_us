@@ -31,6 +31,8 @@ public class JoinFormAction implements Action {
 			String phone = reqData.optString("phone", null);
 			String email = reqData.optString("email", null);
 			String loginType = reqData.optString("login_type", null);
+			if ("null".equals(loginType))
+				loginType = null;
 
 			System.out.println(username);
 			System.out.println(password);
