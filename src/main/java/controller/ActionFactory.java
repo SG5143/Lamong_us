@@ -44,8 +44,6 @@ public class ActionFactory {
 
 	private Action getMemberAction(String command, HttpMethod method) {
 
-		System.out.println("[getMemberAction] command: " + command + ", method: " + method);
-
 		return switch (method) {
 		case POST -> switch (command) {
 		case "login" -> new LoginFormAction();
