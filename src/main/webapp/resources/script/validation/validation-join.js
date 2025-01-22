@@ -1,28 +1,17 @@
-import {
-	updateErrorElementStyle,
-	validateUsername,
-	validatePassword,
-	validateNickname,
-	validatePhone,
-	validateEmail,
-	checkDuplUsername,
-	checkDuplPhone,
-	checkDuplEmail,
-	checkDuplnickname,
-} from "./validation.js";
+import { updateErrorElementStyle, validateUsername, validatePassword, validateNickname, validatePhone, validateEmail, checkDuplUsername, checkDuplPhone, checkDuplEmail, checkDuplnickname } from "./validation.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+window.onload = () => {
+	const form = document.getElementById("form-login");
+
 	const username = document.getElementById("username-join");
 	const password = document.getElementById("password-join");
-	const email = document.getElementById("email-join");
-	const phone = document.getElementById("phone-join");
 	const nickname = document.getElementById("nickname-join");
+	const phone = document.getElementById("phone-join");
+	const email = document.getElementById("email-join");
 	const loginType = document.getElementById("login_type-join");
-
-	const form = document.querySelector("form");
 	const joinButton = form.querySelector("button[type='submit']");
 
-	let isValid = {
+	const isValid = {
 		username: false,
 		password: false,
 		nickname: false,
@@ -30,23 +19,43 @@ document.addEventListener("DOMContentLoaded", () => {
 		email: false,
 	};
 
+	const resetErrorMessages = () => {
+		document.querySelectorAll(".error-msg").forEach((msg) => {
+			msg.style.display = "none";
+		});
+	};
+
 	const handleValidation = async (input, validateFn, duplicateFn, errorIds) => {
 		const { emptyId, patternId, duplicateId } = errorIds;
 
-		if (input.value === "") {
-			updateErrorElementStyle(document.getElementById(emptyId), true);
-			return false;
+		// emptyId가 비어 있는지 확인
+		const emptyElement = document.getElementById(emptyId);
+		if (emptyElement) {
+			if (input.value === "") {
+				updateErrorElementStyle(emptyElement, true);
+				return false;
+			} else {
+				updateErrorElementStyle(emptyElement, false);
+			}
 		} else {
-			updateErrorElementStyle(document.getElementById(emptyId), false);
+			console.warn(`${emptyId} not found`);
 		}
 
+		// 패턴 유효성 검사
+		const patternElement = document.getElementById(patternId);
 		const isPatternValid = validateFn(input.value);
-		updateErrorElementStyle(document.getElementById(patternId), !isPatternValid);
+		if (patternElement) {
+			updateErrorElementStyle(patternElement, !isPatternValid);
+		}
 		if (!isPatternValid) return false;
 
+		// 중복 검사
 		if (duplicateFn) {
+			const duplicateElement = document.getElementById(duplicateId);
 			const isDuplicateValid = await duplicateFn(input.value);
-			updateErrorElementStyle(document.getElementById(duplicateId), !isDuplicateValid);
+			if (duplicateElement) {
+				updateErrorElementStyle(duplicateElement, !isDuplicateValid);
+			}
 			return isDuplicateValid;
 		}
 
@@ -64,6 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				duplicateId: "error-msg-username",
 			}
 		);
+		console.log("isValid.username", isValid.username);
+
 	});
 
 	password.addEventListener("change", (e) => {
@@ -76,6 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			document.getElementById("error-msg-password-pattern"),
 			!isValid.password
 		);
+		console.log("isValid.password", isValid.password);
+
 	});
 
 	nickname.addEventListener("change", async (e) => {
@@ -85,10 +98,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			checkDuplnickname,
 			{
 				emptyId: "error-msg-nickname-empty",
-				patternId: "error-msg-nickname",
+				patternId: "error-msg-nickname-pattern",
 				duplicateId: "error-msg-nickname",
 			}
 		);
+		console.log("isValid.nickname", isValid.nickname);
+
 	});
 
 	phone.addEventListener("change", async (e) => {
@@ -98,10 +113,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			checkDuplPhone,
 			{
 				emptyId: "error-msg-phone-empty",
-				patternId: "error-msg-phone",
+				patternId: "error-msg-phone-pattern",
 				duplicateId: "error-msg-phone",
 			}
 		);
+		console.log("isValid.phone", isValid.phone);
+
 	});
 
 	email.addEventListener("change", async (e) => {
@@ -111,21 +128,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			checkDuplEmail,
 			{
 				emptyId: "error-msg-email-empty",
-				patternId: "error-msg-email",
+				patternId: "error-msg-email-pattern",
 				duplicateId: "error-msg-email",
 			}
 		);
+		console.log("isValid.email", isValid.email);
+
 	});
-
-
 
 	joinButton.addEventListener("click", async (e) => {
 		e.preventDefault();
 
-		console.log("Login button clicked");
 		resetErrorMessages();
 
 		let loginTypeValue = null;
+
 		if (loginType.value === "1") {
 			loginTypeValue = "kakao";
 		} else if (loginType.value === "2") {
@@ -141,35 +158,23 @@ document.addEventListener("DOMContentLoaded", () => {
 			login_type: loginTypeValue,
 		};
 
-		console.log("Sending payload:", JSON.stringify(payload));
-		console.log("URL:", "/members?command=join");
-
-		console.log(JSON.stringify(requestData));
-
 		if (Object.values(isValid).every((value) => value)) {
 			try {
 				const response = await fetch("/v1/members?command=join", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						username: username.value,
-						password: password.value,
-						nickname: nickname.value,
-						phone: phone.value,
-						email: email.value,
-						login_type: loginTypeValue,
-					}),
+					body: JSON.stringify(payload),
 				});
 
 				const data = await response.json();
 				console.log("Response data:", data);
 
-				if (data.status === 200) {
+				if (data.status === 200 || data.status === 201) {
 					alert("회원가입 성공!");
-					window.location.href = "/lobby";
+					window.location.href = "/main";
 				} else {
 					alert(data.message || "회원가입에 실패했습니다.");
-					console.error("join failed:", data);
+					console.error("Join failed:", data);
 				}
 			} catch (error) {
 				console.error("Error during registration:", error);
@@ -179,4 +184,4 @@ document.addEventListener("DOMContentLoaded", () => {
 			alert("모든 정보를 올바르게 입력해주세요.");
 		}
 	});
-});
+};
