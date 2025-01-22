@@ -27,9 +27,9 @@ public class JoinFormAction implements Action {
 
 			String username = reqData.optString("username", null);
 			String password = reqData.optString("password", null);
-			String email = reqData.optString("email", null);
 			String nickname = reqData.optString("nickname", null);
 			String phone = reqData.optString("phone", null);
+			String email = reqData.optString("email", null);
 			String loginType = reqData.optString("login_type", null);
 
 			System.out.println(username);
@@ -49,10 +49,10 @@ public class JoinFormAction implements Action {
 				loginType = "NULL";
 			}
 
-			UserRequestDto userDto = new UserRequestDto(username, password, email, nickname, phone, loginType);
+			UserRequestDto userDto = new UserRequestDto(username, password, nickname, phone, email, loginType);
 			UserDao userDao = UserDao.getInstance();
 
-			if (isDuplicate(userDao, username, email, phone, nickname, response)) {
+			if (isDuplicate(userDao, username, nickname, email, phone, response)) {
 				return;
 			}
 
