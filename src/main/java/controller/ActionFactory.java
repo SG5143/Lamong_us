@@ -43,6 +43,9 @@ public class ActionFactory {
 	}
 
 	private Action getMemberAction(String command, HttpMethod method) {
+
+		System.out.println("[getMemberAction] command: " + command + ", method: " + method);
+
 		return switch (method) {
 		case POST -> switch (command) {
 		case "login" -> new LoginFormAction();
@@ -50,8 +53,10 @@ public class ActionFactory {
 		case "join" -> new JoinFormAction();
 		case "block" -> new PostBlockUserAction();
 		case "search-username" -> new SearchUsernameAction();
-		case "search-phone" -> new SearchUserPhoneAction();
 		case "search-email" -> new SearchUserEmailAction();
+		case "search-phone" -> new SearchUserPhoneAction();
+		case "search-nickname" -> new SearchUserNicknameAction();
+
 		default -> null;
 		};
 		case GET -> switch (command) {
