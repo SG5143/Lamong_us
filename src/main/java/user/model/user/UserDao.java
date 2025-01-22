@@ -56,9 +56,8 @@ public class UserDao {
 				PreparedStatement pstmt = conn.prepareStatement(COUNT_USERS);
 				ResultSet rs = pstmt.executeQuery()) {
 
-			if (rs.next()) {
+			if (rs.next())
 				totalCount = rs.getInt(1);
-			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -79,7 +78,12 @@ public class UserDao {
 			pstmt.setString(3, userDto.getNickname());
 			pstmt.setString(4, userDto.getPhone());
 			pstmt.setString(5, userDto.getEmail());
-			pstmt.setString(6, userDto.getLoginType());
+
+			if (userDto.getLoginType() == null || "null".equalsIgnoreCase(userDto.getLoginType().trim())) {
+				pstmt.setNull(6, java.sql.Types.VARCHAR);
+			} else {
+				pstmt.setString(6, userDto.getLoginType().trim());
+			}
 
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -119,9 +123,8 @@ public class UserDao {
 
 		byte[] profileImage = null;
 		Blob blob = rs.getBlob(COL_PROFILE_IMAGE);
-		if (blob != null) {
+		if (blob != null)
 			profileImage = blob.getBytes(1, (int) blob.length());
-		}
 
 		int score = rs.getInt(COL_SCORE);
 		String apiKey = rs.getString(COL_API_KEY);
@@ -148,9 +151,9 @@ public class UserDao {
 			pstmt.setString(1, parameter);
 
 			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
+				if (rs.next())
 					user = mapResultSetToUser(rs);
-				}
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -209,41 +212,35 @@ public class UserDao {
 				pstmt.setString(++cnt, existingUser.getPassword());
 			}
 
-			if (userDto.getNickname() != null) {
+			if (userDto.getNickname() != null)
 				pstmt.setString(++cnt, userDto.getNickname());
-			} else {
+			else
 				pstmt.setString(++cnt, existingUser.getNickname());
-			}
 
-			if (userDto.getEmail() != null) {
+			if (userDto.getEmail() != null)
 				pstmt.setString(++cnt, userDto.getEmail());
-			} else {
+			else
 				pstmt.setString(++cnt, existingUser.getEmail());
-			}
 
-			if (userDto.getPhone() != null) {
+			if (userDto.getPhone() != null)
 				pstmt.setString(++cnt, userDto.getPhone());
-			} else {
+			else
 				pstmt.setString(++cnt, existingUser.getPhone());
-			}
 
-			if (userDto.getProfileInfo() != null) {
+			if (userDto.getProfileInfo() != null)
 				pstmt.setString(++cnt, userDto.getProfileInfo());
-			} else {
+			else
 				pstmt.setString(++cnt, existingUser.getProfileInfo());
-			}
 
-			if (userDto.getProfileImage() != null) {
+			if (userDto.getProfileImage() != null)
 				pstmt.setBytes(++cnt, userDto.getProfileImage());
-			} else {
+			else
 				pstmt.setBytes(++cnt, existingUser.getProfileImage());
-			}
 
-			if (userDto.getLoginType() != null) {
+			if (userDto.getLoginType() != null)
 				pstmt.setString(++cnt, userDto.getLoginType());
-			} else {
+			else
 				pstmt.setString(++cnt, existingUser.getLoginType());
-			}
 
 			pstmt.setString(++cnt, userDto.getUuid());
 
