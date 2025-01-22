@@ -43,33 +43,38 @@ public class ActionFactory {
 	}
 
 	private Action getMemberAction(String command, HttpMethod method) {
-	    return switch (method) {
-	        case POST -> switch (command) {
-	            case "login" -> new LoginFormAction();
-	            case "logout" -> new LogoutFormAction();
-	            case "join" -> new JoinFormAction();
-	            case "block" -> new PostBlockUserAction();
-	            default -> null;
-	        };
-	        case GET -> switch (command) {
-	            case "all_users_info" -> new GetAllUserAction();
-	            case "history" -> new GetGameHistoryAction();
-	            case "user_info" -> new GetUserPublicInfoAction();
-	            case "Blocked_list" -> new GetBlockUserListAction();
-	            default -> null;
-	        };
-	        case PATCH -> switch (command) {
-	            case "update" -> new UpdateFormAction();
-	            default -> null;
-	        };
-	        case DELETE -> switch (command) {
-	            case "delete" -> new DeleteFormAction();
-	            case "cancelAllBlock" -> new DeleteBlockedAllUserAction();
-	            case "deleteALlInactive" -> new DeleteInactiveUserAction();
-	            default -> null;
-	        };
-	        default -> null; 
-	    };
+		return switch (method) {
+		case POST -> switch (command) {
+		case "login" -> new LoginFormAction();
+		case "logout" -> new LogoutFormAction();
+		case "join" -> new JoinFormAction();
+		case "block" -> new PostBlockUserAction();
+		case "search-username" -> new SearchUsernameAction();
+		case "search-email" -> new SearchUserEmailAction();
+		case "search-phone" -> new SearchUserPhoneAction();
+		case "search-nickname" -> new SearchUserNicknameAction();
+
+		default -> null;
+		};
+		case GET -> switch (command) {
+		case "all_users_info" -> new GetAllUserAction();
+		case "history" -> new GetGameHistoryAction();
+		case "user_info" -> new GetUserPublicInfoAction();
+		case "Blocked_list" -> new GetBlockUserListAction();
+		default -> null;
+		};
+		case PATCH -> switch (command) {
+		case "update" -> new UpdateFormAction();
+		default -> null;
+		};
+		case DELETE -> switch (command) {
+		case "delete" -> new DeleteFormAction();
+		case "cancelAllBlock" -> new DeleteBlockedAllUserAction();
+		case "deleteALlInactive" -> new DeleteInactiveUserAction();
+		default -> null;
+		};
+		default -> null;
+		};
 	}
 
 

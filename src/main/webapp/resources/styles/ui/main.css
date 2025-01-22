@@ -1,36 +1,5 @@
 @charset "UTF-8";
 
-@font-face {
-	font-family: 'SB_Aggro_Bold';
-	src: url('../fonts/SB_aggro_B.ttf') format('truetype');
-	font-weight: bold;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: 'SB_Aggro_Light';
-	src: url('../fonts/SB_aggro_L.ttf') format('truetype');
-	font-weight: lighter;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: 'SB_Aggro_Medium';
-	src: url('../fonts/SB_aggro_M.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-
-:root {
-	--background-color: #161719;
-	--color-theme-01: #3ADE3C;
-	--color-theme-02: #DE3A86;
-	--color-theme-03: #DEAA3A;
-	--color-theme-04: #484F5E;
-	--secondaryTextColor: #A9AEBA;
-	--error-color: #D43F42;
-}
-
 body {
 	background-color: #161719;
 	display: flex;
@@ -42,6 +11,15 @@ body {
 .container {
 	text-align: center;
 	color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.button-container {
+	width: 400px;
+	padding: 20px;
 }
 
 #modal-overlay {
@@ -71,16 +49,97 @@ body {
 #play-method-modal {
 	background: #484F5E;
 	color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	padding-top: 30px;
+}
+
+#play-method-modal>h2 {
+	font-size: 50px;
+	margin: 0;
+	text-align: center;
+	width: 100%;
+}
+
+#login-modal {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: auto;
+	padding: 30px;
+}
+
+#login-modal h2 {
+	display: flex;
+	justify-content: center;
+	color: black;
+	font-family: 'SB_Aggro_Medium';
+	margin: 0 0 20px 0;
+	font-size: 24px;
+	color: black;
+	justify-content: center;
+}
+
+#login-modal p {
+	display: flex;
+	justify-content: center;
+	font-size: 20px;
+	color: #484F5E;
+	font-family: 'SB_Aggro_Medium';
+	margin: 20px;
+	justify-content: center;
+}
+
+#login-modal form, #login-modal .social-login {
+	width: 100%;
+	margin: 10px; display : flex;
+	flex-direction: column;
+	align-items: center;
+	display: flex;
+}
+
+#login-modal input, #login-modal>#social-login {
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+#join-modal h2 {
+	text-align: center;
+	margin-bottom: 500px;
+	color: black;
+	font-family: 'SB_Aggro_Medium';
+	margin: 0;
+	font-size: 24px;
+	color: black;
+}
+
+#join-modal h2 {
+	text-align: center;
+	margin-bottom: 500px;
+	color: black;
+	font-family: 'SB_Aggro_Medium';
+	margin: 0;
+	font-size: 24px;
+	color: black;
 }
 
 h1 {
 	font-size: 100px;
 	margin-top: 100px;
+	margin-bottom: 0;
+	font-family: 'SB_Aggro_Medium';
+	font-weight: normal;
+	font-style: normal;
+	margin-top: 100px;
 }
 
 h2 {
 	font-size: 20px;
-	margin-bottom: 150px;
+	text-align: center;
+	margin: 0;
+	font-family: 'SB_Aggro_Light';
 	color: #A9AEBA;
 }
 
@@ -93,25 +152,32 @@ h2 {
 
 .btn {
 	font-size: 18px;
-	padding: 15px 30px;
+	padding: 15px 10px;
+	text-align: center;
+	font-family: 'SB_Aggro_Light';
 	border: none;
 	border-radius: 8px;
-	background-color: #484F5E;
 	color: white;
 	cursor: pointer;
 	transition: background-color 0.3s;
-	color: white;
 }
 
-.btn-main {
-	width: 200px;
+.btn-top {
+	width: 100%;
+	background-color: #427ef9;
 }
 
-.btn-sub {
+.btn-mid {
+	width: 195px;
+	background-color: #484F5E;
+}
+
+.btn-bottom {
 	width: 150px;
+	background-color: #484F5E;
 }
 
-.btn-sub:hover {
+.btn-mid:hover, .btn-bottom:hover {
 	background-color: #DE3A86;
 }
 
@@ -121,6 +187,18 @@ h2 {
 	gap: 10px;
 }
 
+.modal>social-login {
+	widows: 200
+}
+
 #btn1 {
 	width: 50px;
+}
+
+.error-msg-group {
+	display: none;
+}
+
+.close {
+	cursor: pointer;
 }

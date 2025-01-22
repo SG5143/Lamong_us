@@ -27,7 +27,7 @@ public class RoomDao {
 	private static final String CREATE_ROOM_SQL = "INSERT INTO GameWatingRoom (room_number, host_user, room_title, is_private, room_password, max_players, round_count) VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ROOM_NUMBER_SQL = "SELECT room_number FROM GameWatingRoom WHERE room_state != 'delete'";
 	private static final String FIND_ROOM_COUNT_SQL = "SELECT COUNT(*) FROM GameWatingRoom WHERE room_state != 'delete'";
-	private static final String FIND_ALL_ROOM_SQL = "SELECT * FROM GameWatingRoom where room_state != 'delete' ORDER BY room_number ASC LIMIT 10 OFFSET ?";
+	private static final String FIND_ALL_ROOM_SQL = "SELECT * FROM GameWatingRoom where room_state != 'delete' ORDER BY room_number DESC LIMIT 10 OFFSET ?";
 	private static final String FIND_ONE_ROOM_SQL = "SELECT * FROM GameWatingRoom WHERE room_number = ? AND room_state != 'delete'";
 	private static final String DELETE_ROOM_SQL= "UPDATE GameWatingRoom SET room_state = 'delete' WHERE room_code = ?";
 	private static final String UPDATE_ROOM_SQL = "UPDATE GameWatingRoom SET room_title = ?, is_private = ?, room_password = ?, max_players = ?, round_count = ? WHERE room_code = ? AND room_state != 'delete'";
@@ -338,5 +338,7 @@ public class RoomDao {
 
 	    return room;
 	}
+	
+	
 
 }

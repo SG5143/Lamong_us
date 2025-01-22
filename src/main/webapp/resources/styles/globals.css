@@ -22,13 +22,13 @@
 }
 
 :root {
-	--background-color: #161719; /* 배경 색 */
+	--background-color: #161719; 
 	--color-theme-01: #3ADE3C;
 	--color-theme-02: #DE3A86;
 	--color-theme-03: #DEAA3A;
 	--color-theme-04: #484F5E;
-	--secondaryTextColor: #A9AEBA; /* 중요도 낮은 텍스트 색상 */
-	--error-color: #D43F42; /* 에러 색상 */
+	--secondaryTextColor: #A9AEBA; 
+	--error-color: #D43F42;
 }
 
 * {

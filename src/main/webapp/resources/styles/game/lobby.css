@@ -5,35 +5,104 @@
 	padding: 0;
 }
 
-.game-room {
-	margin-top: 20px;
-	border: 1px solid grey;
-	max-width: 900px;
-	padding: 10px;
-	border-radius: 8px;
-	background-color: #f9f9f9;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 20px;
+body {
+	background-color: var(--background-color);
 }
 
-.game-room>.room {
-	width: 45%;
-	box-sizing: border-box;
-	border: 1px solid #ddd;
-	padding: 10px;
-	border-radius: 8px;
-	background-color: #fff;
+#main {
+	border-top-left-radius: 35px;
+	border-bottom-left-radius: 35px;
+	width: 100%;
+	background-color: var(--color-theme-04);
+	text-align: center;
+	box-shadow: -5px 0 10px rgba(0, 0, 0, 0.3);
+	height: 100vh;
 }
 
-.room>div:first-child {
+#cont-wrap {
+	height: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	justify-content: center;
 }
 
-.room>div:first-child p {
+.game-room {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(5, 1fr);
+	gap: 20px;
+	padding: 20px;
+	min-height: 70vh;
+}
+
+.room-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.room {
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	border-radius: 5px;
+	background-color: #f0f0f0;
+	text-align: center;
+	cursor: pointer;
+}
+
+/*.game-room {*/
+/*	padding: 10px;*/
+/*	border-radius: 8px;*/
+/*	display: flex;*/
+/*	flex-wrap: wrap;*/
+/*	gap: 20px;*/
+/*	border: 1px solid red;*/
+/*	min-height: 60vh;*/
+/*}*/
+
+/*.game-room>.room {*/
+/*	width: 35%;*/
+/*	height:100px;*/
+/*	padding: 10px;*/
+/*	border-radius: 8px;*/
+/*	background-color: var(--secondaryTextColor);*/
+/*	cursor: pointer;*/
+/*}*/
+.game-room>.room>div:last-child {
+	padding-top: 10px;
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+}
+
+.game-room>.room>div:last-child>div:last-child {
+	font-size: 12px;
+}
+
+#room-top {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	background-color: var(--color-theme-04);
+	border-radius: 4px;
+	padding: 8px;
+}
+
+#room-top>p:first-child {
+	width: 30px;
+	height: 25px;
+	line-height: 25px;
+	background-color: #dad3d3;
+	border-radius: 4px;
 	font-weight: bold;
+	font-size: 12px;
+	background-color: #dad3d3;
+}
+
+#room-top>p:last-child {
+	color: white;
+	font-size: 14px;
 }
 
 .room>div:last-child {
@@ -53,12 +122,28 @@
 	align-items: center;
 }
 
+#btn-wrap {
+	display: flex;
+	gap:10px;
+	padding-left: 20px;
+}
+
+#btn-wrap>button {
+	background-color: var(--background-color);
+	color: white;
+}
+
+#page-btns {
+	
+}
+
 button {
-	color: blue;
+	min-width: 80px;
+	color: white;
 	padding: 10px;
-	margin: 10px;
 	border-radius: 5px;
 	cursor: pointer;
+	color: black;
 }
 
 .modal {
@@ -99,21 +184,38 @@ button {
 #createRoomForm {
 	display: flex;
 	flex-direction: column;
-	gap:10px;
+	gap: 10px;
 }
+
+#joinRoomForm {
+	display: none;
+}
+
 .number-wrap {
-	flex:1;
+	flex: 1;
 	display: flex;
 	justify-content: space-between;
 }
+
 .password-wrap {
 	display: flex;
-	gap:15px;
+	gap: 15px;
 }
 
 .error-msg {
 	font-size: 12px;
-	font-weight : bold;
+	font-weight: bold;
 	color: #D43F42;
 	display: none;
+}
+
+#lobby-wrap {
+	display: flex;
+}
+
+#header {
+	color: white;
+	min-width: 300px;
+	background-color: var(--background-color);
+	padding: 20px;
 }
