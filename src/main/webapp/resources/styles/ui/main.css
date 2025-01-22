@@ -21,7 +21,6 @@ body {
 	display: flex;
 	width: 400px;
 	padding: 20px;
-	width: 400px;
 }
 
 #modal-overlay {
@@ -130,13 +129,27 @@ h2 {
 	transition: background-color 0.3s;
 }
 
+.btn-group-mid {
+	display: flex;
+	justify-content: space-between;
+	width: 100%; 
+	gap: 10px;
+}
+
+.btn-group-bottom {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
 .btn-top {
 	width: 100%;
 	background-color: #578FFF;
 }
 
 .btn-mid {
-	width: 195px;
+	flex: 1; 
+	width: 50%; 
 	background-color: #484F5E;
 }
 
@@ -163,6 +176,6 @@ h2 {
 	width: 50px;
 }
 
-#error-msg-group {
+.error-msg-group {
 	display: none;
 }
