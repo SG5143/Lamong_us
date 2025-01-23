@@ -8,6 +8,19 @@
 body {
 	background-color: var(--background-color);
 }
+label {
+	text-align: left;
+}
+
+input {
+	outline: none;
+	padding: 8px;
+	border-radius: 8px;
+}
+
+input:focus {
+	background-color: none;
+}
 
 #main {
 	border-top-left-radius: 35px;
@@ -49,26 +62,9 @@ body {
 	background-color: #f0f0f0;
 	text-align: center;
 	cursor: pointer;
+	min-width: 235px;
 }
 
-/*.game-room {*/
-/*	padding: 10px;*/
-/*	border-radius: 8px;*/
-/*	display: flex;*/
-/*	flex-wrap: wrap;*/
-/*	gap: 20px;*/
-/*	border: 1px solid red;*/
-/*	min-height: 60vh;*/
-/*}*/
-
-/*.game-room>.room {*/
-/*	width: 35%;*/
-/*	height:100px;*/
-/*	padding: 10px;*/
-/*	border-radius: 8px;*/
-/*	background-color: var(--secondaryTextColor);*/
-/*	cursor: pointer;*/
-/*}*/
 .game-room>.room>div:last-child {
 	padding-top: 10px;
 	font-size: 14px;
@@ -122,19 +118,30 @@ body {
 	align-items: center;
 }
 
+
+#modal-cont {
+    display: grid;
+    grid-template-columns: 1fr; /* 기본적으로 1열 */
+    gap: 16px;
+    max-width: 400px;
+    margin: auto;
+  }
+
+#modal-cont div {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
 #btn-wrap {
 	display: flex;
-	gap:10px;
+	gap: 10px;
 	padding-left: 20px;
 }
 
 #btn-wrap>button {
 	background-color: var(--background-color);
 	color: white;
-}
-
-#page-btns {
-	
 }
 
 button {
@@ -158,12 +165,16 @@ button {
 }
 
 .modal-content {
-	background-color: #fefefe;
-	margin: 15% auto;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	padding: 20px;
-	border: 1px solid #888;
-	width: 60%;
-	position: relative;
+	width: 30%;
+	min-width: 300px;
+	border-radius: 8px;
+	background-color: var(--background-color);
+	color: white;
 }
 
 .close-btn {
@@ -181,26 +192,14 @@ button {
 	cursor: pointer;
 }
 
-#createRoomForm {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
 #joinRoomForm {
 	display: none;
 }
 
-.number-wrap {
-	flex: 1;
-	display: flex;
-	justify-content: space-between;
-}
 
-.password-wrap {
-	display: flex;
-	gap: 15px;
-}
+/*#password-wrap>div {*/
+/*	display: flex;*/
+/*}*/
 
 .error-msg {
 	font-size: 12px;

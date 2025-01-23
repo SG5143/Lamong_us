@@ -40,34 +40,59 @@
 
 						<form method="POST" id="createRoomForm">
 							<h2>방 만들기</h2>
-							<label for="roomTitle">방 제목</label>
-							<input type="text" id="roomTitle" name="roomTitle" required>
-							<span class="error-msg" id="roomTitleError">방 제목을 입력해주세요.</span>
 
-							<div class="number-wrap">
+							<div id="modal-cont">
 								<div>
-									<label for="maxPlayers">인원수</label>
-									<input type="number" id="maxPlayers" name="maxPlayers" value="3" required>
+									<label for="roomTitle">방 제목</label>
+									<input type="text" id="roomTitle" name="roomTitle" required>
+								</div>
+								<span class="error-msg" id="roomTitleError">방 제목을 입력해주세요.</span>
+
+								<div class="grid-pair">
+									<div>
+										<label for="maxPlayers">인원수</label>
+										<div>
+											<input type="number" id="maxPlayers" name="maxPlayers" value="3" required>
+										</div>
+
+									</div>
 									<span class="error-msg" id="maxPlayersError">인원수를 정해주세요.</span>
 									<span class="error-msg" id="maxPlayersLimitError">인원수는 최소3명 최대8명까지 설정 가능합니다.</span>
-								</div>
-								<div>
-									<label for="roundCount">라운드 수</label>
-									<input type="number" id="roundCount" name="roundCount" value="2" required>
+
+									<div>
+										<label for="roundCount">라운드 수</label>
+										<input type="number" id="roundCount" name="roundCount" value="2" required>
+									</div>
 									<span class="error-msg" id="roundCountError">라운드 수를 정해주세요.</span>
 									<span class="error-msg" id="roundCountLimitError">라운드 수는 2~5회 설정 가능합니다.</span>
-								</div>
-							</div>
-							<div class="password-wrap">
-								<label for="isPrivate">비밀번호 설정</label>
-								<input type="checkbox" id="isPrivate" name="isPrivate">
 
-								<label for="password" id="passwordLabel" style="display: none;">비밀번호</label>
-								<input type="password" id="password" name="password" style="display: none;" maxlength="4">
+								</div>
+
+								<div id="password-wrap">
+
+									<div>
+										<label for="isPrivate">비밀번호 설정</label>
+										<input type="checkbox" id="isPrivate" name="isPrivate">
+									</div>
+
+
+									<div>
+										<label for="password" id="passwordLabel" style="display: none;">비밀번호</label>
+										<input type="password" id="password" name="password" style="display: none;" maxlength="4">
+
+									</div>
+								</div>
 								<span class="error-msg" id="passwordError">비밀번호를 입력해주세요.</span>
 								<span class="error-msg" id="passwordLimitError">비밀번호는 4자리로 설정해주세요.</span>
 							</div>
+
+
+
+
+
 							<button type="submit" id="submitButton">방 만들기</button>
+
+
 						</form>
 
 						<!-- 방번호 입력 입장 -->
