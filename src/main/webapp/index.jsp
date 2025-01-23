@@ -23,11 +23,11 @@
 
 		<div class="button-container">
 			<button class="btn btn-top" data-modal="play-method-modal">플레이 방법</button>
-			<div class="btn-group">
+			<div class="btn-group-mid">
 				<button class="btn btn-mid" data-modal="login-modal">로그인</button>
 				<button class="btn btn-mid" data-modal="join-modal">회원가입</button>
 			</div>
-			<div class="btn-group">
+			<div class="btn-group-bottom">
 				<button class="btn btn-bottom" data-modal="find-id-modal">아이디 찾기</button>
 				<button class="btn btn-bottom" data-modal="find-pw-modal">비밀번호 찾기</button>
 			</div>
@@ -58,19 +58,23 @@
 			<div class="modal-content">
 				<span class="close" data-close>x</span>
 				<form method="POST" action="/v1/login">
-					<input id="username-login" name="username" type="text" placeholder="아이디" required>
-					<input id="password-login" name="password" type="password" placeholder="비밀번호" required>
+					<h2>로그인</h2>
+					<div class="login-container">
+						<button class="social-login" type="button">카카오 로그인</button>
+						<button class="social-login" type="button">구글 로그인</button>
+						<p>또는</p>
+						<input id="username-login" name="username" type="text" placeholder="아이디" required>
+						<input id="password-login" name="password" type="password" placeholder="비밀번호" required>
 
-					<ul class="error-msg-group">
-						<li id="error-msg-username-empty" class="error-msg">아이디: 필수 정보입니다.</li>
-						<li id="error-msg-username-pattern" class="error-msg">아이디: 유효하지 않은 값입니다.</li>
-						<li id="error-msg-password-empty" class="error-msg">비밀번호: 필수 정보입니다.</li>
-						<li id="error-msg-password-pattern" class="error-msg">비밀번호: 유효하지 않은 값입니다.</li>
-					</ul>
+						<ul class="error-msg-group">
+							<li id="error-msg-username-empty" class="error-msg">아이디: 필수 정보입니다.</li>
+							<li id="error-msg-username-pattern" class="error-msg">아이디: 유효하지 않은 값입니다.</li>
+							<li id="error-msg-password-empty" class="error-msg">비밀번호: 필수 정보입니다.</li>
+							<li id="error-msg-password-pattern" class="error-msg">비밀번호: 유효하지 않은 값입니다.</li>
+						</ul>
+					</div>
 
 					<button type="submit">로그인</button>
-					<button type="button">카카오 로그인</button>
-					<button type="button">구글 로그인</button>
 				</form>
 			</div>
 		</div>
@@ -79,14 +83,15 @@
 		<div class="modal" id="join-modal">
 			<div class="modal-content">
 				<span class="close" data-close>x</span>
-				<form method="POST" action="/v1/join">
+				<form id="form-login" method="POST" action="/v1/login">
+					<h2>로그인</h2>
 					<input id="username-join" name="username" type="text" placeholder="아이디" required>
-					<input id="password-join" name="password" type="text" placeholder="비밀번호" required>
-					<input id="email-join" name="email" type="text" placeholder="이메일" required>
+					<input id="password-join" name="password" type="password" placeholder="비밀번호" required>
 					<input id="nickname-join" name="nickname" type="text" placeholder="닉네임" required>
 					<input id="phone-join" name="phone" type="text" placeholder="전화번호" required>
+					<input id="email-join" name="email" type="text" placeholder="이메일" required>
 					<select id="login_type-join" name="login_type">
-						<option value="" >소셜 계정</option>
+						<option value="">소셜 계정</option>
 						<option value="1">kakao</option>
 						<option value="2">google</option>
 					</select>
