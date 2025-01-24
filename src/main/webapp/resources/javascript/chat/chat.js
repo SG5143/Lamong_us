@@ -47,11 +47,11 @@ ws.onmessage = function (event) {
 		case 'MESSAGE':
 			displayMessage(data.sessionId, data.message);
 			break;
-		case 'ROUND_END':
-			handleRoundEnd();
-			break;
 		case 'ROUND_INFO':
 			displayRoundInfo(data.round);
+			break;
+		case 'ROUND_END':
+			handleRoundEnd();
 			break;
 		case 'CLIENT_INFO':
 			setPlayerList(data.clientInfo);

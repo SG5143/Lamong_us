@@ -1,11 +1,15 @@
 package websoket;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import chat.model.ChatRequestDto;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
@@ -15,7 +19,7 @@ import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import org.json.JSONObject;
 
-@ServerEndpoint("/ws/{roomType}/{roomUUID}")
+@ServerEndpoint(value = "/ws/{roomType}/{roomUUID}", configurator = CustomConfigurator.class)
 public class SoketServer {
 	private final Logger LOGGER = Logger.getLogger(SoketServer.class.getName());
 
@@ -23,8 +27,24 @@ public class SoketServer {
 	private ChatRoomManager chatRoomManager = ChatRoomManager.getInstance();
 
 	@OnOpen
-	public void onOpen(Session session, @PathParam("roomType") String roomType,
-			@PathParam("roomUUID") String roomUUID) {
+	public void onOpen(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID, EndpointConfig config) {
+		HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
+
+		if (httpSession != null) {
+			String uuid = (String) httpSession.getAttribute("uuid");
+			String nickname = (String) httpSession.getAttribute("nickname");
+			String profileImage = (String) httpSession.getAttribute("profileImage");
+			Integer score = (Integer) httpSession.getAttribute("score");
+
+			Map<String, Object> userInfo = new HashMap<>();
+			userInfo.put("uuid", uuid);
+			userInfo.put("nickname", nickname);
+			userInfo.put("profileImage", profileImage);
+			userInfo.put("score", score);
+
+			session.getUserProperties().put("userInfo", userInfo);
+		}
+
 		if (!chatRoomManager.addClientToRoom(roomType, roomUUID, session)) {
 			closeSession(session);
 			return;
@@ -32,15 +52,13 @@ public class SoketServer {
 
 		if ("playing".equals(roomType)) {
 			Set<Session> clients = chatRoomManager.getClientsInRoom(roomType, roomUUID);
-			if (clients.size() == 2) {
+			if (clients.size() == 2)
 				startGameForAllClients(roomType, roomUUID, clients);
-			}
 		}
 	}
 
 	@OnMessage
-	public void onMessage(String message, Session session, @PathParam("roomType") String roomType,
-			@PathParam("roomUUID") String roomUUID) throws IOException {
+	public void onMessage(String message, Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) throws IOException {
 		String roomKey = roomType + "/" + roomUUID;
 
 		// 로그인 세션 연결 이전 테스트로 세션 구분하기 위한 코드
@@ -69,8 +87,7 @@ public class SoketServer {
 	}
 
 	@OnClose
-	public void onClose(Session session, @PathParam("roomType") String roomType,
-			@PathParam("roomUUID") String roomUUID) {
+	public void onClose(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) {
 		chatRoomManager.removeClientFromRoom(roomType, roomUUID, session);
 	}
 
@@ -81,10 +98,8 @@ public class SoketServer {
 
 	private void startGameForAllClients(String roomType, String roomUUID, Set<Session> clients) {
 		String roomKey = roomType + "/" + roomUUID;
-		String topic = "과일";
-		String keyword = "사과";
 		int rounds = 3;
-		GameStartDto gameStartDto = new GameStartDto(roomKey, clients, topic, keyword, rounds);
+		GameStartDto gameStartDto = new GameStartDto(roomKey, rounds, clients);
 		liarGameManager.startGame(gameStartDto);
 	}
 
