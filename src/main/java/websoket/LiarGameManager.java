@@ -9,48 +9,58 @@ import org.json.JSONObject;
 import jakarta.websocket.Session;
 
 public class LiarGameManager {
-	private static final String TYPE_MESSAGE = "MESSAGE";
-	private static final String TYPE_SET_TURN = "SET_TURN";
-	private static final String TYPE_GAME_START = "GAME_START";
-	private static final String TYPE_CUR_TURN = "CUR_TURN";
-
-	private static final String TURN = "turn";
-	private static final String IS_END = "isEnd";
-	private static final String CURRENT_TURN = "currentTurn";
-
+	private static final LiarGameManager INSTANCE = new LiarGameManager();
 	private final Logger LOGGER = Logger.getLogger(LiarGameManager.class.getName());
 
-	private Map<String, Map<String, Object>> gameSessions = new HashMap<>();
-	private Map<String, String> playerAssignments = new HashMap<>();
+	private Map<String, GameSession> gameSessions = new HashMap<>();
 
-	private LiarGameManager() {
-	}
-
-	private static final LiarGameManager INSTANCE = new LiarGameManager();
+	private LiarGameManager() {}
 
 	public static LiarGameManager getInstance() {
 		return INSTANCE;
 	}
 
-	public void startGame(final GameStartDto gameStartDto) {
-		initializeGame(gameStartDto);
-
+	/*
+	 * 인원수가 모이면 게임 초기화 및 시작 
+	 * 1. 클라이언트 모두 중 라이어를 임의 배정 
+	 * 2. 현재 클라이언트들의 정보를 모두에게 건내줌
+	 * 3.현재 턴 순서를 배정하고 각자의 순서 정보를 넘겨줌 
+	 * 4. 주제와 제시어를 응답 -> 라이어의 경우 제시어는 응답하지 않음 
+	 * 5. 시작을 알리기 위해 현재 라운드(1)와 턴정보(1)를 보내줌
+	 */
+	public void startGame(GameStartDto gameStartDto) {
 		String roomKey = gameStartDto.getRoomKey();
-		Map<String, Object> gameSession = gameSessions.get(roomKey);
-		boolean isGameEnded = (boolean) gameSession.get(IS_END);
-		if (isGameEnded) {
-			endGame(gameStartDto.getRoomKey());
-		}
+		int rounds = gameStartDto.getRounds();
+		
+		List<Session> clients = new ArrayList<>(gameStartDto.getClients());
+		Session liar = assignLiar(clients);
+		
+		String topic = "음식";
+		String keyword = "사과";
+
+		GameSession gameDto = new GameSession(liar.getId(), topic, keyword, rounds, clients);
+		gameSessions.put(roomKey, gameDto);
+
+		sendClientInfo(clients);
+		assignTurns(clients);
+		distributeWords(clients, liar, topic, keyword);
+
+		sendChangeRound(clients, 1);
+		sendTurnInfo(clients, 1);
 	}
 
-	// 게임 메시지 처리
+	/*
+	 * 게임 메시지 처리 
+	 * 1. 라운드 전체 종료시 모두 채팅을 할 수 있음 
+	 * 2. 라운드 진행 시 현재 턴인 플레이어만 채팅을 할 수 있음
+	 */
 	public boolean processGameMessage(String roomKey, Session session, String message) {
-		Map<String, Object> gameSession = gameSessions.get(roomKey);
-		int currentTurn = (int) gameSession.get(CURRENT_TURN);
+		GameSession gameSession = gameSessions.get(roomKey);
+		int currentTurn = gameSession.getCurrentTurn();
 
-		int rounds = (int) gameSession.get("rounds");
-		int round = (int) gameSession.get("round");
-
+		int rounds = gameSession.getRounds();
+		int round = gameSession.getRound();
+		
 		if (round > rounds) {
 			broadcastMessage(roomKey, session.getId(), message);
 			return true;
@@ -62,11 +72,15 @@ public class LiarGameManager {
 		return false;
 	}
 
-	// 게임 턴 정보 업데이트
-	private void updateGameTurn(Map<String, Object> gameSession, String roomKey) {
-		@SuppressWarnings("unchecked")
-		List<Session> clients = (List<Session>) gameSession.get("clients");
-		int currentTurn = (int) gameSession.get(CURRENT_TURN);
+	/*
+	 * 게임 턴 정보 업데이트 후 > 현재 턴 정보 응답 
+	 * 메서드 호출 턴을 증가시키고 라운드 정보 계산 및 응답 메서드 호출 
+	 * 라운드가 종료되어 false를 반환할 경우 턴 정보 업데이트X 
+	 * 아닐경우 계산된 턴 정보를 클라이언트 모두에게 전달
+	 */
+	private void updateGameTurn(GameSession gameSession, String roomKey) {
+		List<Session> clients = gameSession.getClients();
+		int currentTurn = gameSession.getCurrentTurn();
 		currentTurn = (currentTurn % clients.size()) + 1;
 
 		if (currentTurn == 1) {
@@ -75,87 +89,68 @@ public class LiarGameManager {
 			}
 		}
 
-		gameSession.put(CURRENT_TURN, currentTurn);
+		gameSession.setCurrentTurn(currentTurn);
 		sendTurnInfo(clients, currentTurn);
 	}
 
-	// 현재 클라이언트 차례인지 확인
+	// 현재 클라이언트 차례인지 확인하여 true false 반환
 	private boolean isCurrentPlayerTurn(Session session, int currentTurn) {
-		return session.getUserProperties().get(TURN) != null
-				&& (Integer) session.getUserProperties().get(TURN) == currentTurn;
+		return session.getUserProperties().get(GameConstants.TURN) != null
+				&& (Integer) session.getUserProperties().get(GameConstants.TURN) == currentTurn;
 	}
 
 	// 현재 턴 정보를 클라이언트로 전송하는 메서드
 	private void sendTurnInfo(List<Session> clients, int currentTurn) {
 		for (Session client : clients) {
-			try {
-				sendJsonMessage(client, createJsonMessage(TYPE_CUR_TURN, CURRENT_TURN, currentTurn));
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
-			}
+				sendJsonMessage(client, JsonUtil.createJsonMessage(
+						GameConstants.TYPE_CUR_TURN,
+						GameConstants.CURRENT_TURN, currentTurn));
 		}
 	}
 
 	// 데이터 정리 및 게임 종료
-	private void endGame(final String ROOM_KEY) {
-		gameSessions.remove(ROOM_KEY);
-		playerAssignments.remove(ROOM_KEY);
+	private void endGame(String roomKey) {
+		gameSessions.remove(roomKey);
 	}
 
-	// 게임 초기화
-	private void initializeGame(GameStartDto gameStartDto) {
-		String roomKey = gameStartDto.getRoomKey();
-		List<Session> clients = new ArrayList<>(gameStartDto.getClients());
-		Session liar = assignLiar(roomKey, clients);
-
-		gameSessions.put(roomKey, createGameSession(liar.getId(), gameStartDto.getTopic(), gameStartDto.getKeyword(),
-				gameStartDto.getRounds(), clients));
-
-		sendClientInfo(clients);
-		assignTurns(clients);
-		distributeWords(clients, liar, gameStartDto.getTopic(), gameStartDto.getKeyword());
-		sendTurnInfo(clients, 1);
-		sendChangeRound(clients, 1);
-	}
-
-	// 유저 기본 정보 전달 -> 추후 로그인한 유저 uud, 닉네임, 프로필 이미지 정보로 변경
+	/*
+	 * 유저 기본 정보 전달 추후 로그인한 유저 uud, 닉네임, 프로필 이미지 정보로 변경
+	 * 현재 자동생성 클라이언트 id, nickname, profileImage를 건내줌
+	 */
 	private boolean sendClientInfo(List<Session> clients) {
-		List<Map<String, Object>> playersInfo =  new ArrayList<>();
-		
+		List<Map<String, Object>> playersInfo = new ArrayList<>();
+
 		for (Session client : clients) {
 			Map<String, Object> clientInfo = new HashMap<>();
 			clientInfo.put("uuid", client.getId());
 			clientInfo.put("nickname", "nickname");
 			clientInfo.put("image", "profileImage");
-		
+
 			playersInfo.add(clientInfo);
 		}
-		
+
 		for (Session client : clients) {
-			try {
-				JSONObject jsonObject = createJsonMessage("CLIENT_INFO", "clientInfo", playersInfo);
+				JSONObject jsonObject = JsonUtil.createJsonMessage(
+						GameConstants.TYPE_CLIENT_INFO,
+						GameConstants.CLIENT_INFO, playersInfo);
 				sendJsonMessage(client, jsonObject);
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
-				return false;
-			}
 		}
 		return true;
 	}
 
+	/*
+	 * 라운드 증가 처리 후 라운드 정보 전송
+	 * 라운드 종료 시 종료 알림 메서드 호출
+	 */
+	private boolean sendRoundInfo(GameSession gameSession, String roomKey, int currentTurn) {
+		List<Session> clients = (List<Session>) gameSession.getClients();
 
-	// 라운드 정보 전송
-	private boolean sendRoundInfo(Map<String, Object> gameSession, String roomKey, int currentTurn) {
-		@SuppressWarnings("unchecked")
-		List<Session> clients = (List<Session>) gameSession.get("clients");
-
-		int rounds = (int) gameSession.get("rounds");
-		int round = (int) gameSession.get("round");
-		round++;
-		gameSession.put("round", round);
+		int rounds = gameSession.getRounds();
+		int round = gameSession.getRound();
+		gameSession.setRound(round+1);
 
 		if (round > rounds) {
-			sendNewRound(clients);
+			sendRoundEndMessage(clients);
 			return false;
 		}
 
@@ -163,52 +158,34 @@ public class LiarGameManager {
 		return true;
 	}
 
+	// 라운드 종료 처리
+	private void sendRoundEndMessage(List<Session> clients) {
+		for (Session client : clients) {
+				JSONObject jsonObject = JsonUtil.createJsonMessage(
+						GameConstants.TYPE_ROUND_END,
+						GameConstants.MESSAGE, "라운드 종료");
+				sendJsonMessage(client, jsonObject);
+		}
+	}
+
+	// 라운드 증가 메시지 응답
 	private void sendChangeRound(List<Session> clients, int round) {
 		for (Session client : clients) {
-			try {
-				JSONObject jsonObject = createJsonMessage("ROUND_INFO", "round", round);
+				JSONObject jsonObject = JsonUtil.createJsonMessage(
+						GameConstants.TYPE_ROUND_INFO,
+						GameConstants.ROUND, round);
 				sendJsonMessage(client, jsonObject);
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
-			}
 		}
 	}
 
-	private void sendNewRound(List<Session> clients) {
-		for (Session client : clients) {
-			try {
-				JSONObject jsonObject = createJsonMessage("ROUND_END", "message", "라운드 종료");
-				sendJsonMessage(client, jsonObject);
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
-			}
-		}
-	}
-
-	// 게임 세션 정보 생성
-	private Map<String, Object> createGameSession(String liarId, String topic, String keyword, int rounds,
-			List<Session> clients) {
-		Map<String, Object> gameSession = new HashMap<>();
-		gameSession.put("liarId", liarId);
-		gameSession.put("topic", topic);
-		gameSession.put("keyword", keyword);
-		gameSession.put("rounds", rounds);
-		gameSession.put("clients", clients);
-		gameSession.put("currentTurn", 1);
-		gameSession.put("round", 1);
-		gameSession.put("isEnd", false);
-		return gameSession;
-	}
-
-	// 라이어 지정
-	private Session assignLiar(String roomKey, List<Session> clientList) {
+	// 클라이언트 셔플 후 0번 클라이언트에게 라이어 역할 배정
+	private Session assignLiar(List<Session> clientList) {
 		Collections.shuffle(clientList);
 		Session liar = clientList.get(0);
-		playerAssignments.put(roomKey, liar.getId());
 		return liar;
 	}
 
-	// 클라이언트 그룹 순서 배정하기
+	// 클라이언트 모두를 받아 순서를 배정
 	private void assignTurns(List<Session> clients) {
 		List<Session> clientList = new ArrayList<>(clients);
 		for (int i = 0; i < clients.size(); i++) {
@@ -216,57 +193,56 @@ public class LiarGameManager {
 		}
 	}
 
-	// 순서 기록 및 전달
+	// 배정받은 순서 할당 및 메시지 전달
 	private void assignTurnToClient(Session client, int turn) {
-		try {
-			client.getUserProperties().put(TURN, turn);
-			sendJsonMessage(client, createJsonMessage(TYPE_SET_TURN, TURN, turn));
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
+			client.getUserProperties().put(GameConstants.TURN, turn);
+			sendJsonMessage(client, JsonUtil.createJsonMessage(
+					GameConstants.TYPE_SET_TURN,
+					GameConstants.TURN, turn));
 	}
 
-	// 단어 분배
+	/*
+	 * 클라이언트 모두와 라이어, 주제, 키워드를 받아
+	 *  라이어가 아닐 경우 주제와 키워드 
+	 *  라이어일 경우 주제만 전달
+	 */
 	private void distributeWords(List<Session> clients, Session liar, String topic, String keyword) {
 		for (Session client : clients) {
-			try {
-				JSONObject wordMessage = createJsonMessage(TYPE_GAME_START, "topic", topic, "keyword",
-						client.equals(liar) ? null : keyword); // 라이어는 키워드 제외
+				JSONObject wordMessage = JsonUtil.createJsonMessage(
+						GameConstants.TYPE_GAME_START, 
+						GameConstants.TOPIC, topic,
+						GameConstants.KEYWORD, client.equals(liar) ? null : keyword); // 라이어는 키워드 제외
 				sendJsonMessage(client, wordMessage);
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
-			}
 		}
 	}
+	
+	private void voteMessage() {
+		
+	}
+	
 
-	// 메시지 브로드캐스트
+	// 채팅 메시지 전체 클라이언트에게 브로드캐스트
 	private void broadcastMessage(String roomKey, String senderId, String message) {
-		Map<String, Object> gameSession = gameSessions.get(roomKey);
-		@SuppressWarnings("unchecked")
-		List<Session> clients = (List<Session>) gameSession.get("clients");
+		GameSession gameSession = gameSessions.get(roomKey);
+		List<Session> clients = gameSession.getClients();
 
-		JSONObject chatMessage = createJsonMessage(TYPE_MESSAGE, "sessionId", senderId, "message", message);
+		JSONObject chatMessage = JsonUtil.createJsonMessage(
+				GameConstants.TYPE_MESSAGE,
+				GameConstants.SESSION_ID, senderId,
+				GameConstants.MESSAGE, message);
 		clients.forEach(client -> {
-			try {
 				sendJsonMessage(client, chatMessage);
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
-			}
 		});
 	}
 
-	// JSON 오브젝트 생성
-	private JSONObject createJsonMessage(String type, Object... keyValuePairs) {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("type", type);
-		for (int i = 0; i < keyValuePairs.length; i += 2) {
-			jsonObject.put(String.valueOf(keyValuePairs[i]), keyValuePairs[i + 1]);
+	// JSON 메시지를 클라이언트에게 전송
+	private boolean sendJsonMessage(Session client, JSONObject message){
+		try {
+			client.getBasicRemote().sendText(message.toString());
+			return true;
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+			return false;
 		}
-		return jsonObject;
-	}
-
-	// JSON 메시지 전송
-	private void sendJsonMessage(Session client, JSONObject message) throws IOException {
-		client.getBasicRemote().sendText(message.toString());
 	}
 }
