@@ -14,25 +14,19 @@
 <body>
 	<div id="lobby-wrap">
 		<header id="header">
+			<div id="backButton" class="back-button"></div>
 			<h1>Lamong Us</h1>
-
-			<img src="https://search.pstatic.net/sunny/?src=https%3A%2F%2Fw7.pngwing.com%2Fpngs%2F1004%2F26%2Fpng-transparent-emojipedia-space-invaders-sticker-computer-space-invaders-purple-violet-text.png&type=sc960_832" alt="Profile Picture">
 			<h3>${log.nickname}</h3>
 			<p>1123점</p>
 			<div class="header-menu">
 				<button>최근 플레이</button>
 				<button>차단 목록</button>
 			</div>
-			<div class="user-actions">
-				<a href="/v1/members?command=logout" class="text-link">로그아웃</a> <a href="/v1/members?command=delete" class="text-link">탈퇴</a>
-			</div>
 		</header>
 
 		<main class="main">
 			<div class="main-content">
 				<section class="profile-section">
-					<img src="https://via.placeholder.com/80" alt="Profile Picture">
-
 					<div class="info">
 						<h2>${log.username}</h2>
 						<p>${log.email}</p>
