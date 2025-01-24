@@ -8,6 +8,9 @@ window.onload = () => {
 	fetchRoomList(currentPage);
 	setupEventListeners();
 	initializeRoomCreation();
+	
+	
+
 };
 
 const setupEventListeners = () => {
@@ -29,12 +32,13 @@ const handleCreateRoom = async (e) => {
 	await createRoom(currentPage, fetchRoomList);
 };
 
-const handleJoinRoomSubmit = (e) => {
+const handleJoinRoomSubmit = async(e) => {
 	e.preventDefault();
 	const roomNumber = document.getElementById('roomNumber').value.trim();
 
 	if (validateRoomNumber(roomNumber)) {
-		fetchRoom(roomNumber);
+		const data = await fetchRoomByNumber(roomNumber);
+		handleRoomDetails(data.GameRoom);
 	}
 };
 
@@ -52,51 +56,48 @@ const fetchRoomList = async (page = 1) => {
 	}
 };
 
-const fetchRoom = async (roomNumber) => {
+const fetchRoomByNumber = async (roomNumber) => {
 	try {
 		const response = await fetch(`/v1/game-room?room_number=${roomNumber}`);
 		if (!response.ok) {
-			handleFetchError(response);
+			if (response.status === 400 || response.status === 404) {
+				showErrorModal("없는 방 번호입니다.");
+			}
 			return;
 		}
-
 		const data = await response.json();
-		handleRoomDetails(data.GameRoom);
+		return data;
 	} catch (error) {
 		console.error("Error fetching room details:", error);
 	}
 };
 
-const handleFetchError = (response) => {
-	if (response.status === 400 || response.status === 404) {
-		showErrorModal("없는 방 번호입니다.");
-	}
-};
-
 const handleRoomDetails = (room) => {
-	const roomNumberInput = document.getElementById('roomNumber');
-	roomNumberInput.disabled = false;
+	const inputRoomNum = document.getElementById('roomNumber');
+	inputRoomNum.disabled = true;
 
-	if (room.is_private) {
+	if (room.is_private){
 		document.getElementById('passwordField').style.display = 'block';
-		handlePrivateRoom(room);
-	} else {
-		joinRoom(room.room_code);
+		const joinRoomBtn = document.getElementById('joinRoomBtn');
+		joinRoomBtn.addEventListener('click', clickJoinRoomButton(room));
 	}
+	else
+		joinRoom(room.room_code);
 };
 
-const handlePrivateRoom = (room) => {
-	const roomPw = room.password;
-	document.getElementById('joinRoomBtn').addEventListener('click', (e) => {
-		e.preventDefault();
-		const inputPw = document.getElementById('roomPassword').value.trim();
-		if (inputPw === roomPw) {
-			document.getElementById('passwordField').style.display = 'none';
-			joinRoom(room.room_code);
-		} else {
-			document.getElementById('roomPasswordError').style.display = 'block';
-		}
-	});
+const clickJoinRoomButton = (room) => {
+	const inputPw = document.getElementById('roomPassword');
+
+	if (inputPw.value.trim() === "" || inputPw.style.display === "none") {
+		return;
+	}
+
+	if (inputPw.value === room.password) {
+		document.getElementById('passwordField').style.display = 'none';
+		joinRoom(room.room_code);
+	} else {
+		document.getElementById('roomPasswordError').style.display = 'block';
+	}
 };
 
 const joinRoom = async (roomCode) => {
@@ -149,10 +150,10 @@ const updateRoomList = (rooms) => {
 
 const createRoomWrapper = (room) => {
 	const roomWrapper = document.createElement("div");
-	roomWrapper.classList.add("room-wrapper"); 
+	roomWrapper.classList.add("room-wrapper");
 
-	const roomElement = createRoomElement(room); 
-	roomWrapper.appendChild(roomElement); 
+	const roomElement = createRoomElement(room);
+	roomWrapper.appendChild(roomElement);
 
 	return roomWrapper;
 };
@@ -177,13 +178,11 @@ const createRoomElement = (room) => {
 		</div>
 	`;
 
-	// 클릭 이벤트 처리
 	roomElement.addEventListener("click", (e) => {
 		const roomNumber = e.currentTarget.getAttribute("data-room-number");
-		console.log("클릭한 방 번호:", roomNumber); // 방 번호 출력
+		console.log("클릭한 방 번호:", roomNumber);
 
-		// 방 번호를 사용하여 원하는 작업 수행
-		fetchRoom(roomNumber); // 예시: 해당 방 정보를 가져오는 함수 호출
+		fetchRoomByNumber(roomNumber);
 	});
 
 	return roomElement;
@@ -223,6 +222,10 @@ const openRoomModal = () => toggleRoomModalVisibility(true);
 const closeRoomModal = () => {
 	toggleRoomModalVisibility(false);
 	document.getElementById('passwordField').style.display = 'none';
+	document.getElementById('roomPassword').value = '';
+
+	const roomNumberInput = document.getElementById('roomNumber');
+	roomNumberInput.disabled = false;
 	resetJoinRoomForm();
 };
 

@@ -1,8 +1,7 @@
 import { validateRoomTitle, validateMaxPlayers, validateRoundCount, validatePassword } from './room-validation.js';
 
 const ROOM_TITLES = [
-	"이선구와 아이들", "더조은 학원 탈출", "선구가 좋아하는 라이어게임", "성원이가 반탄이 된 이유", "구라쟁이를 모십니다",
-	"양치기도 울고갈 라이어 구함", "라이어 게임 뿌수기", "성원이만 들어와", "주제는 이선구 팀장 해고", "하츄핑을 넘어설 구라핑 들어오쇼"
+	"TEST 1", "TEST 2"
 ];
 
 const togglePasswordField = () => {

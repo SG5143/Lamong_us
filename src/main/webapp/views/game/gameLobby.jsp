@@ -14,7 +14,6 @@
 
 	<body>
 		<div id="main">
-
 			<div id="cont-wrap">
 				<div id="btn-wrap">
 					<button id="createRoomBtn">방만들기</button>
@@ -43,70 +42,90 @@
 
 							<div id="modal-cont">
 								<div>
-									<label for="roomTitle">방 제목</label>
-									<input type="text" id="roomTitle" name="roomTitle" required>
-								</div>
-								<span class="error-msg" id="roomTitleError">방 제목을 입력해주세요.</span>
+									<div class="input-wrap">
+										<span>방 제목</span>
 
-								<div class="grid-pair">
-									<div>
-										<label for="maxPlayers">인원수</label>
 										<div>
-											<input type="number" id="maxPlayers" name="maxPlayers" value="3" required>
+											<input type="text" id="roomTitle" name="roomTitle" required>
+											<span class="error-msg" id="roomTitleError">방 제목을 입력해주세요.</span>
 										</div>
 
 									</div>
-									<span class="error-msg" id="maxPlayersError">인원수를 정해주세요.</span>
-									<span class="error-msg" id="maxPlayersLimitError">인원수는 최소3명 최대8명까지 설정 가능합니다.</span>
+								</div>
 
-									<div>
-										<label for="roundCount">라운드 수</label>
-										<input type="number" id="roundCount" name="roundCount" value="2" required>
+								<div>
+									<div class="input-wrap">
+										<span>인원수</span>
+
+										<div>
+											<input type="number" id="maxPlayers" name="maxPlayers" value="3" required>
+											<span class="error-msg" id="maxPlayersError">인원수를 정해주세요.</span>
+											<span class="error-msg" id="maxPlayersLimitError">3명에서 8명까지 가능합니다.</span>
+										</div>
+
+
 									</div>
-									<span class="error-msg" id="roundCountError">라운드 수를 정해주세요.</span>
-									<span class="error-msg" id="roundCountLimitError">라운드 수는 2~5회 설정 가능합니다.</span>
+
 
 								</div>
 
-								<div id="password-wrap">
+								<div>
+									<div class="input-wrap">
+										<span>라운드수</span>
+										<div>
 
-									<div>
-										<label for="isPrivate">비밀번호 설정</label>
-										<input type="checkbox" id="isPrivate" name="isPrivate">
-									</div>
-
-
-									<div>
-										<label for="password" id="passwordLabel" style="display: none;">비밀번호</label>
-										<input type="password" id="password" name="password" style="display: none;" maxlength="4">
+											<input type="number" id="roundCount" name="roundCount" value="2" required>
+											<span class="error-msg" id="roundCountError">라운드 수를 정해주세요.</span>
+											<span class="error-msg" id="roundCountLimitError">2~5회까지 가능합니다.</span>
+										</div>
 
 									</div>
+
+
 								</div>
-								<span class="error-msg" id="passwordError">비밀번호를 입력해주세요.</span>
-								<span class="error-msg" id="passwordLimitError">비밀번호는 4자리로 설정해주세요.</span>
+
+
+								<div>
+									<div class="pw-wrap">
+										<div>
+											<span>비밀번호</span>
+											<input type="checkbox" id="isPrivate" name="isPrivate">
+										</div>
+										<div>
+
+											<input type="password" id="password" name="password" style="display: none;" maxlength="4">
+											<span class="error-msg" id="passwordError">비밀번호를 입력해주세요.</span>
+											<span class="error-msg" id="passwordLimitError">비밀번호는 4자리로 설정해주세요.</span>
+										</div>
+
+									</div>
+
+								</div>
+
 							</div>
-
-
-
-
-
 							<button type="submit" id="submitButton">방 만들기</button>
-
-
 						</form>
 
 						<!-- 방번호 입력 입장 -->
 						<form method="POST" id="joinRoomForm">
 							<h2>방번호 입장</h2>
-							<label for="roomNumber">방 번호</label>
-							<input type="text" id="roomNumber" name="roomNumber" placeholder="입장하실 방 번호를 입력해주세요." required>
+							<div class="input-wrap">
+								<span>방 번호</span>
+								<input type="text" id="roomNumber" name="roomNumber" placeholder="입장하실 방 번호를 입력해주세요." required>
+							</div>
+
 							<div id="passwordField" style="display: none;">
-								<label for="roomNumber">방 비밀번호</label>
-								<input type="password" id="roomPassword" placeholder="비밀번호 입력" maxlength="4">
-								<span class="error-msg" id="roomPasswordError">비밀번호가 일치하지 않습니다.</span>
+								<div class="input-wrap">
+									<span>비밀번호</span>
+									<div>
+										<input type="password" id="roomPassword" placeholder="비밀번호 입력" maxlength="4">
+										<span class="error-msg" id="roomPasswordError">비밀번호가 일치하지 않습니다.</span>
+									</div>
+
+								</div>
+
 							</div>
 							<span class="error-msg" id="roomNumError"></span>
-
 							<button type="submit" id="joinRoomBtn">입장</button>
 						</form>
 

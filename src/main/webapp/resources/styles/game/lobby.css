@@ -8,9 +8,6 @@
 body {
 	background-color: var(--background-color);
 }
-label {
-	text-align: left;
-}
 
 input {
 	outline: none;
@@ -20,6 +17,10 @@ input {
 
 input:focus {
 	background-color: none;
+}
+
+form>h2 {
+	margin: 20px auto;
 }
 
 #main {
@@ -118,19 +119,55 @@ input:focus {
 	align-items: center;
 }
 
+#modal-cont>div {
+	padding-bottom: 4px;
+}
 
-#modal-cont {
-    display: grid;
-    grid-template-columns: 1fr; /* 기본적으로 1열 */
-    gap: 16px;
-    max-width: 400px;
-    margin: auto;
-  }
-
-#modal-cont div {
+.input-wrap {
 	display: flex;
+	align-items: center;
+	margin-bottom: 2px;
+}
+
+.input-wrap>input {
+	flex: 1;
+}
+
+.input-wrap>span {
+	width: 90px;
+	text-align: left;
+}
+
+.input-wrap>div {
+	width: 90px;
+	display: flex;
+	flex: 1;
 	flex-direction: column;
-	gap: 5px;
+}
+
+.input-wrap>div>span {
+	text-align: left;
+	margin-right: 5px;
+}
+
+.pw-wrap {
+	display: flex;
+	align-items: center;
+}
+
+.pw-wrap>div:first-child {
+	width: 90px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.pw-wrap>div:last-child {
+	flex: 1;
+}
+
+.pw-wrap>div:last-child span {
+	text-align: left;
 }
 
 #btn-wrap {
@@ -146,12 +183,21 @@ input:focus {
 
 button {
 	min-width: 80px;
-	color: white;
+	color: var(--background-color);
 	padding: 10px;
 	border-radius: 5px;
 	cursor: pointer;
-	color: black;
 }
+
+#submitButton, #joinRoomBtn {
+	width: 100%;
+	margin-top: 20px;
+}
+
+#passwordField {
+	display: flex;
+}
+
 
 .modal {
 	display: none;
@@ -172,40 +218,51 @@ button {
 	padding: 20px;
 	width: 30%;
 	min-width: 300px;
+	min-height: 200px;
 	border-radius: 8px;
 	background-color: var(--background-color);
 	color: white;
 }
 
 .close-btn {
-	color: #aaa;
+	color: var(--color-theme-04);
 	font-size: 28px;
 	font-weight: bold;
 	position: absolute;
-	right: 10px;
-	top: 0px;
+	right: 20px;
+	top: 20px;
+	font-size: 28px;
+	transition: 0.2s;
 }
 
 .close-btn:hover, .close-btn:focus {
-	color: black;
 	text-decoration: none;
 	cursor: pointer;
+	color: white;
+}
+
+#roomNumber:disabled {
+	color:white;
 }
 
 #joinRoomForm {
 	display: none;
 }
 
-
-/*#password-wrap>div {*/
-/*	display: flex;*/
-/*}*/
+#roomPasswordError {
+	display: none;
+}
 
 .error-msg {
 	font-size: 12px;
 	font-weight: bold;
 	color: #D43F42;
 	display: none;
+	margin-top: 4px;
+}
+
+#errorMessage {
+	margin-top: 40px;
 }
 
 #lobby-wrap {
