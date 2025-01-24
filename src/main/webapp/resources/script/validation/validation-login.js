@@ -1,15 +1,16 @@
 import { updateErrorElementStyle, validateUsername, validatePassword } from "./validation.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+	const form = document.querySelector("form");
+	
 	const usernameInput = document.getElementById("username-login");
 	const passwordInput = document.getElementById("password-login");
-	const form = document.querySelector("form");
-	const loginButton = form.querySelector("button[type='submit']");
 
 	const usernameErrorEmpty = document.getElementById("error-msg-username-empty");
 	const usernameErrorPattern = document.getElementById("error-msg-username-pattern");
 	const passwordErrorEmpty = document.getElementById("error-msg-password-empty");
 	const passwordErrorPattern = document.getElementById("error-msg-password-pattern");
+	const loginButton = form.querySelector("button[type='submit']");
 
 	const resetErrorMessages = () => {
 		const errMsgGroup = document.getElementsByClassName("error-msg");
@@ -35,10 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		return true;
 	};
 
-	// 로그인 폼 제출 이벤트
 	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
-		console.log("Login form submitted");
 		resetErrorMessages();
 
 		const usernameValue = usernameInput.value;
