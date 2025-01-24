@@ -37,7 +37,7 @@ public class LoginFormAction implements Action {
 
 		if (user == null) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_NOT_FOUND, "사용자를 찾을 수 없습니다.");
-			 return;
+			return;
 		}
 
 		if (user.checkPassword(password)) {
@@ -45,8 +45,19 @@ public class LoginFormAction implements Action {
 			HttpSession session = request.getSession();
 			session.setAttribute("log", user);
 
+			JSONObject jsonResponse = new JSONObject();
+			jsonResponse.put("status", HttpServletResponse.SC_OK);
+			jsonResponse.put("message", "로그인 성공");
+			jsonResponse.put("uuid", user.getUuid());
+			jsonResponse.put("apiKey", user.getApiKey());
+
+			String json = jsonResponse.toString();
+
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(json);
+
 			logger.info("로그인 성공: 사용자 " + username + " 세션 생성됨. 세션 ID: " + session.getId());
-			sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "로그인 성공");
 			return;
 		} else {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
