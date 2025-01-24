@@ -5,17 +5,13 @@ import jakarta.websocket.Session;
 
 public class GameStartDto {
 	private String roomKey;
-	private Set<Session> clients;
-	private String topic;
-	private String keyword;
 	private int rounds;
+	private Set<Session> clients;
 
-	public GameStartDto(String roomKey, Set<Session> clients, String topic, String keyword, int rounds) {
+	public GameStartDto(String roomKey, int rounds,  Set<Session> clients) {
 		this.roomKey = roomKey;
-		this.clients = clients;
-		this.topic = topic;
-		this.keyword = keyword;
 		this.rounds = rounds;
+		this.clients = clients;
 	}
 
 	public String getRoomKey() {
@@ -24,14 +20,6 @@ public class GameStartDto {
 
 	public Set<Session> getClients() {
 		return clients;
-	}
-
-	public String getTopic() {
-		return topic;
-	}
-
-	public String getKeyword() {
-		return keyword;
 	}
 
 	public int getRounds() {
