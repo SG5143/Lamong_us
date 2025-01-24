@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const modal = document.getElementById(modalId);
 
 			if (modal) {
+				resetErrorMessages();
 				document.querySelectorAll(".modal").forEach((modal) => {
 					modal.style.display = "none";
 				});
@@ -17,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				modalOverlay.style.display = "flex";
 
 				modal.style.display = "block";
+
 			}
 		});
 	});
@@ -27,7 +29,19 @@ document.addEventListener("DOMContentLoaded", () => {
 			modalOverlay.style.display = "none";
 			document.querySelectorAll(".modal").forEach((modal) => {
 				modal.style.display = "none";
+
+				resetErrorMessages();
 			});
 		});
 	});
+
+	
+	function resetErrorMessages() {
+		const errorMsgElements = document.querySelectorAll('.error-msg-group li');
+		errorMsgElements.forEach((element) => {
+			element.style.display = 'none';
+		});
+	}
+
+
 });
