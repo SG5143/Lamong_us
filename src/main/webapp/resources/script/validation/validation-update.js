@@ -4,7 +4,8 @@ import {
 	formatPhoneString,
 	checkDuplEmail,
 	checkDuplPhone,
-	checkDuplnickname
+	checkDuplnickname,
+	updateErrorElementStyle
 } from "./validation.js";
 
 window.onload = () => {
@@ -17,19 +18,9 @@ window.onload = () => {
 		nickname: document.getElementById("new-nickname"),
 		phone: document.getElementById("new-phone"),
 		email: document.getElementById("new-email"),
-		updateButton: form.querySelector("button[type='submit']"),
 		profileImage: document.getElementById("profile-image"),
-		profileInfo: document.getElementById("profile-info")
-	};
-
-	const showError = (elementId, message) => {
-		const errorElement = document.getElementById(elementId);
-		errorElement.textContent = message;
-		errorElement.style.display = 'block';
-	};
-
-	const hideError = (elementId) => {
-		document.getElementById(elementId).style.display = 'none';
+		profileInfo: document.getElementById("profile-info"),
+		updateButton: form.querySelector("button[type='submit']")
 	};
 
 	elements.password.addEventListener("change", () => {
@@ -45,34 +36,40 @@ window.onload = () => {
 
 	elements.newPassword.addEventListener("change", () => {
 		const isValid = validatePassword(elements.newPassword.value);
-		isValid ? hideError("error-msg-password-pattern") : showError("error-msg-password-pattern", "비밀번호 형식이 올바르지 않습니다.");
+		const errorElement = document.getElementById("error-msg-password-pattern");
+		updateErrorElementStyle(errorElement, "비밀번호 형식이 올바르지 않습니다.", !isValid);
 	});
 
 	elements.confirmPassword.addEventListener("change", () => {
 		const isMatched = elements.newPassword.value === elements.confirmPassword.value;
-		isMatched ? hideError("error-msg-confirm-password") : showError("error-msg-confirm-password", "비밀번호가 일치하지 않습니다.");
+		const errorElement = document.getElementById("error-msg-confirm-password");
+		updateErrorElementStyle(errorElement, "비밀번호가 일치하지 않습니다.", !isMatched);
 	});
 
 	elements.phone.addEventListener("change", async (e) => {
 		elements.phone.value = formatPhoneString(e.target.value);
 		const isValid = validatePhone(elements.phone.value);
+		const errorElement = document.getElementById("error-msg-phone");
+
 		if (!isValid) {
-			showError("error-msg-phone", "전화번호 형식이 올바르지 않습니다.");
+			updateErrorElementStyle(errorElement, "전화번호 형식이 올바르지 않습니다.", true);
 		} else if (await checkDuplPhone(elements.phone.value)) {
-			showError("error-msg-phone", "이미 사용 중인 전화번호입니다.");
+			updateErrorElementStyle(errorElement, "이미 사용 중인 전화번호입니다.", true);
 		} else {
-			hideError("error-msg-phone");
+			updateErrorElementStyle(errorElement, "", false);
 		}
 	});
 
 	elements.email.addEventListener("change", async () => {
 		const isDuplicate = await checkDuplEmail(elements.email.value);
-		isDuplicate ? showError("error-msg-email", "이미 사용 중인 이메일입니다.") : hideError("error-msg-email");
+		const errorElement = document.getElementById("error-msg-email");
+		updateErrorElementStyle(errorElement, "이미 사용 중인 이메일입니다.", isDuplicate);
 	});
 
 	elements.nickname.addEventListener("change", async () => {
 		const isDuplicate = await checkDuplnickname(elements.nickname.value);
-		isDuplicate ? showError("error-msg-nickname", "이미 사용 중인 닉네임입니다.") : hideError("error-msg-nickname");
+		const errorElement = document.getElementById("error-msg-nickname");
+		updateErrorElementStyle(errorElement, "이미 사용 중인 닉네임입니다.", isDuplicate);
 	});
 
 	elements.updateButton.addEventListener("click", async (e) => {
@@ -81,6 +78,9 @@ window.onload = () => {
 
 		const apiKey = sessionStorage.getItem("apiKey");
 		const uuid = sessionStorage.getItem("uuid");
+
+		console.log("API Key:", apiKey);
+		console.log("UUID:", uuid);
 
 		if (!apiKey || !uuid) {
 			alert("API 키 또는 사용자 정보가 유효하지 않습니다.");
@@ -106,10 +106,14 @@ window.onload = () => {
 			formData.append("profile_image", elements.profileImage.files[0]);
 		}
 
+		updateButton.disabled = true;
+
 		try {
-			const response = await fetch("/v1/user/update", {
+			const response = await fetch("/v1/members?command=update", {
 				method: "PATCH",
-				headers: { "Authorization": `Bearer ${apiKey}` },
+				headers: {
+					"Authorization": `Bearer ${apiKey}`,
+				},
 				body: formData
 			});
 
@@ -122,6 +126,8 @@ window.onload = () => {
 		} catch (error) {
 			console.error("업데이트 요청 중 오류 발생", error);
 			alert("회원 정보 업데이트 요청 중 오류가 발생했습니다.");
+		} finally {
+			elements.updateButton.disabled = false;
 		}
 	});
 };
