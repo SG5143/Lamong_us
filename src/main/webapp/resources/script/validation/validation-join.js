@@ -1,7 +1,7 @@
 import { updateErrorElementStyle, validateUsername, validatePassword, validateNickname, validatePhone, validateEmail, checkDuplUsername, checkDuplPhone, checkDuplEmail, checkDuplnickname } from "./validation.js";
 
 window.onload = () => {
-	const form = document.getElementById("form-login");
+	const form = document.getElementById("form-join");
 
 	const username = document.getElementById("username-join");
 	const password = document.getElementById("password-join");

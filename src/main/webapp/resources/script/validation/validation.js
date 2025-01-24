@@ -27,10 +27,13 @@ export const validateEmail = (email) => {
 };
 
 export const validatePhone = (phone) => {
-    const phonePattern = /^(010-\d{4}-\d{4}|010\d{8})$/; 
-    return phonePattern.test(phone);
+	const phonePattern = /^(010-\d{4}-\d{4}|010\d{8})$/;
+	return phonePattern.test(phone);
 };
 
+export const formatPhoneString = (phone) => {
+	return phone.replace(/[^\d]/g, '');
+};
 
 export async function checkDuplUsername(username) {
 	const response = await fetch("/v1/members?command=search-username", {

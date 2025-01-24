@@ -4,109 +4,31 @@ body {
 	background-color: #161719;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	height: 100vh;
 	margin: 0;
+	padding: 0;
+	font-family: 'SB_Aggro_Light', sans-serif;
+	color: white;
 }
 
 .container {
 	text-align: center;
-	color: white;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-}
-
-.button-container {
-	display: flex;
-	width: 400px;
-	padding: 20px;
-}
-
-#modal-overlay {
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.7);
-	z-index: 1000;
-	justify-content: center;
-	align-items: center;
-}
-
-.modal {
-	display: none;
-	background: white;
-	border-radius: 8px;
-	padding: 20px;
-	width: 90%;
-	max-width: 500px;
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-	animation: fadeIn 0.3s ease-in-out;
-}
-
-#play-method-modal {
-	background: #484F5E;
-	color: white;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	padding-top: 30px;
-}
-
-#play-method-modal>h2 {
-	font-size: 32px;
-	margin: 0;
-	text-align: center;
-	width: 100%;
-}
-
-#login-modal {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	height: auto;
-	padding: 30px;
-}
-
-#login-modal h2 {
-	text-align: center;
-	color: black;
-	font-family: 'SB_Aggro_Medium';
-	margin: 0 0 20px 0;
-	font-size: 24px;
-}
-
-#login-modal form, #login-modal .social-login {
-	width: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-}
-
-#login-modal input, #login-modal button {
-	width: 100%;
-	margin-bottom: 10px;
 }
 
 h1 {
 	font-size: 100px;
-	margin-top: 100px;
-	margin-bottom: 0;
-	font-family: 'SB_Aggro_Medium';
+	margin: 100px 0 0;
+	font-family: 'SB_Aggro_Medium', sans-serif;
 	font-weight: normal;
-	font-style: normal;
-	margin-top: 100px;
 }
 
 h2 {
 	font-size: 20px;
-	margin: 0;
-	margin-bottom: 150px;
-	font-family: 'SB_Aggro_Light';
+	margin: 0 0 150px;
 	color: #A9AEBA;
 }
 
@@ -114,14 +36,13 @@ h2 {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	width: 400px;
 	gap: 20px;
 }
 
 .btn {
 	font-size: 18px;
 	padding: 15px 10px;
-	text-align: center;
-	font-family: 'SB_Aggro_Light';
 	border: none;
 	border-radius: 8px;
 	color: white;
@@ -129,17 +50,13 @@ h2 {
 	transition: background-color 0.3s;
 }
 
-.btn-group-mid {
-	display: flex;
-	justify-content: space-between;
-	width: 100%; 
-	gap: 10px;
+button, .btn, [type="submit"], [type="button"] {
+	cursor: pointer;
+	transition: all 0.3s ease;
 }
 
-.btn-group-bottom {
-	display: flex;
-	justify-content: center;
-	gap: 10px;
+button:hover, .btn:hover, [type="submit"]:hover, [type="button"]:hover {
+	opacity: 0.85;
 }
 
 .btn-top {
@@ -148,8 +65,8 @@ h2 {
 }
 
 .btn-mid {
-	flex: 1; 
-	width: 50%; 
+	flex: 1;
+	width: 50%;
 	background-color: #484F5E;
 }
 
@@ -168,14 +85,156 @@ h2 {
 	gap: 10px;
 }
 
-.modal>social-login {
-	widows: 200
+.btn-group-mid {
+	width: 100%;
 }
 
-#btn1 {
-	width: 50px;
+.modal-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 1000;
+	justify-content: center;
+	align-items: center;
+}
+
+.modal {
+	background: white;
+	border-radius: 8px;
+	padding: 30px;
+	max-width: 500px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal p {
+	color: #000;
+}
+
+.modal-content {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	display: flex;
+}
+
+#play-method-modal {
+	background: white;
+	color: black;
+	padding-top: 30px;
+}
+
+#play-method-modal h2 {
+	color: black;
+}
+
+#play-method-modal p {
+	color: black;
+}
+
+.play-method {
+	text-align: left;
+	padding: 20px;
+}
+
+.step {
+	margin-bottom: 20px;
+	position: relative;
+	padding-left: 50px;
+}
+
+.step-number {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 40px;
+	height: 40px;
+	background-color: #578FFF;
+	color: white;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.step h3 {
+	margin: 0 0 10px 0;
+	color: #578FFF;
+}
+
+.step p {
+	margin: 0;
+	line-height: 1.5;
+}
+
+strong {
+	color: #DE3A86;
+}
+
+#login-modal, #join-modal {
+	width: 70%;
+	height: 60%;
+}
+
+.modal h2 {
+	color: black;
+	font-family: 'SB_Aggro_Medium', sans-serif;
+	font-size: 30px;
+	margin: 40px;
+}
+
+.modal form {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.modal input, .modal select, .modal button {
+	width: 70%;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 5px;
+	margin: 10px;
+}
+
+.modal input {
+	height: 30px;
+}
+
+.modal [type="submit"] {
+	background-color: #578FFF;
+	margin: 30px;
+	height: 40px;
+	color: white;
+	height: 40px;
 }
 
 .error-msg-group {
 	display: none;
+	color: red;
+	list-style-type: none;
+	padding: 0;
+	margin-top: 10px;
+}
+
+.error-msg-group li {
+	margin-bottom: 5px;
+}
+
+.close {
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	font-size: 24px;
+	cursor: pointer;
 }

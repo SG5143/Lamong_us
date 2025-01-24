@@ -3,7 +3,6 @@ import { updateErrorElementStyle, validateUsername, validatePassword } from "./v
 document.addEventListener("DOMContentLoaded", () => {
 	const usernameInput = document.getElementById("username-login");
 	const passwordInput = document.getElementById("password-login");
-	
 	const form = document.querySelector("form");
 	const loginButton = form.querySelector("button[type='submit']");
 
@@ -36,17 +35,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		return true;
 	};
 
-	// 로그인 버튼 클릭 이벤트
-	loginButton.addEventListener("click", async (e) => {
+	// 로그인 폼 제출 이벤트
+	form.addEventListener("submit", async (e) => {
 		e.preventDefault();
-		console.log("Login button clicked");
+		console.log("Login form submitted");
 		resetErrorMessages();
 
 		const usernameValue = usernameInput.value;
 		const passwordValue = passwordInput.value;
-
-		console.log("username:", usernameValue);
-		console.log("password:", passwordValue);
 
 		const isUsernameValid = validateField(
 			usernameValue,
@@ -60,9 +56,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			passwordErrorPattern.id
 		);
 
-		if (!isUsernameValid || !isPasswordValid) {
+		if (!isUsernameValid || !isPasswordValid)
 			return;
-		}
+
+		// 로그인 버튼 비활성화 (중복 클릭 방지)
+		loginButton.disabled = true;
 
 		try {
 			// 로그인 API 요청
@@ -79,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const data = await response.json();
 
-			if (data.status === 200) { 
+			if (data.status === 200) {
 				alert("로그인 성공!");
 				window.location.href = "/lobby";
 			} else {
@@ -89,6 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		} catch (error) {
 			console.error("Error during login:", error);
 			alert("로그인 요청 중 오류가 발생했습니다.");
+		} finally {
+			// 요청 완료 후 버튼 다시 활성화
+			loginButton.disabled = false;
 		}
 	});
 });
