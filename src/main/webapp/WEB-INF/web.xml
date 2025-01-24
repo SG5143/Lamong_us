@@ -35,6 +35,24 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>main</servlet-name>
+		<jsp-file>/index.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>main</servlet-name>
+		<url-pattern>/main</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>myPage</servlet-name>
+		<jsp-file>/views/user/myPage.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>myPage</servlet-name>
+		<url-pattern>/myPage</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>gameLobby</servlet-name>
 		<jsp-file>/views/game/gameLobby.jsp</jsp-file>
 	</servlet>
