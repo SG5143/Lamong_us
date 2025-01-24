@@ -10,7 +10,7 @@
 <title>LAMONG US MAIN PAGE</title>
 <link rel="stylesheet" href="/resources/styles/globals.css">
 <link rel="stylesheet" href="/resources/styles/ui/main.css">
-<script type="module" src="resources/script/main-modul.js"></script>
+<script type="module" src="resources/script/main-modal.js"></script>
 <script type="module" src="resources/script/validation/validation-login.js"></script>
 <script type="module" src="resources/script/validation/validation-join.js"></script>
 </head>
@@ -78,8 +78,8 @@
 			<div class="modal-content">
 				<h2>로그인</h2>
 				<form id="login-form" method="POST" action="/v1/login">
-					<input id="username-login" name="username" type="text" placeholder="아이디" required>
-					<input id="password-login" name="password" type="password" placeholder="비밀번호" required>
+					<input id="username-login" name="username" type="text" placeholder="아이디">
+					<input id="password-login" name="password" type="password" placeholder="비밀번호">
 					<ul class="error-msg-group">
 						<li id="error-msg-username-empty">아이디: 필수 정보입니다.</li>
 						<li id="error-msg-username-pattern">아이디: 유효하지 않은 값입니다.</li>
@@ -88,7 +88,7 @@
 					</ul>
 					<button id="login-btn" type="submit">로그인</button>
 				</form>
-				<p>or</p>
+				<div class="line-text">or</div>
 				<button class="social-login" type="button">카카오 로그인</button>
 				<button class="social-login" type="button">구글 로그인</button>
 			</div>
@@ -100,11 +100,35 @@
 			<div class="modal-content">
 				<h2>회원가입</h2>
 				<form id="form-join" method="POST" action="/v1/join">
-					<input id="username-join" name="username" type="text" placeholder="아이디" required>
-					<input id="password-join" name="password" type="password" placeholder="비밀번호" required>
-					<input id="nickname-join" name="nickname" type="text" placeholder="닉네임" required>
-					<input id="phone-join" name="phone" type="tel" placeholder="전화번호" required>
-					<input id="email-join" name="email" type="email" placeholder="이메일" required>
+					<input id="username-join" name="username" type="text" placeholder="아이디">
+					<ul class="error-msg-group">
+						<li id="error-msg-username-empty">아이디: 필수 정보입니다.</li>
+						<li id="error-msg-username-pattern">아이디: 유효하지 않은 값입니다.</li>
+						<li id="error-msg-username-duplicate">아이디: 이미 사용 중입니다.</li>
+					</ul>
+					<input id="password-join" name="password" type="password" placeholder="비밀번호">
+					<ul class="error-msg-group">
+						<li id="error-msg-password-empty">비밀번호: 필수 정보입니다.</li>
+						<li id="error-msg-password-pattern">비밀번호: 유효하지 않은 값입니다.</li>
+					</ul>
+					<input id="nickname-join" name="nickname" type="text" placeholder="닉네임">
+					<ul class="error-msg-group">
+						<li id="error-msg-nickname-empty">닉네임: 필수 정보입니다.</li>
+						<li id="error-msg-nickname-pattern">닉네임: 유효하지 않은 값입니다.</li>
+						<li id="error-msg-nickname-duplicate">닉네임: 이미 사용 중입니다.</li>
+					</ul>
+					<input id="phone-join" name="phone" type="tel" placeholder="전화번호">
+					<ul class="error-msg-group">
+						<li id="error-msg-phone-empty">전화번호: 필수 정보입니다.</li>
+						<li id="error-msg-phone-pattern">전화번호: 유효하지 않은 값입니다.</li>
+						<li id="error-msg-phone-duplicate">전화번호: 이미 사용 중입니다.</li>
+					</ul>
+					<input id="email-join" name="email" type="email" placeholder="이메일">
+					<ul class="error-msg-group">
+						<li id="error-msg-email-empty">이메일: 필수 정보입니다.</li>
+						<li id="error-msg-email-pattern">이메일: 유효하지 않은 값입니다.</li>
+						<li id="error-msg-email-duplicate">이메일: 이미 사용 중입니다.</li>
+					</ul>
 					<select id="login_type-join" name="login_type">
 						<option value="">소셜 계정</option>
 						<option value="1">kakao</option>
