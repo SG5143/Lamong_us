@@ -4,7 +4,7 @@ const send = document.getElementById('send');
 
 let players = null;
 
-let sessionId = null;
+let userUUID = null;
 let round = 1;
 let currentTurn = 1;
 let myTurn = null;
@@ -30,7 +30,7 @@ ws.onmessage = function (event) {
 
 	switch (data.type) {
 		case 'SESSION_ID':
-			sessionId = data.sessionId;
+			userUUID = data.uuid;
 			break;
 		case 'CHAT_HISTORY':
 			displayChatHistory(data.chatHistory);
@@ -47,14 +47,19 @@ ws.onmessage = function (event) {
 		case 'MESSAGE':
 			displayMessage(data.sessionId, data.message);
 			break;
+		case 'STATE_CHANGE':
+			handleStateChange(data.gamsState);
+			break;
 		case 'ROUND_INFO':
 			displayRoundInfo(data.round);
 			break;
-		case 'ROUND_END':
-			handleRoundEnd();
-			break;
 		case 'CLIENT_INFO':
 			setPlayerList(data.clientInfo);
+			break;
+		case 'END_GAME':
+			break;
+		case 'SYSTEM_MESSAGE':
+			handleSystemMessage(data.messge)
 			break;
 	}
 };
@@ -88,7 +93,7 @@ function displayChatHistory(chatHistory) {
 	});
 }
 
-function displayMessage(senderSessionId, message) {
+function displayMessage(senderUUID, message) {
     const messageContainer = document.createElement('div');
 	messageContainer.className ="user-msg-container"
 	
@@ -100,7 +105,7 @@ function displayMessage(senderSessionId, message) {
     messageContainer.innerHTML = `
         <div class="message-content">
 			<div class = "message-writer-time">
-				<span class="message-writer">${senderSessionId === sessionId ? '나' : senderSessionId}</span>
+				<span class="message-writer">${senderUUID === userUUID ? '나' : senderUUID}</span>
 				<span class="message-time">${formattedTime}</span>
 			</div>
             <p class="message-text">${message}</p>
@@ -109,19 +114,20 @@ function displayMessage(senderSessionId, message) {
     `;
     
     const profileImage = messageContainer.querySelector('.profile-image');
-	const container = messageContainer.querySelector('.message-writer-time');
+	const writerTime = messageContainer.querySelector('.message-writer-time');
+	const writer = messageContainer.querySelector('.message-writer');
 	const time = messageContainer.querySelector('.message-time')
     
-    if (senderSessionId === sessionId) {
+    if (senderUUID === userUUID) {
         messageContainer.style.justifyContent = "end";
-		container.style.justifyContent = "end";
-		messageContainer.querySelector('p').style.textAlign = "right";
+		writerTime.style.justifyContent = "end";
+		writer.style.textAlign="right";
         profileImage.style.order = 1; 
 		time.style.order=-1;
     } else {
         messageContainer.style.justifyContent = "start";
-		container.style.justifyContent = "start";
-		messageContainer.querySelector('p').style.textAlign = "left";
+		writerTime.style.justifyContent = "start";
+		writer.style.textAlign="left";
         profileImage.style.order = -1; 
 		time.style.order=1;
     }
@@ -156,7 +162,7 @@ function handleGameStart(topic, keyword) {
 	if (topic !== undefined && topic !== null && keyword !== undefined && keyword !== null) {
 		detailMessage.textContent = ` 주제 : ${topic}  키워드 : ${keyword}`;
 	} else {
-		detailMessage.textContent = `라이어입니다. 다른 플레이어들의 제시어를 맞춰주세요!`;
+		detailMessage.textContent = `라이어입니다. 다른 플레이어들의 주제를 맞춰주세요!`;
 	}
 	detailMessage.style.textAlign ="center"
 
@@ -178,6 +184,7 @@ function handleCurrentTurn(curTurn) {
 			if (currentTurn === myTurn) {
 				message.placeholder = `제시어를 설명해주세요. 남은 시간: ${timeLeft}초`;
 				send.style.display = "block";
+				message.focus();
 			} else {
 				message.placeholder = `현재 ${curTurn}번의 차례입니다. 남은 시간: ${timeLeft}초`;
 				send.style.display = "none";
@@ -192,41 +199,46 @@ function handleCurrentTurn(curTurn) {
 	}, 1000);
 }
 
-function handleRoundEnd() {
-	clearInterval(countdownInterval);
+function handleStateChange(state) {
+	if (state === "ROUND_END") {
+		clearInterval(countdownInterval);
 
-	let timeLeft = 60;
-	message.disabled = false;
-	send.style.display = "block";
-	
-	const roundInfoContainer = document.createElement('div');
-	const roundHeader = document.createElement("h4");
+		let timeLeft = 10;
+		message.disabled = false;
+		send.style.display = "block";
 
-	roundHeader.textContent = `-- 60초 후 라이어 투표가 진행됩니다.  --`;
-	roundHeader.style.fontSize ="24px";
-	roundHeader.style.margin = "20px 0"
-	roundHeader.style.textAlign ="center"
+		const roundInfoContainer = document.createElement('div');
+		const roundHeader = document.createElement("h4");
 
-	roundInfoContainer.appendChild(roundHeader);
-	chat.appendChild(roundInfoContainer);
-	chat.scrollTop = chat.scrollHeight;
+		roundHeader.textContent = `-- 60초 후 라이어 투표가 진행됩니다.  --`;
+		roundHeader.style.fontSize = "24px";
+		roundHeader.style.margin = "20px 0"
+		roundHeader.style.textAlign = "center"
 
-	countdownInterval = setInterval(() => {
-		if (timeLeft > 0) {
-			message.placeholder = `${timeLeft}초 동안 자유 채팅이 가능합니다.`;
-			timeLeft--;
-		} else {
-			if (gameTopic !== undefined && gameTopic !== null && gameKeyword !== undefined && gameKeyword !== null) {
-				message.placeholder = `라이어를 찾아주세요.`;
+		roundInfoContainer.appendChild(roundHeader);
+		chat.appendChild(roundInfoContainer);
+		chat.scrollTop = chat.scrollHeight;
+
+		countdownInterval = setInterval(() => {
+			if (timeLeft > 0) {
+				message.placeholder = `${timeLeft}초 동안 자유 채팅이 가능합니다.`;
+				timeLeft--;
 			} else {
-				message.placeholder = `투표 중 입니다.`;
+				if (gameTopic !== undefined && gameTopic !== null && gameKeyword !== undefined && gameKeyword !== null) {
+					message.placeholder = `라이어를 찾아주세요.`;
+				} else {
+					message.placeholder = `투표 중 입니다.`;
+				}
+				message.disabled = true;
+				send.style.display = "none";
+				clearInterval(countdownInterval);
 			}
-			message.disabled = true;
-			send.style.display = "none";
-			clearInterval(countdownInterval);
-			handleVote();
-		}
-	}, 1000);
+		}, 1000);
+	}
+	
+	if (state === "VOTE_START") {
+	    showVoteModal();
+	}
 }
 
 function displayRoundInfo(currentRound) {
@@ -242,19 +254,20 @@ function displayRoundInfo(currentRound) {
 	
 	roundInfoContainer.appendChild(roundHeader);
 	chat.appendChild(roundInfoContainer);
+	chat.scrollTop = chat.scrollHeight;
 }
 
-function handleVote() {
+function showVoteModal() {
 	const modal = document.getElementById('liar-vote-modal');
 	const closeModal = document.getElementById('close-modal');
 	const voteContainer = document.getElementById('vote-options');
 	const submitVoteButton = document.getElementById('submit-vote');
-	
+
 	voteContainer.innerHTML = '';
 	modal.style.display = 'block';
-	
+
 	let timeLeft = 30;
-	
+
 	const timer = setInterval(() => {
 	    if (timeLeft > 0) {
 	        const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
@@ -283,7 +296,7 @@ function handleVote() {
 		//img.src = player.img;
 
 		const label = document.createElement('span');	
-		label.textContent = player.uuid == sessionId ? "나" :  player.uuid;
+		label.textContent = player.uuid == userUUID ? "나" :  player.uuid;
 		
 		label.appendChild(radioInput);
 
@@ -295,7 +308,7 @@ function handleVote() {
 		submitVoteButton.addEventListener('click', () => {
 		    const selectedVote = document.querySelector('input[name="vote"]:checked');
 		    if (selectedVote) {
-				ws.send(JSON.stringify({ type: 'VOTE', sessionId: sessionId, vote: selectedVote.value }));
+				ws.send(JSON.stringify({ type: 'VOTE', userUUID: userUUID, vote: selectedVote.value }));
 		    }
 		    clearInterval(timer);
 		    modal.style.display = 'none';
@@ -303,4 +316,13 @@ function handleVote() {
 	});
 }
 
+function handleSystemMessage(message){
+	chat.innerHTML = '';
+	const systemMessageContainer = document.createElement('div');
+	const systemMessageHeader = document.createElement('h4');
+	systemMessageHeader.textContent = `${message}`;
+	systemMessageContainer.style.textAlign ="center"
 
+	systemMessageContainer.appendChild(systemMessageHeader);
+	chat.appendChild(systemMessageContainer);
+}
