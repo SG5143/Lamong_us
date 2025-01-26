@@ -60,12 +60,13 @@ public class SoketServer {
 	@OnMessage
 	public void onMessage(String message, Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) throws IOException {
 		String roomKey = roomType + "/" + roomUUID;
-
+		
+		System.out.println(message);
 		// 로그인 세션 연결 이전 테스트로 세션 구분하기 위한 코드
 		if ("TEST_SESSION_ID".equals(message)) {
 			JSONObject sessionIdMessage = new JSONObject();
 			sessionIdMessage.put("type", "SESSION_ID");
-			sessionIdMessage.put("sessionId", session.getId());
+			sessionIdMessage.put("uuid", session.getId());
 			session.getBasicRemote().sendText(sessionIdMessage.toString());
 			return;
 		}
@@ -75,11 +76,10 @@ public class SoketServer {
 		// return;
 		// }
 
-		JSONObject jsonObject = new JSONObject(message);
-		String extractedMessage = jsonObject.getString("message");
-
 		if ("playing".equals(roomType)) {
-			if (liarGameManager.processGameMessage(roomKey, session, extractedMessage)) {
+			if (liarGameManager.handleGameMessage(roomKey, session, message)) {
+				JSONObject jsonObject = new JSONObject(message);
+				String extractedMessage = jsonObject.getString("message");
 				ChatRequestDto chatRequest = new ChatRequestDto(session.getId(), extractedMessage);
 				chatRoomManager.addChatToRoomHistory(roomType, roomUUID, chatRequest);
 			}
@@ -89,6 +89,10 @@ public class SoketServer {
 	@OnClose
 	public void onClose(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) {
 		chatRoomManager.removeClientFromRoom(roomType, roomUUID, session);
+	    
+		if ("playing".equals(roomType)) {
+	        liarGameManager.manageClientDisconnection(roomType + "/" + roomUUID, session);
+	    }
 	}
 
 	@OnError
@@ -100,7 +104,7 @@ public class SoketServer {
 		String roomKey = roomType + "/" + roomUUID;
 		int rounds = 3;
 		GameStartDto gameStartDto = new GameStartDto(roomKey, rounds, clients);
-		liarGameManager.startGame(gameStartDto);
+		liarGameManager.initializeNewGame(gameStartDto);
 	}
 
 	private void closeSession(Session session) {
