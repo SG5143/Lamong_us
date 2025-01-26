@@ -1,9 +1,13 @@
 package websoket;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import jakarta.websocket.Session;
 
 public class GameSession {
+	private String state;
 	private String liarId;
 	private String topic;
 	private String keyword;
@@ -12,8 +16,11 @@ public class GameSession {
 	private int currentTurn;
 	private boolean isEnd;
 	private List<Session> clients;
+	private Map<String, String> votes = new HashMap<>();
+	private boolean isVoteInProgress;
 	
-	public GameSession(String liarId, String topic, String keyword, int rounds, List<Session> clients) {
+	public GameSession(String state, String liarId, String topic, String keyword, int rounds, List<Session> clients) {
+		this.state = state;
 		this.liarId = liarId;
 		this.topic = topic;
 		this.keyword = keyword;
@@ -24,6 +31,14 @@ public class GameSession {
 		this.clients = clients;
 	}
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+    
 	public String getLiarId() {
 		return liarId;
 	}
@@ -87,5 +102,20 @@ public class GameSession {
 	public void setClients(List<Session> clients) {
 		this.clients = clients;
 	}
+	
+    public Map<String, String> getVotes() {
+        return votes;
+    }
 
+    public void addVote(String userUUID, String vote) {
+        votes.put(userUUID, vote);
+    }
+    
+    public boolean isVoteInProgress() {
+        return isVoteInProgress;
+    }
+
+    public void setVoteInProgress(boolean isVoteInProgress) {
+        this.isVoteInProgress = isVoteInProgress;
+    }
 }
