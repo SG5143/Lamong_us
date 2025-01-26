@@ -83,6 +83,32 @@ body {
 	background-color: #578FFF;
 }
 
+.back-button {
+	background-image:
+		url('https://img.icons8.com/ios-filled/50/FFFFFF/back.png');
+	background-color: #484F5E;
+	background-size: contain;
+	background-repeat: no-repeat;
+	border-radius: 5px;
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+	transition: transform 0.2s;
+	background-size: contain;
+	width: 30px;
+}
+
+.back-button:hover {
+	transform: scale(1.1);
+}
+
+#header .back-button {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	z-index: 1000;
+}
+
 .user-actions {
 	margin-top: auto;
 	align-self: flex-start;
@@ -114,7 +140,7 @@ body {
 	padding: 50px;
 	box-sizing: border-box;
 	justify-content: center;
-	align-items: center; 
+	align-items: center;
 	margin: 0 auto;
 }
 

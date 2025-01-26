@@ -20,7 +20,7 @@ window.onload = () => {
 	};
 
 	const resetErrorMessages = () => {
-		document.querySelectorAll(".error-msg").forEach((msg) => {
+		document.querySelectorAll(".error-msg-group").forEach((msg) => {
 			msg.style.display = "none";
 		});
 	};
@@ -28,7 +28,6 @@ window.onload = () => {
 	const handleValidation = async (input, validateFn, duplicateFn, errorIds) => {
 		const { emptyId, patternId, duplicateId } = errorIds;
 
-		// emptyId가 비어 있는지 확인
 		const emptyElement = document.getElementById(emptyId);
 		if (emptyElement) {
 			if (input.value === "") {
@@ -41,7 +40,6 @@ window.onload = () => {
 			console.warn(`${emptyId} not found`);
 		}
 
-		// 패턴 유효성 검사
 		const patternElement = document.getElementById(patternId);
 		const isPatternValid = validateFn(input.value);
 		if (patternElement) {
@@ -49,107 +47,61 @@ window.onload = () => {
 		}
 		if (!isPatternValid) return false;
 
-		// 중복 검사
 		if (duplicateFn) {
 			const duplicateElement = document.getElementById(duplicateId);
 			const isDuplicateValid = await duplicateFn(input.value);
-			if (duplicateElement) {
+			if (duplicateElement)
 				updateErrorElementStyle(duplicateElement, !isDuplicateValid);
-			}
+
 			return isDuplicateValid;
 		}
 
 		return true;
 	};
 
-	username.addEventListener("change", async (e) => {
-		isValid.username = await handleValidation(
-			e.target,
-			validateUsername,
-			checkDuplUsername,
-			{
-				emptyId: "error-msg-username-empty",
-				patternId: "error-msg-username-pattern",
-				duplicateId: "error-msg-username",
-			}
-		);
-		console.log("isValid.username", isValid.username);
+	const setInputEventListener = (input, validateFn, duplicateFn, errorIds, field) => {
+		input.addEventListener("change", async (e) => {
+			isValid[field] = await handleValidation(e.target, validateFn, duplicateFn, errorIds);
+			console.log(`isValid.${field}`, isValid[field]);
+		});
+	};
 
-	});
+	setInputEventListener(username, validateUsername, checkDuplUsername, {
+		emptyId: "error-msg-username-empty",
+		patternId: "error-msg-username-pattern",
+		duplicateId: "error-msg-username"
+	}, "username");
 
-	password.addEventListener("change", (e) => {
-		isValid.password = validatePassword(e.target.value);
-		updateErrorElementStyle(
-			document.getElementById("error-msg-password-empty"),
-			e.target.value === ""
-		);
-		updateErrorElementStyle(
-			document.getElementById("error-msg-password-pattern"),
-			!isValid.password
-		);
-		console.log("isValid.password", isValid.password);
+	setInputEventListener(password, validatePassword, null, {
+		emptyId: "error-msg-password-empty",
+		patternId: "error-msg-password-pattern"
+	}, "password");
 
-	});
+	setInputEventListener(nickname, validateNickname, checkDuplnickname, {
+		emptyId: "error-msg-nickname-empty",
+		patternId: "error-msg-nickname-pattern",
+		duplicateId: "error-msg-nickname"
+	}, "nickname");
 
-	nickname.addEventListener("change", async (e) => {
-		isValid.nickname = await handleValidation(
-			e.target,
-			validateNickname,
-			checkDuplnickname,
-			{
-				emptyId: "error-msg-nickname-empty",
-				patternId: "error-msg-nickname-pattern",
-				duplicateId: "error-msg-nickname",
-			}
-		);
-		console.log("isValid.nickname", isValid.nickname);
+	setInputEventListener(phone, validatePhone, checkDuplPhone, {
+		emptyId: "error-msg-phone-empty",
+		patternId: "error-msg-phone-pattern",
+		duplicateId: "error-msg-phone"
+	}, "phone");
 
-	});
-
-	phone.addEventListener("change", async (e) => {
-		isValid.phone = await handleValidation(
-			e.target,
-			validatePhone,
-			checkDuplPhone,
-			{
-				emptyId: "error-msg-phone-empty",
-				patternId: "error-msg-phone-pattern",
-				duplicateId: "error-msg-phone",
-			}
-		);
-		console.log("isValid.phone", isValid.phone);
-
-	});
-
-	email.addEventListener("change", async (e) => {
-		isValid.email = await handleValidation(
-			e.target,
-			validateEmail,
-			checkDuplEmail,
-			{
-				emptyId: "error-msg-email-empty",
-				patternId: "error-msg-email-pattern",
-				duplicateId: "error-msg-email",
-			}
-		);
-		console.log("isValid.email", isValid.email);
-
-	});
+	setInputEventListener(email, validateEmail, checkDuplEmail, {
+		emptyId: "error-msg-email-empty",
+		patternId: "error-msg-email-pattern",
+		duplicateId: "error-msg-email"
+	}, "email");
 
 	joinButton.addEventListener("click", async (e) => {
 		e.preventDefault();
 
 		resetErrorMessages();
 
-		let loginTypeValue = null;
-
-		if (loginType.value === "1") {
-			loginTypeValue = "kakao";
-		} else if (loginType.value === "2") {
-			loginTypeValue = "google";
-		}
-
-		const payload = {
+		const loginTypeValue = loginType.value === "1" ? "kakao" : (loginType.value === "2" ? "google" : null);
+		const formData = {
 			username: username.value,
 			password: password.value,
 			nickname: nickname.value,
@@ -158,12 +110,14 @@ window.onload = () => {
 			login_type: loginTypeValue,
 		};
 
+
 		if (Object.values(isValid).every((value) => value)) {
 			try {
 				const response = await fetch("/v1/members?command=join", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload),
+					body: JSON.stringify(formData)
+
 				});
 
 				const data = await response.json();
@@ -179,9 +133,9 @@ window.onload = () => {
 			} catch (error) {
 				console.error("Error during registration:", error);
 				alert("회원가입 요청 중 오류가 발생했습니다.");
+			} finally {
+				joinButton.disabled = false;
 			}
-		} else {
-			alert("모든 정보를 올바르게 입력해주세요.");
 		}
 	});
 };
