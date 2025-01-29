@@ -1,10 +1,8 @@
 package websoket;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
+import java.util.logging.*;
 
 import org.json.JSONObject;
 
@@ -19,13 +17,24 @@ public class SandGameMessage {
 	public static SandGameMessage getInstance() {
 		return INSTANCE;
 	}
+	
+	public void broadcastKeywordReveal(GameSession session) {
+	    JSONObject keywordMessage = JsonUtil.createJsonMessage(
+	        GameConstants.TYPE_KEYWORD_REVEAL,
+	        GameConstants.KEYWORD, session.getKeyword()
+	    );
+	    session.getClients().forEach(client -> sendJsonMessage(client, keywordMessage));
+	}
 
-	public void voteResult(List<Session> clients,  String mostVoted, int maxVotes) {
+	public void voteResult(List<Session> clients,  GameSession.VoteResult result) {
 		for (Session client : clients) {
 			sendJsonMessage(client, JsonUtil.createJsonMessage(
 					GameConstants.TYPE_VOTE_RESULT,
-					GameConstants.VOTE_RESULT_MOST_VOTED, mostVoted,
-					GameConstants.VOTE_RESULT_MAX_VOTES, maxVotes));
+					GameConstants.VOTED_PLAYER_NICKNAME, result.getNICKNAME(),
+					GameConstants.VOTE_RESULT_MOST_VOTED, result.getMostVotedPlayerUUID(),
+					GameConstants.VOTE_RESULT_MAX_VOTES, result.getMaxVotes(),
+					GameConstants.IS_LIAR_CORRECT, result.isLiarCorrect()
+					));
 		}
 	}
 	
@@ -55,11 +64,11 @@ public class SandGameMessage {
 		}
 	}
 
-	public void endGameMessage(List<Session> clients) {
+	public void endGameMessage(List<Session> clients, String endStatus) {
 		for (Session client : clients) {
 			sendJsonMessage(client, JsonUtil.createJsonMessage(
 					GameConstants.TYPE_GAME_END,
-					GameConstants.GAME_END, "close"));
+					GameConstants.GAME_END, endStatus));
 		}
 	}
 
@@ -78,12 +87,13 @@ public class SandGameMessage {
 				GameConstants.TURN, turn));
 	}
 
-	public void distributeWords(List<Session> clients, Session liar, String topic, String keyword) {
+	public void distributeWords(GameSession session) {
+		List<Session> clients = session.getClients();
 		for (Session client : clients) {
 			JSONObject wordMessage = JsonUtil.createJsonMessage(
 					GameConstants.TYPE_GAME_START,
-					GameConstants.TOPIC, topic, 
-					GameConstants.KEYWORD, client.equals(liar) ? null : keyword); // 라이어는 키워드 제외
+					GameConstants.TOPIC, session.getTopic(), 
+					GameConstants.KEYWORD, client.getId().equals(session.getLiarId()) ? null : session.getKeyword()); // 라이어는 키워드 제외
 			sendJsonMessage(client, wordMessage);
 		}
 	}
@@ -95,13 +105,14 @@ public class SandGameMessage {
 		clients.forEach(client -> sendJsonMessage(client, systemMessage));
 	}
 
-	public void broadcastMessage(List<Session> clients , String senderId, String message) {
+	public void broadcastMessage(List<Session> clients , String senderUUID, String nickname, String message) {
 		JSONObject jsonObject = new JSONObject(message);
 		String extractedMessage = jsonObject.getString("message");
 
 		JSONObject chatMessage = JsonUtil.createJsonMessage(
 				GameConstants.TYPE_MESSAGE,
-				GameConstants.SESSION_ID, senderId,
+				GameConstants.SENDER_UUID, senderUUID,
+				GameConstants.SENDER_NICKNAME, nickname,
 				GameConstants.MESSAGE, extractedMessage);
 		clients.forEach(client -> {
 			sendJsonMessage(client, chatMessage);
