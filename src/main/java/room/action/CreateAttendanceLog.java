@@ -55,16 +55,30 @@ public class CreateAttendanceLog implements Action {
 			RoomDao roomDao = RoomDao.getInstance();
 
 			String userCode = reqData.optString("user_code", null);
+
+			String existingStatus = roomDao.checkUserRoomStatus(userCode, roomCode);
 			// String userCode = log.getUuid();
 			RoomRequestDto roomDto = new RoomRequestDto(userCode, roomCode);
 
-			try {
-				roomDao.userToGameRoomAttendance(userCode, roomDto);
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "참가 기록이 성공적으로 저장되었습니다.");
-			} catch (Exception e) {
-				e.printStackTrace();
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"참가 기록 저장 중 오류가 발생했습니다.");
+
+			if ("exists".equals(existingStatus) || "in_progress".equals(existingStatus)) {
+				try {
+					roomDao.updateJoinTime(userCode, roomDto);
+					sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "참가 시간이 성공적으로 업데이트되었습니다.");
+				} catch (Exception e) {
+					e.printStackTrace();
+					sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+							"참가 시간 업데이트 중 오류가 발생했습니다.");
+				}
+			} else {
+				try {
+					roomDao.userToGameRoomAttendance(userCode, roomDto);
+					sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "참가 기록이 성공적으로 저장되었습니다.");
+				} catch (Exception e) {
+					e.printStackTrace();
+					sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+							"참가 기록 저장 중 오류가 발생했습니다.");
+				}
 			}
 
 		} catch (Exception e) {
