@@ -1,121 +1,190 @@
 package websoket;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import jakarta.websocket.Session;
 
 public class GameSession {
-	private String state;
-	private String liarId;
-	private String topic;
-	private String keyword;
-	private int round;
-	private int rounds;
-	private int currentTurn;
-	private boolean isEnd;
-	private List<Session> clients;
-	private Map<String, String> votes = new HashMap<>();
-	private boolean isVoteInProgress;
 	
-	public GameSession(String state, String liarId, String topic, String keyword, int rounds, List<Session> clients) {
-		this.state = state;
-		this.liarId = liarId;
-		this.topic = topic;
-		this.keyword = keyword;
-		this.round = 1;
-		this.rounds = rounds;
-		this.currentTurn = 1;
-		this.isEnd = false;
-		this.clients = clients;
-	}
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
+    public enum GameState {
+        INIT, ROUND_START, ROUND_END, TURN_PROGRESS, VOTE_PHASE, FINAL_CHANCE, GAME_END
     }
     
-	public String getLiarId() {
-		return liarId;
-	}
+    public static class VoteResult {
+    	private final String NICKNAME;
+        private final String MOST_VOTED_PLAYER_UUID; // 가장 많은 표를 받은 플레이어 ID
+        private final int MAX_VOTES; // 가장 많은 표 수
+        private final boolean IS_LIAR_CORRECT; // 라이어가 정답을 맞췄는지 여부
 
-	public void setLiarId(String liarId) {
-		this.liarId = liarId;
-	}
+        public VoteResult(String nickname, String mostVotedPlayerUUID, int maxVotes, boolean isLiarCorrect) {
+            this.NICKNAME = nickname;
+        	this.MOST_VOTED_PLAYER_UUID = mostVotedPlayerUUID;
+            this.MAX_VOTES = maxVotes;
+            this.IS_LIAR_CORRECT = isLiarCorrect;
+        }
+        
+        public String getNICKNAME() {
+			return NICKNAME;
+		}
 
-	public String getTopic() {
-		return topic;
-	}
+        public String getMostVotedPlayerUUID() {
+            return MOST_VOTED_PLAYER_UUID;
+        }
 
-	public void setTopic(String topic) {
-		this.topic = topic;
-	}
+        public int getMaxVotes() {
+            return MAX_VOTES;
+        }
 
-	public String getKeyword() {
-		return keyword;
-	}
+        public boolean isLiarCorrect() {
+            return IS_LIAR_CORRECT;
+        }
+    }
 
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
+    private final String ROOM_ID;
+    private final String LIAR_ID;
+    private final String TOPIC;
+    private final String KEYWORD;
+    private final int MAX_ROUNDS;
+    private final List<Session> CLIENTS;
 
-	public int getRounds() {
-		return rounds;
-	}
+    private GameState state;
+    private int currentRound;
+    private int currentTurn;
+    private final Map<String, String> votes = new ConcurrentHashMap<>();
+    private boolean isVoteInProgress;
 
-	public void setRounds(int rounds) {
-		this.rounds = rounds;
-	}
+    public GameSession(String roomId, String liarId, String topic, String keyword, int maxRounds, List<Session> clients) {
+        this.ROOM_ID = Objects.requireNonNull(roomId, "roomId must not be null");
+        this.LIAR_ID = Objects.requireNonNull(liarId, "liarId must not be null");
+        this.TOPIC = Objects.requireNonNull(topic, "topic must not be null");
+        this.KEYWORD = Objects.requireNonNull(keyword, "keyword must not be null");
+        this.MAX_ROUNDS = maxRounds;
+        this.CLIENTS = new CopyOnWriteArrayList<>(clients);
+        this.state = GameState.INIT;
+        this.currentRound = 1;
+        this.currentTurn = 1;
+    }
 
-	public int getCurrentTurn() {
-		return currentTurn;
-	}
+    public synchronized void transitionState(GameState newState) {
+        this.state = newState;
+    }
 
+    public synchronized void advanceTurn() {
+        currentTurn = (currentTurn % CLIENTS.size()) + 1;
+        if (currentTurn == 1) {
+            currentRound++;
+        }
+    }
+
+    public synchronized void addVote(String userUUID, String vote) {
+        votes.put(userUUID, vote);
+    }
+
+    public synchronized boolean isAllVoted() {
+        return votes.size() == CLIENTS.size();
+    }
+
+    public synchronized boolean shouldTerminate() {
+        return CLIENTS.size() <= 2 || state == GameState.GAME_END;
+    }
+
+    public String getRoomId() {
+        return ROOM_ID;
+    }
+
+    public String getLiarId() {
+        return LIAR_ID;
+    }
+
+    public String getTopic() {
+        return TOPIC;
+    }
+
+    public String getKeyword() {
+        return KEYWORD;
+    }
+
+    public int getCurrentRound() {
+        return currentRound;
+    }
+    
+    public int getMaxRounds() {
+    	return MAX_ROUNDS;
+    }
+
+    public int getCurrentTurn() {
+        return currentTurn;
+    }
+    
 	public void setCurrentTurn(int currentTurn) {
 		this.currentTurn = currentTurn;
 	}
 
-	public int getRound() {
-		return round;
-	}
+    public GameState getState() {
+        return state;
+    }
 
-	public void setRound(int round) {
-		this.round = round;
-	}
+    public List<Session> getClients() {
+        return Collections.unmodifiableList(CLIENTS); 
+    }
 
-	public boolean isEnd() {
-		return isEnd;
-	}
-
-	public void setEnd(boolean isEnd) {
-		this.isEnd = isEnd;
-	}
-
-	public List<Session> getClients() {
-		return clients;
-	}
-
-	public void setClients(List<Session> clients) {
-		this.clients = clients;
-	}
-	
     public Map<String, String> getVotes() {
-        return votes;
+        return Collections.unmodifiableMap(votes);
     }
 
-    public void addVote(String userUUID, String vote) {
-        votes.put(userUUID, vote);
-    }
-    
     public boolean isVoteInProgress() {
         return isVoteInProgress;
     }
 
-    public void setVoteInProgress(boolean isVoteInProgress) {
-        this.isVoteInProgress = isVoteInProgress;
+    public synchronized void setVoteInProgress(boolean voteInProgress) {
+        isVoteInProgress = voteInProgress;
     }
+
+    public synchronized void removeClient(Session client) {
+        CLIENTS.remove(client);
+    }
+
+    public synchronized boolean isCurrentPlayer(Session client) {
+        return CLIENTS.indexOf(client) == currentTurn - 1;
+    }
+    
+    public synchronized boolean isNewRoundNeeded() {
+        return currentTurn == 1;
+    }
+    
+    public synchronized VoteResult calculateVoteResult() {
+        Map<String, Integer> voteCounts = new HashMap<>();
+        for (String votedPlayerId : votes.values()) {
+            voteCounts.put(votedPlayerId, voteCounts.getOrDefault(votedPlayerId, 0) + 1);
+        }
+
+        String mostVotedPlayerId = null;
+        int maxVotes = 0;
+        for (Map.Entry<String, Integer> entry : voteCounts.entrySet()) {
+            if (entry.getValue() > maxVotes) {
+                mostVotedPlayerId = entry.getKey();
+                maxVotes = entry.getValue();
+            }
+        }
+        
+        String votedPlayerNickname = null;
+        for(Session client: CLIENTS) {
+        	@SuppressWarnings("unchecked")
+			Map<String, Object> liarInfo = (Map<String, Object>) client.getUserProperties().get("userInfo");
+        	String uuid = (String) liarInfo.get("uuid");
+        	String nickname = (String) liarInfo.get("nickname");
+        	
+        	if(uuid.equals(mostVotedPlayerId)) {
+        		votedPlayerNickname = nickname;
+        	}
+        }
+
+        boolean isLiarCorrect = LIAR_ID.equals(mostVotedPlayerId);
+
+        return new VoteResult(votedPlayerNickname, mostVotedPlayerId, maxVotes, isLiarCorrect);
+    }
+    
 }
+

@@ -15,6 +15,8 @@ public class GameConstants {
     public static final String TYPE_ROUND_INFO = "ROUND_INFO";
     public static final String TYPE_VOTE = "VOTE";
 	public static final String TYPE_VOTE_RESULT = "VOTE_RESULT";
+	public static final String TYPE_KEYWORD_REVEAL = "KEYWORD_REVEAL";
+	public static final String TYPE_FINAL_CHANCE = "FINAL_CHANCE";
     public static final String TYPE_GAME_END = "GAME_END";
    
     
@@ -22,7 +24,8 @@ public class GameConstants {
 
     public static final String TURN = "turn";
     public static final String ROUND = "round";
-    public static final String SESSION_ID = "sessionId";
+    public static final String SENDER_UUID = "senderUUID";
+    public static final String SENDER_NICKNAME = "senderNickname";
     
     public static final String CURRENT_TURN = "currentTurn";
     public static final String CLIENT_INFO = "clientInfo";
@@ -30,12 +33,13 @@ public class GameConstants {
     public static final String TOPIC ="topic";
     public static final String KEYWORD = "keyword";
 	public static final String VOTE = "vote";
+	public static final String VOTED_PLAYER_NICKNAME = "votedPlayerNickname";
 	public static final String VOTE_RESULT_MOST_VOTED= "voteResultMostVoted";
 	public static final String VOTE_RESULT_MAX_VOTES= "voteResultMaxVotes";
-	public static final Object GAME_END = "gameEnd";
+	public static final String IS_LIAR_CORRECT = "isLiarCorrect";
+	
+	public static final String GAME_END = "gameEnd";
 
-	public static final Object GAME_STATE = "gamsState";
-
-
+	public static final String GAME_STATE = "gamsState";
     
 }
