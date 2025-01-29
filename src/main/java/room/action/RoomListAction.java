@@ -2,6 +2,7 @@ package room.action;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -87,7 +88,6 @@ public class RoomListAction implements Action {
 
 			int curPlayers = roomDao.getCurrentPlayers(room.getCode());
 			roomJson.put("current_players", curPlayers);
-
 			resGameRoom.put(roomJson);
 		}
 
