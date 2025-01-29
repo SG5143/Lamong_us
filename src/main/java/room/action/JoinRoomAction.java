@@ -9,13 +9,24 @@ import controller.Action;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import room.model.RoomDao;
 import room.model.RoomRequestDto;
+import user.model.user.User;
 
 public class JoinRoomAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+//		HttpSession session = request.getSession();
+//
+//		User log = (User) session.getAttribute("log");
+//
+//		if (log == null) {
+//			response.sendRedirect("/");
+//			return;
+//		}
 		String authorization = request.getHeader("Authorization");
 
 		if (!isValidAuthorization(authorization)) {
@@ -50,6 +61,9 @@ public class JoinRoomAction implements Action {
 			try {
 				roomDao.userJoinRoom(roomDto);
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "방에 성공적으로 입장했습니다.");
+
+//				request.setAttribute("log", log);
+//				request.getRequestDispatcher("/waiting-room").forward(request, response);
 			} catch (Exception e) {
 				e.printStackTrace();
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
