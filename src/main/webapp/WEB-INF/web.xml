@@ -63,7 +63,7 @@
 
 	<servlet>
 		<servlet-name>chat</servlet-name>
-		<jsp-file>/views/chat/chat.jsp</jsp-file>
+		<jsp-file>/views/chat/liarGameChat.jsp</jsp-file>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>chat</servlet-name>
