@@ -1,5 +1,5 @@
 export const validateRoomTitle = (roomTitle) => {
-	const errEmpty = document.getElementById("roomTitleError");
+	const errEmpty = document.getElementById("empty-title-err");
 	if (roomTitle === "") {
 		updateErrorElementStyle(errEmpty, true);
 		return false;
@@ -10,8 +10,8 @@ export const validateRoomTitle = (roomTitle) => {
 };
 
 export const validateMaxPlayers = (maxPlayers) => {
-	const errEmpty = document.getElementById("maxPlayersError");
-	const errLimit = document.getElementById("maxPlayersLimitError");
+	const errEmpty = document.getElementById("empty-players-err");
+	const errLimit = document.getElementById("limit-players-err");
 
 	if (maxPlayers === "") {
 		updateErrorElementStyle(errEmpty, true);
@@ -32,8 +32,8 @@ export const validateMaxPlayers = (maxPlayers) => {
 };
 
 export const validateRoundCount = (roundCount) => {
-	const errEmpty = document.getElementById("roundCountError");
-	const errLimit = document.getElementById("roundCountLimitError");
+	const errEmpty = document.getElementById("empty-round-err");
+	const errLimit = document.getElementById("limit-round-err");
 
 	if (roundCount === "") {
 		updateErrorElementStyle(errEmpty, true);
@@ -54,8 +54,8 @@ export const validateRoundCount = (roundCount) => {
 };
 
 export const validatePassword = (password) => {
-	const errEmpty = document.getElementById("passwordError");
-	const errLimit = document.getElementById("passwordLimitError");
+	const errEmpty = document.getElementById("empty-password-err");
+	const errLimit = document.getElementById("limit-password-err");
 
 	if (password === "") {
 		updateErrorElementStyle(errEmpty, true);
@@ -75,7 +75,7 @@ export const validatePassword = (password) => {
 };
 
 export const validateRoomNumber = (roomNumber) => {
-	const errEmpty = document.getElementById("roomNumError");
+	const errEmpty = document.getElementById("room-num-err");
 
 	if (roomNumber === "") {
 		errEmpty.textContent = "방 번호를 입력해주세요.";
