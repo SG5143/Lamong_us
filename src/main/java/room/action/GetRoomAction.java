@@ -1,6 +1,10 @@
 package room.action;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import controller.Action;
@@ -48,6 +52,7 @@ public class GetRoomAction implements Action {
 
 	private JSONObject createGameRoom(Room room) {
 		JSONObject roomJson = new JSONObject();
+		RoomDao roomDao = RoomDao.getInstance();
 
 		if (room != null) {
 			roomJson.put("room_code", room.getCode());
@@ -58,6 +63,18 @@ public class GetRoomAction implements Action {
 			roomJson.put("password", room.getPassword());
 			roomJson.put("max_players", room.getMaxPlayers());
 			roomJson.put("round_count", room.getRoundCount());
+
+			List<Map<String, String>> usersInRoom = roomDao.getUsersInRoomTest(room.getCode());
+			JSONArray userArray = new JSONArray();
+			for (Map<String, String> user : usersInRoom) {
+				JSONObject userJson = new JSONObject();
+				userJson.put("user_code", user.get("uuid"));
+				userJson.put("nickname", user.get("nickname"));
+				userJson.put("profile_image", user.get("profile_image") != null ? user.get("profile_image") : "");
+				userArray.put(userJson);
+			}
+
+			roomJson.put("user_list", userArray);
 		}
 
 		return roomJson;
