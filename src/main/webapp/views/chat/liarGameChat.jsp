@@ -5,11 +5,10 @@
 
 <head>
 <meta charset="UTF-8">
-<script type="module" src="/resources/javascript/chat/chat.js"></script>
+<script type="module" src="/resources/script/liarGame/liarGame.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=send"/>
 <link rel="stylesheet" href="resources/styles/globals.css">
 <link rel="stylesheet" href="resources/styles/chat/chat.css">
-<title>채팅 테스트</title>
 </head>
 
 <body>
@@ -51,7 +50,6 @@
 		</div>
 	</div>
 </div>
-
 </body>
 
 </html>
