@@ -3,6 +3,7 @@ package websoket;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +18,8 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
+import user.model.user.User;
+
 import org.json.JSONObject;
 
 @ServerEndpoint(value = "/ws/{roomType}/{roomUUID}", configurator = CustomConfigurator.class)
@@ -30,11 +33,24 @@ public class SoketServer {
 	public void onOpen(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID, EndpointConfig config) {
 		HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
 
-		if (httpSession != null) {
-			String uuid = (String) httpSession.getAttribute("uuid");
-			String nickname = (String) httpSession.getAttribute("nickname");
-			String profileImage = (String) httpSession.getAttribute("profileImage");
-			Integer score = (Integer) httpSession.getAttribute("score");
+		if (httpSession.getAttribute("log") != null) {
+			User user = (User) httpSession.getAttribute("log");
+			String uuid = user.getUuid();
+			String nickname = user.getNickname();
+			byte[] profileImage = user.getProfileImage();
+			Integer score = user.getScore();
+
+			Map<String, Object> userInfo = new HashMap<>();
+			userInfo.put("uuid", uuid);
+			userInfo.put("nickname", nickname);
+			userInfo.put("profileImage", profileImage);
+			userInfo.put("score", score);
+			session.getUserProperties().put("userInfo", userInfo);
+		} else {
+			String uuid = session.getId();
+			String nickname = "임시닉" + uuid;
+			String profileImage = "resources/images/Default" + String.format("%02d", new Random().nextInt(11) + 1) + ".jpg";
+			Integer score = 1000;
 
 			Map<String, Object> userInfo = new HashMap<>();
 			userInfo.put("uuid", uuid);
@@ -42,6 +58,7 @@ public class SoketServer {
 			userInfo.put("profileImage", profileImage);
 			userInfo.put("score", score);
 
+			System.out.println("uuid:" + uuid);
 			session.getUserProperties().put("userInfo", userInfo);
 		}
 
@@ -58,41 +75,44 @@ public class SoketServer {
 	}
 
 	@OnMessage
+	@SuppressWarnings("unchecked")
 	public void onMessage(String message, Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) throws IOException {
 		String roomKey = roomType + "/" + roomUUID;
-		
-		System.out.println(message);
-		// 로그인 세션 연결 이전 테스트로 세션 구분하기 위한 코드
-		if ("TEST_SESSION_ID".equals(message)) {
-			JSONObject sessionIdMessage = new JSONObject();
-			sessionIdMessage.put("type", "SESSION_ID");
-			sessionIdMessage.put("uuid", session.getId());
-			session.getBasicRemote().sendText(sessionIdMessage.toString());
-			return;
-		}
 
 		// if ("GET_CHAT_HISTORY".equals(message)) {
 		// sendChatHistory(session, roomType, roomUUID);
 		// return;
 		// }
 
+		if ("TEST_SESSION_ID".equals(message)) {
+			JSONObject sessionIdMessage = new JSONObject();
+			sessionIdMessage.put("type", "SESSION_ID");
+			Map<String, Object> info = (Map<String, Object>) session.getUserProperties().get("userInfo");
+			String uuid = (String) info.get("uuid");
+			sessionIdMessage.put("uuid", uuid);
+			session.getBasicRemote().sendText(sessionIdMessage.toString());
+			return;
+		}
+
+		System.out.println(message);
+		
 		if ("playing".equals(roomType)) {
 			if (liarGameManager.handleGameMessage(roomKey, session, message)) {
 				JSONObject jsonObject = new JSONObject(message);
 				String extractedMessage = jsonObject.getString("message");
-				ChatRequestDto chatRequest = new ChatRequestDto(session.getId(), extractedMessage);
+				Map<String, Object> userInfo = (Map<String, Object>) session.getUserProperties().get("userInfo");
+				ChatRequestDto chatRequest = new ChatRequestDto((String) userInfo.get("uuid"), extractedMessage);
 				chatRoomManager.addChatToRoomHistory(roomType, roomUUID, chatRequest);
 			}
 		}
 	}
 
 	@OnClose
-	public void onClose(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) {
-		chatRoomManager.removeClientFromRoom(roomType, roomUUID, session);
-	    
+	public void onClose(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) {	    
 		if ("playing".equals(roomType)) {
 	        liarGameManager.manageClientDisconnection(roomType + "/" + roomUUID, session);
 	    }
+		chatRoomManager.removeClientFromRoom(roomType, roomUUID, session);
 	}
 
 	@OnError
