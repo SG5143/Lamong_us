@@ -1,14 +1,14 @@
 import { validateRoomTitle, validateMaxPlayers, validateRoundCount, validatePassword } from './room-validation.js';
 
 const ROOM_TITLES = [
-	"TEST 1", "TEST 2"
+	"방 제목을 입력해주세요.", "신나는 라이어게임"
 ];
 
 const togglePasswordField = () => {
-	const isPrivateCheckbox = document.getElementById('isPrivate');
+	const isPrivateCheckbox = document.getElementById('private');
 	const passwordField = document.getElementById('password');
-	const passwordErrorMsg = document.querySelector('#passwordError');
-	const passwordLimitErrorMsg = document.querySelector('#passwordLimitError');
+	const passwordErrorMsg = document.querySelector('#empty-password-err');
+	const passwordLimitErrorMsg = document.querySelector('#limit-password-err');
 
 	const shouldShowPassword = isPrivateCheckbox.checked;
 	passwordField.style.display = shouldShowPassword ? 'block' : 'none';
@@ -24,7 +24,7 @@ const hidePasswordErrors = (passwordErrorMsg, passwordLimitErrorMsg) => {
 };
 
 export const initializeRoomCreation = () => {
-	const isPrivateCheckbox = document.getElementById('isPrivate');
+	const isPrivateCheckbox = document.getElementById('private');
 	togglePasswordField();
 
 	isPrivateCheckbox.addEventListener('change', togglePasswordField);
@@ -33,19 +33,19 @@ export const initializeRoomCreation = () => {
 };
 
 const addModalEventListeners = () => {
-	document.getElementById("createRoomBtn").addEventListener("click", openRoomModal);
-	document.getElementById("closeModal").addEventListener("click", closeRoomModal);
+	document.getElementById("create-room-btn").addEventListener("click", openRoomModal);
+	document.getElementById("close-modal").addEventListener("click", closeRoomModal);
 };
 
 const openRoomModal = () => {
-	document.getElementById("createRoomModal").style.display = "block";
+	document.getElementById("create-room-modal").style.display = "block";
 	const randomTitle = ROOM_TITLES[Math.floor(Math.random() * ROOM_TITLES.length)];
-	document.getElementById('roomTitle').placeholder = randomTitle;
+	document.getElementById('room-title').placeholder = randomTitle;
 };
 
 const closeRoomModal = () => {
-	document.getElementById("createRoomModal").style.display = "none";
-	document.getElementById('createRoomForm').reset();
+	document.getElementById("create-room-modal").style.display = "none";
+	document.getElementById('create-room-form').reset();
 	togglePasswordField();
 	hideAllErrorMessages();
 };
@@ -56,9 +56,9 @@ const hideAllErrorMessages = () => {
 };
 
 const addInputEventListeners = () => {
-	document.getElementById('roomTitle').addEventListener('input', (e) => validateRoomTitle(e.target.value));
-	document.getElementById('maxPlayers').addEventListener('input', (e) => validateMaxPlayers(e.target.value));
-	document.getElementById('roundCount').addEventListener('input', (e) => validateRoundCount(e.target.value));
+	document.getElementById('room-title').addEventListener('input', (e) => validateRoomTitle(e.target.value));
+	document.getElementById('max-players').addEventListener('input', (e) => validateMaxPlayers(e.target.value));
+	document.getElementById('round').addEventListener('input', (e) => validateRoundCount(e.target.value));
 	document.getElementById('password').addEventListener('input', (e) => validatePassword(e.target.value));
 };
 
@@ -74,10 +74,10 @@ const isRoomDataValid = (roomTitle, maxPlayers, roundCount, isPrivate, password)
 };
 
 export const createRoom = async (currentPage, fetchRoomList) => {
-	const roomTitle = document.getElementById('roomTitle').value;
-	const maxPlayers = document.getElementById('maxPlayers').value;
-	const roundCount = document.getElementById('roundCount').value;
-	const isPrivate = document.getElementById('isPrivate').checked;
+	const roomTitle = document.getElementById('room-title').value;
+	const maxPlayers = document.getElementById('max-players').value;
+	const roundCount = document.getElementById('round').value;
+	const isPrivate = document.getElementById('private').checked;
 	const password = document.getElementById('password').value;
 
 	if (!isRoomDataValid(roomTitle, maxPlayers, roundCount, isPrivate, password)) {
@@ -98,6 +98,7 @@ export const createRoom = async (currentPage, fetchRoomList) => {
 
 		const result = await response.json();
 		handleRoomCreationResponse(result, currentPage, fetchRoomList);
+		window.location.href = "/waiting-room";
 	} catch (error) {
 		console.error("Error Details:", {
 			message: error.message,
@@ -126,7 +127,7 @@ const buildRequestBody = (roomTitle, maxPlayers, roundCount, isPrivate, password
 
 const handleRoomCreationResponse = (result, currentPage, fetchRoomList) => {
 	if (result.status !== 201) {
-		alert(`게임방 생성 실패: ${result.message1}`);
+		alert("게임방 생성을 실패하였습니다.");
 		return;
 	}
 
