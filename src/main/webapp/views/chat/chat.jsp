@@ -23,9 +23,9 @@
 	</div>
 
 	<!-- 라이어 투표 모달 -->
-	<div id="liar-vote-modal" class="modal">
+	<div id="vote-modal" class="modal">
 		<div class="modal-content">
-			<span class="close" id="close-modal">00:30</span>
+			<span class="close" id="vote-timer">00:30</span>
 			<h2>라이어 투표</h2>
 			<p>투표할 사람을 선택하세요</p>
 			<div id="vote-options">
@@ -34,7 +34,24 @@
 			<button id="submit-vote">투표하기</button>
 		</div>
 	</div>
+	
+	<!-- 라이어 제시어 맞추기 모달 -->
+	<div id="liar-chance-modal" class="modal">
+		<div class="modal-content">
+			<span class="close" id="close-modal">00:30</span>
+			<h2>제시어를 맞추세요.</h2>
+			<input id="liar-chance-input" type="text" maxlength="15">
+			<button id="submit-keyword">제출</button>
+		</div>
+	</div>
+	
+	<!-- 최종 결과 출력 모달 -->
+	<div id="game-result-modal" class="modal">
+		<div class="modal-content">
+		</div>
+	</div>
 </div>
+
 </body>
 
 </html>
