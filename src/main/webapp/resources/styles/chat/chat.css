@@ -78,10 +78,11 @@
 
 .profile-image {
 	flex-shrink: 0;
-	width: 80px;
-	height: 80px;
+	width: 60px;
+	height: 60px;
 	border-radius: 100px;
-	background-color: green;
+	background-size: cover;
+	background-position: center;
 }
 
 .message-content {
@@ -114,7 +115,7 @@
 	font-size: 14px;
 }
 
-#liar-vote-modal {
+#vote-modal {
 	position: absolute;
 	display:none;
 	top: 25%;
@@ -124,7 +125,7 @@
 	width: 70vw;
 }
 
-#liar-vote-modal .modal-content {
+#vote-modal .modal-content {
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
@@ -132,24 +133,24 @@
 	gap: 20px;
 }
 
-#liar-vote-modal .modal-content>span {
+#vote-modal .modal-content>span {
 	font-size: 24px;
 }
 
-#liar-vote-modal .modal-content>h2 {
+#vote-modal .modal-content>h2 {
 	font-size: 32px;
 }
 
-#liar-vote-modal .modal-content>p {
+#vote-modal .modal-content>p {
 	font-size: 28px;
 }
 
-#liar-vote-modal #vote-options {
+#vote-modal #vote-options {
 	display: flex;
 	gap: 10px;
 }
 
-#liar-vote-modal .vote-option {
+#vote-modal .vote-option {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -160,29 +161,30 @@
 	transition: background-color 0.2s;
 }
 
-#liar-vote-modal .vote-option:hover {
+#vote-modal .vote-option:hover {
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
-#liar-vote-modal .vote-option img {
+#vote-modal .vote-option img {
 	width: 40px;
 	height: 40px;
 	border-radius: 100%;
 	object-fit: cover;
+	background-size: cover;
+	background-position: center;
 	background-color: green;
 }
 
-#liar-vote-modal .vote-option span {
+#vote-modal .vote-option span {
 	font-size: 16px;
 	transition: color 0.3s;
 }
 
-#liar-vote-modal .vote-option input[type="radio"] {
+#vote-modal .vote-option input[type="radio"] {
 	/* display: none; */
-	
 }
 
-#liar-vote-modal #submit-vote {
+#vote-modal #submit-vote {
 	width: 50%;
 	font-size: 24px;
 	padding: 15px 0;
@@ -192,3 +194,50 @@
 	border-radius: 10px;
 	cursor: pointer;
 }
+
+#liar-chance-modal {
+	position: absolute;
+	display: none;
+	top: 25%;
+	left: 10%;
+	width: 70vw;
+	background-color: pink;
+	width: 70vw;
+}
+
+#liar-chance-modal .modal-content{
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+}
+
+#liar-chance-modal #liar-chance-input{
+	outline: none;
+	padding: 10px;
+	height: 20px;
+	width: 80%;
+}
+
+#liar-chance-modal #submit-keyword {
+	width: 50%;
+	font-size: 24px;
+	padding: 15px 0;
+	border: none;
+	background-color: var(--color-theme-04);
+	color: white;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+#game-result-modal {
+	position: absolute; 
+	display: none; 
+	top: 25%;
+	left: 10%;
+	width: 70vw;
+	background-color: pink;
+	width: 70vw;
+}
+
