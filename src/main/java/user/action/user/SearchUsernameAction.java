@@ -42,7 +42,6 @@ public class SearchUsernameAction implements Action {
 			resData.put("isValid", isValid);
 		}
 
-		// 응답 준비
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
 
