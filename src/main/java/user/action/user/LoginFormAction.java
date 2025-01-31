@@ -40,14 +40,22 @@ public class LoginFormAction implements Action {
 			return;
 		}
 
+		if (user.getDeleteStatus()) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_FORBIDDEN, "비활성화된 유저입니다.");
+			return;
+		}
+
 		if (user.checkPassword(password)) {
 
 			HttpSession session = request.getSession();
 			session.setAttribute("log", user);
 
+			logger.info("로그인 성공: " + username);
+
 			JSONObject jsonResponse = new JSONObject();
 			jsonResponse.put("status", HttpServletResponse.SC_OK);
 			jsonResponse.put("message", "로그인 성공");
+			jsonResponse.put("nickname", user.getNickname());
 			jsonResponse.put("uuid", user.getUuid());
 			jsonResponse.put("apiKey", user.getApiKey());
 
@@ -57,7 +65,6 @@ public class LoginFormAction implements Action {
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write(json);
 
-			logger.info("로그인 성공: 사용자 " + username + " 세션 생성됨. 세션 ID: " + session.getId());
 			return;
 		} else {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
