@@ -1,86 +1,23 @@
-html, body {
-	height: 100%;
+@charset "UTF-8";
+
+* {
 	margin: 0;
 	padding: 0;
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
 	font-family: 'SB_Aggro_Light', sans-serif;
+	background-color: var(--background-color);
+	color: var(--text-color);
+	overflow-x: auto;
 }
 
 body {
-	background-color: var(--background-color);
-	overflow-x: auto;
 	min-width: 1200px;
-}
-
-#lobby-wrap {
-	display: grid;
-	grid-template-columns: 300px 1fr;
-	width: 100%;
-	height: 100vh;
-	min-width: 1200px;
-}
-
-#header {
-	background-color: var(--background-color);
-	width: 300px;
-	height: 100vh;
-	color: white;
 	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: 5px;
-	box-sizing: border-box;
-	overflow-y: auto;
-}
-
-#header h1 {
-	justify-content: center;
-	align-content: center;
-	display: flex;
-	margin-bottom: 30px;
-	width: 100%;
-}
-
-#header h3 {
-	font-size: 30px;
-	padding: 10px;
-}
-
-#header p {
-	font-size: 20px;
-	color: #A9AEBA;
-	margin-bottom: 50px;
-}
-
-#header img {
-	padding: 10px;
-	width: 150px;
-	height: 150px;
-	border-radius: 50%;
-}
-
-#header .header-menu {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	align-items: center;
-	width: 100%;
-}
-
-#header .header-menu button {
-	width: 80%;
-	padding: 10px;
-	background-color: #484F5E;
-	color: white;
-	border: none;
-	border-radius: 8px;
-	margin: 5px;
-	cursor: pointer;
-	transition: background-color 0.3s;
-	cursor: pointer;
-}
-
-#header .header-menu button:hover {
-	background-color: #578FFF;
+	margin: 0;
 }
 
 .back-button {
@@ -94,44 +31,76 @@ body {
 	height: 30px;
 	cursor: pointer;
 	transition: transform 0.2s;
-	background-size: contain;
-	width: 30px;
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	z-index: 10;
 }
 
 .back-button:hover {
 	transform: scale(1.1);
 }
 
-#header .back-button {
-	position: absolute;
-	top: 20px;
-	right: 20px;
-	z-index: 1000;
+#lobby-wrap {
+	display: flex;
+	width: 100%;
+	height: 100vh;
 }
 
-.user-actions {
-	margin-top: auto;
-	align-self: flex-start;
+#header .header-menu {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-top: 400px;
+	height: 100%;
+	z-index: 10;
+}
+
+#header .header-menu button {
+	width: 200px;
+	padding: 10px;
+	background-color: #484F5E;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	margin: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s;
 	padding: 10px;
 }
 
-.text-link {
-	background: none;
-	border: none;
-	color: #A9AEBA;
-	text-decoration: underline;
-	cursor: pointer;
-	padding: 5px;
-	margin-right: 10px;
-	font-size: 14px;
+#header .header-menu button:hover {
+	background-color: #578FFF;
 }
 
-.text-link:hover {
-	color: #ffffff;
+#header .user-actions {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 10px;
+	margin-top: 20px;
+	z-index: 10;
+	align-self: flex-start;
+}
+
+#header .user-actions button {
+	background-color: transparent;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	padding: 10px;
+	margin: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+#header .user-actions button:hover {
+	color: #A9AEBA;
 }
 
 .main {
-	width: 100%;
+	flex: 1;
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
@@ -139,114 +108,141 @@ body {
 	overflow: auto;
 	padding: 50px;
 	box-sizing: border-box;
-	justify-content: center;
-	align-items: center;
-	margin: 0 auto;
 }
 
 .main-content {
-	display: grid;
-	grid-template-areas: "profile update" "info update";
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr 2fr;
-	gap: 20px;
-	padding: 30px;
-	width: 90%;
-	height: 85%;
-	min-height: 600px;
+	width: 100%;
+	height: 100%;
 	background-color: #A9AEBA;
 	border-radius: 10px;
 	box-sizing: border-box;
 	overflow: hidden;
-}
-
-.profile-section {
-	grid-area: profile;
-	background-color: white;
 	padding: 20px;
-	border-radius: 10px;
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
 }
 
-.update-section {
-	grid-area: update;
-	background-color: white;
-	padding: 50px;
-	border-radius: 10px;
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
-	overflow-y: auto;
-}
-
-.info-section {
-	grid-area: info;
-	background-color: white;
-	padding: 20px;
-	border-radius: 10px;
-	box-sizing: border-box;
-	width: 100%;
+.grid-container {
+	display: grid;
+	grid-template-areas: "profile update" "info update";
+	grid-template-columns: 3fr 5fr;
+	grid-template-rows: 3fr 2fr;
+	gap: 20px;
 	height: 100%;
 }
 
 form {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+	width: 100%;
 	height: 100%;
 }
 
-form>h3 {
-	margin: 10px 0;
-	text-align: center;
-	font-size: 24px;
+.profile-section, .info-section, .update-section {
+	background-color: white;
+	padding: 20px;
+	border-radius: 10px;
+	box-sizing: border-box;
 }
 
-form>div {
+.profile-section {
 	display: flex;
-	margin: 5px 0;
-	padding: 5px 0;
-	border-bottom: 1px solid #ccc;
+	flex-direction: column; /* 요소를 세로로 정렬 */
+	align-items: center; /* 가운데 정렬 */
+	gap: 10px; /* 요소 간격 */
 }
 
-form>button[type="submit"] {
+#profile-image {
+	width: 100%;
+	height: auto;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.profile-section img {
 	display: block;
-	width: 40%;
-	color: white !important;
-	margin: 10px auto 0;
-	background: #484F5E;
+	max-width: 100px;
+	height: auto;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.update-section {
+	grid-area: update;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	padding: 20px 40px;
+}
+
+.update-section h3 {
+	text-align: center;
+	width: 100%;
+	margin-bottom: 20px;
+	font-size: 1.5em;
+}
+
+.info-section {
+	grid-area: info;
+	display: flex;
+	flex-direction: column;
+}
+
+form input, form textarea {
+	width: 100%;
+	padding: 10px;
+	font-size: 1rem;
+	border: 1px solid #d9d9d9;
+	border-radius: 5px;
+	outline: none;
+	transition: border-color 0.3s;
+}
+
+form input:focus, form textarea:focus {
+	border-color: #578FFF;
+}
+
+form button {
+	background-color: #484F5E;
+	color: white;
+	padding: 10px 20px;
 	border: none;
 	border-radius: 5px;
-	padding: 8px;
-	font-size: 14px;
-	border-radius: 10px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s;
 }
 
-form>button[type="submit"]:hover {
+form button:hover {
 	background-color: #578FFF;
+}
+
+.error-msg {
+	display: none;
+	color: red;
+	font-size: 0.8rem;
+}
+
+.success-msg {
+	display: none;
+	color: green;
+	font-size: 0.8rem;
 }
 
 .inline-div {
 	display: flex;
+	gap: 10px;
+	margin-bottom: 30px;
 	align-items: center;
-	gap: 10%;
-	flex-wrap: nowrap;
 }
 
 .inline-div p {
-	width: 20%;
 	text-align: left;
-	margin-right: 5px;
-	font-size: 14px;
+	font-size: 18px;
+	margin: 0;
+	width: 150px;
 }
 
 .inline-div input {
-	height: 25px;
-	flex: 1;
+	width: 40%;
+	height: 35px;
 	border: 0.5px solid #d9d9d9;
-	padding: 3px;
 	box-sizing: border-box;
 	font-family: 'SB_Aggro_Light';
 	font-weight: lighter;
@@ -254,7 +250,138 @@ form>button[type="submit"]:hover {
 }
 
 .inline-div .error-msg {
-	display: none;
+	width: 30%;
+	text-align: left;
 	color: red;
-	font-size: 10px;
+	font-size: 14px;
+}
+
+@media ( max-width : 768px) {
+	#lobby-wrap {
+		grid-template-columns: 1fr;
+	}
+	.main-content {
+		grid-template-areas: "profile" "info" "update";
+		grid-template-columns: 1fr;
+	}
+}
+
+.modal-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.7);
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+}
+
+.modal {
+	display: none;
+	background-color: black;
+	padding: 10px;
+	border-radius: 8px;
+	width: 400px;
+	z-index: 10000;
+}
+
+.modal .close {
+	font-size: 24px;
+	cursor: pointer;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.modal-content {
+	display: flex;
+	color: white;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	padding: 30px;
+}
+
+.modal .deletion-notice {
+	font-size: 15px;
+	color: #A9AEBA;
+	font-family: 'SB_Aggro_Light', sans-serif;
+	text-align: center;
+	margin: 10px;
+}
+
+.block-icon {
+	width: 100px;
+	height: 100px;
+	background-image:
+		url('https://img.icons8.com/?size=100&id=12405&format=png&color=FFFFFF');
+	background-size: 70%;
+	background-position: center;
+	background-repeat: no-repeat;
+	border-radius: 50%;
+	background-color: #dc575a;
+	margin-bottom: 15px;
+}
+
+.delete-icon {
+	width: 100px;
+	height: 100px;
+	background-image:
+		url('https://img.icons8.com/?size=100&id=NITUnH7loUWU&format=png&color=FFFFFF');
+	background-size: 70%;
+	background-position: center;
+	background-repeat: no-repeat;
+	border-radius: 50%;
+	background-color: #dc575a;
+	margin-bottom: 15px;
+}
+
+#blocked-user, #delete-password {
+	height: 40px;
+	width: 100%;
+	padding: 10px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	margin-bottom: 30px;
+	box-sizing: border-box;
+}
+
+.button-group {
+	display: flex;
+	gap: 10px;
+}
+
+.modal button {
+	background-color: #484F5E;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s;
+	margin: 10px;
+}
+
+#confirm-delete-button, #cancel-delete-button {
+	padding: 10px 20px;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+#confirm-delete-button {
+	color: white;
+}
+
+#cancel-delete-button {
+	color: white;
+}
+
+.modal button:hover {
+	background-color: #578FFF;
 }
