@@ -16,15 +16,33 @@ public class PostBlockUserAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String authorization = request.getHeader("Authorization");
 
+		System.out.println("Authorization Header: " + authorization); // 디버깅용 로그
+
 		if (!isValidAuthorization(authorization)) {
+			System.out.println("Invalid Authorization"); // 디버깅용 로그
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, null);
 			return;
 		}
 
-		String blockingUserNickname = request.getParameter("blocking_user");
-		String blockedUserNickname = request.getParameter("blocked_user");
+		BufferedReader reader = request.getReader();
+		StringBuilder sb = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+		}
+
+		String requestBodyString = sb.toString();
+		System.out.println("Request Body: " + requestBodyString); // 디버깅용 로그
+
+		JSONObject requestBody = new JSONObject(sb.toString());
+		String blockingUserNickname = requestBody.optString("blocking_user");
+		String blockedUserNickname = requestBody.optString("blocked_user");
+
+		System.out.println("Blocking User: " + blockingUserNickname); // 디버깅용 로그
+		System.out.println("Blocked User: " + blockedUserNickname); // 디버깅용 로그
 
 		if (blockingUserNickname == null || blockedUserNickname == null) {
+			System.out.println("Invalid User Information"); // 디버깅용 로그
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "유효하지 않은 사용자 정보입니다.");
 			return;
 		}
@@ -32,13 +50,19 @@ public class PostBlockUserAction implements Action {
 		String blockingUserUuid = userDao.getUuidByNickname(blockingUserNickname);
 		String blockedUserUuid = userDao.getUuidByNickname(blockedUserNickname);
 
+		System.out.println("Blocking User UUID: " + blockingUserUuid); // 디버깅용 로그
+		System.out.println("Blocked User UUID: " + blockedUserUuid); // 디버깅용 로그
+
 		BlockDao blockDao = BlockDao.getInstance();
 		if (blockDao.isBlocked(blockingUserUuid, blockedUserUuid)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "이미 차단된 사용자입니다.");
+			System.out.println("Already Blocked"); // 디버깅용 로그
 			return;
 		}
 
 		boolean result = blockDao.blockUser(blockingUserUuid, blockedUserUuid);
+		System.out.println("Block Result: " + result); // 디버깅용 로그
+
 		sendResponse(response, result ? "차단 성공" : "차단 싫패",
 				result ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	}
