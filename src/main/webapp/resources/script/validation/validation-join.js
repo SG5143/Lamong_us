@@ -1,19 +1,34 @@
-import { updateErrorElementStyle, validateUsername, validatePassword, validateNickname, validatePhone, validateEmail, checkDuplUsername, checkDuplPhone, checkDuplEmail, checkDuplnickname } from "./validation.js";
+import {
+	updateErrorElementStyle,
+	validateUsername,
+	validatePassword,
+	validateNickname,
+	validatePhone,
+	validateEmail,
+	checkPassword,
+	checkDuplUsername,
+	checkDuplPhone,
+	checkDuplEmail,
+	checkDuplNickname,
+} from "./validation.js";
 
 window.onload = () => {
 	const form = document.getElementById("form-join");
 
-	const username = document.getElementById("username-join");
-	const password = document.getElementById("password-join");
-	const nickname = document.getElementById("nickname-join");
-	const phone = document.getElementById("phone-join");
-	const email = document.getElementById("email-join");
-	const loginType = document.getElementById("login_type-join");
-	const joinButton = form.querySelector("button[type='submit']");
+	const elements = {
+		username: document.getElementById("username-join"),
+		password: document.getElementById("new-password"),
+		confirmPassword: document.getElementById("confirm-password"),
+		nickname: document.getElementById("nickname-join"),
+		phone: document.getElementById("phone-join"),
+		email: document.getElementById("email-join"),
+		joinButton: form.querySelector("button[type='submit']"),
+	};
 
 	const isValid = {
 		username: false,
 		password: false,
+		checkPassword: false,
 		nickname: false,
 		phone: false,
 		email: false,
@@ -25,99 +40,117 @@ window.onload = () => {
 		});
 	};
 
-	const handleValidation = async (input, validateFn, duplicateFn, errorIds) => {
-		const { emptyId, patternId, duplicateId } = errorIds;
+	const handleValidation = async (input, validateFn, duplicateFn, errorIds, field) => {
+		resetErrorMessages();
 
-		const emptyElement = document.getElementById(emptyId);
-		if (emptyElement) {
-			if (input.value === "") {
-				updateErrorElementStyle(emptyElement, true);
-				return false;
-			} else {
-				updateErrorElementStyle(emptyElement, false);
-			}
-		} else {
-			console.warn(`${emptyId} not found`);
+		const { patternId, duplicateId } = errorIds;
+
+		if (!patternId) {
+			console.error("Pattern ID is missing in errorIds for", field);
+			return false;
 		}
 
 		const patternElement = document.getElementById(patternId);
-		const isPatternValid = validateFn(input.value);
-		if (patternElement) {
-			updateErrorElementStyle(patternElement, !isPatternValid);
+		if (!patternElement) {
+			console.error(`Element with ID '${patternId}' not found for ${field}`);
+			return false;
 		}
-		if (!isPatternValid) return false;
 
-		if (duplicateFn) {
+		const isPatternValid = validateFn ? validateFn(input.value) : true;
+		updateErrorElementStyle(patternElement, !isPatternValid);
+		if (!isPatternValid) {
+			isValid[field] = false;
+			return false;
+		}
+
+		if (duplicateId) {
 			const duplicateElement = document.getElementById(duplicateId);
-			const isDuplicateValid = await duplicateFn(input.value);
-			if (duplicateElement)
-				updateErrorElementStyle(duplicateElement, !isDuplicateValid);
+			if (!duplicateElement) {
+				console.error(`Element with ID '${duplicateId}' not found for ${field}`);
+				return false;
+			}
 
-			return isDuplicateValid;
+			const isDuplicateValid = await duplicateFn(input.value);
+			updateErrorElementStyle(duplicateElement, !isDuplicateValid);
+			if (!isDuplicateValid) {
+				isValid[field] = false;
+				return false;
+			}
 		}
 
+		isValid[field] = true;
 		return true;
 	};
 
-	const setInputEventListener = (input, validateFn, duplicateFn, errorIds, field) => {
-		input.addEventListener("change", async (e) => {
-			isValid[field] = await handleValidation(e.target, validateFn, duplicateFn, errorIds);
-			console.log(`isValid.${field}`, isValid[field]);
+	const setInputEventListener = (inputElement, validateFn, duplicateFn, errorIds, field) => {
+		inputElement.addEventListener('input', async () => {
+			await handleValidation(inputElement, validateFn, duplicateFn, errorIds, field);
 		});
 	};
 
-	setInputEventListener(username, validateUsername, checkDuplUsername, {
-		emptyId: "error-msg-username-empty",
-		patternId: "error-msg-username-pattern",
-		duplicateId: "error-msg-username"
-	}, "username");
+	const setupEventListeners = () => {
+		const { username, password, confirmPassword, nickname, email, phone } = elements;
 
-	setInputEventListener(password, validatePassword, null, {
-		emptyId: "error-msg-password-empty",
-		patternId: "error-msg-password-pattern"
-	}, "password");
+		// 유효성 검사 이벤트 리스너 등록
+		setInputEventListener(username, validateUsername, checkDuplUsername, {
+			emptyId: "error-msg-username-empty",
+			patternId: "error-msg-username-pattern",
+			duplicateId: "error-msg-username-duplicate"
+		}, "username");
 
-	setInputEventListener(nickname, validateNickname, checkDuplnickname, {
-		emptyId: "error-msg-nickname-empty",
-		patternId: "error-msg-nickname-pattern",
-		duplicateId: "error-msg-nickname"
-	}, "nickname");
+		setInputEventListener(password, validatePassword, null, {
+			emptyId: "error-msg-password-empty",
+			patternId: "error-msg-password-pattern"
+		}, "password");
 
-	setInputEventListener(phone, validatePhone, checkDuplPhone, {
-		emptyId: "error-msg-phone-empty",
-		patternId: "error-msg-phone-pattern",
-		duplicateId: "error-msg-phone"
-	}, "phone");
+		setInputEventListener(confirmPassword, checkPassword, null, {
+			emptyId: "error-msg-checkpassword-empty",
+			patternId: "error-msg-checkpassword-pattern"
+		}, "checkPassword");
 
-	setInputEventListener(email, validateEmail, checkDuplEmail, {
-		emptyId: "error-msg-email-empty",
-		patternId: "error-msg-email-pattern",
-		duplicateId: "error-msg-email"
-	}, "email");
+		setInputEventListener(nickname, validateNickname, checkDuplNickname, {
+			emptyId: "error-msg-nickname-empty",
+			patternId: "error-msg-nickname-pattern",
+			duplicateId: "error-msg-nickname-duplicate"
+		}, "nickname");
 
-	joinButton.addEventListener("click", async (e) => {
+		setInputEventListener(phone, validatePhone, checkDuplPhone, {
+			emptyId: "error-msg-phone-empty",
+			patternId: "error-msg-phone-pattern",
+			duplicateId: "error-msg-phone-duplicate"
+		}, "phone");
+
+		setInputEventListener(email, validateEmail, checkDuplEmail, {
+			emptyId: "error-msg-email-empty",
+			patternId: "error-msg-email-pattern",
+			duplicateId: "error-msg-email-duplicate"
+		}, "email");
+	};
+
+	// 이벤트 리스너 설정
+	setupEventListeners();
+
+	// 회원가입 버튼 클릭 시 처리
+	elements.joinButton.addEventListener("click", async (e) => {
 		e.preventDefault();
 
 		resetErrorMessages();
 
-		const loginTypeValue = loginType.value === "1" ? "kakao" : (loginType.value === "2" ? "google" : null);
 		const formData = {
-			username: username.value,
-			password: password.value,
-			nickname: nickname.value,
-			phone: phone.value,
-			email: email.value,
-			login_type: loginTypeValue,
+			username: elements.username.value,
+			password: elements.password.value,
+			nickname: elements.nickname.value,
+			phone: elements.phone.value,
+			email: elements.email.value,
 		};
 
-
+		// 모든 유효성 검사 통과 여부 확인
 		if (Object.values(isValid).every((value) => value)) {
 			try {
 				const response = await fetch("/v1/members?command=join", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(formData)
-
 				});
 
 				const data = await response.json();
@@ -134,8 +167,10 @@ window.onload = () => {
 				console.error("Error during registration:", error);
 				alert("회원가입 요청 중 오류가 발생했습니다.");
 			} finally {
-				joinButton.disabled = false;
+				elements.joinButton.disabled = false;
 			}
+		} else {
+			alert("모든 정보를 정확히 입력해 주세요.");
 		}
 	});
 };
