@@ -81,7 +81,7 @@ window.onload = () => {
 		return true;
 	};
 
-	const setInputEventListener = (inputElement, validateFn, duplicateFn, errorIds, field) => {
+	const setInputEventListener = (inputElement, validateFn, duplicateFn, errorIds) => {
 		inputElement.addEventListener('input', async () => {
 			const { patternId, duplicateId } = errorIds;
 			const patternElement = document.getElementById(patternId);
