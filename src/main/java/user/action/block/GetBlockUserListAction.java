@@ -33,6 +33,9 @@ public class GetBlockUserListAction implements Action {
 		try {
 			int totalCount = blockDao.getTotalBlockedUsersCount(blockingUser);
 			List<Block> blockList = blockDao.getBlockedUser(blockingUser, page);
+			if (blockList == null) {
+				blockList = new ArrayList<>(); // 기본값 설정
+			}
 
 			JSONObject meta = createMeta(totalCount, (int) Math.ceil((double) totalCount / PAGE_SIZE), page);
 
