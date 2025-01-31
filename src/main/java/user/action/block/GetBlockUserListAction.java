@@ -33,19 +33,17 @@ public class GetBlockUserListAction implements Action {
 		try {
 			int totalCount = blockDao.getTotalBlockedUsersCount(blockingUser);
 			List<Block> blockList = blockDao.getBlockedUser(blockingUser, page);
-			if (blockList == null) {
-				blockList = new ArrayList<>(); // 기본값 설정
-			}
+			if (blockList == null)
+				blockList = new ArrayList<>();
 
 			JSONObject meta = createMeta(totalCount, (int) Math.ceil((double) totalCount / PAGE_SIZE), page);
 
 			JSONArray resBlockInfo = new JSONArray();
 			String message = null;
-			if (blockList.isEmpty()) {
+			if (blockList.isEmpty())
 				message = "차단한 유저가 없습니다.";
-			} else {
+			else
 				resBlockInfo = createBlockInfo(blockList);
-			}
 
 			JSONArray resData = new JSONArray();
 			resData.put(meta);
@@ -67,7 +65,6 @@ public class GetBlockUserListAction implements Action {
 		}
 	}
 
-	// Meta 정보 생성
 	private JSONObject createMeta(int blockCount, int maxPage, int currentPage) {
 		JSONObject resMeta = new JSONObject();
 		resMeta.put("total_count", blockCount);
@@ -76,7 +73,6 @@ public class GetBlockUserListAction implements Action {
 		return resMeta;
 	}
 
-	// Block 정보 생성
 	private JSONArray createBlockInfo(List<Block> blockList) {
 		JSONArray resBlockInfo = new JSONArray();
 
@@ -92,12 +88,10 @@ public class GetBlockUserListAction implements Action {
 		return resBlockInfo;
 	}
 
-	// Authorization 유효성 검사
 	private boolean isValidAuthorization(String authorization) {
 		return authorization != null;
 	}
 
-	// 응답 전송
 	private void sendJsonResponse(HttpServletResponse response, int statusCode, JSONArray resData, String message)
 			throws IOException {
 		JSONObject jsonResponse = new JSONObject();
