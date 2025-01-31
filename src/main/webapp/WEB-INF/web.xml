@@ -27,7 +27,7 @@
 
 	<servlet>
 		<servlet-name>header</servlet-name>
-		<jsp-file>/views/moudules/header.jsp</jsp-file>
+		<jsp-file>/views/modules/header.jsp</jsp-file>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>header</servlet-name>
@@ -53,6 +53,24 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>blockList</servlet-name>
+		<jsp-file>/views/user/blockList.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>blockList</servlet-name>
+		<url-pattern>/blockList</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>gameHistory</servlet-name>
+		<jsp-file>/views/user/gameHistory.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>gameHistory</servlet-name>
+		<url-pattern>/gameHistory</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>gameLobby</servlet-name>
 		<jsp-file>/views/game/gameLobby.jsp</jsp-file>
 	</servlet>
@@ -68,6 +86,15 @@
 	<servlet-mapping>
 		<servlet-name>chat</servlet-name>
 		<url-pattern>/chat</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>upload</servlet-name>
+		<jsp-file>/views/chat/upload.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>upload</servlet-name>
+		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>
 
 	<!-- 404 에러 페이지 매핑 -->
