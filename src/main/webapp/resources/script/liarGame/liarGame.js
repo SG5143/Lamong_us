@@ -11,11 +11,11 @@ let gameTopic = null;
 let gameKeyword = null;
 let countdownInterval;
 
-const roomType = 'playing';
 const roomUUID = 'room1';
+//const roomUUID = document.getElementById("roomUUID").value;
 
 // WebSocket 서버에 연결
-const ws = new WebSocket(`ws://localhost:8080/ws/${roomType}/${roomUUID}`);
+const ws = new WebSocket(`ws://localhost:8080/ws/play/${roomUUID}`);
 
 ws.onopen = function () {
 	ws.send('TEST_SESSION_ID')
@@ -178,8 +178,14 @@ function handleGameStart(topic, keyword) {
 	const detailMessage = document.createElement("p");
 	if (topic && keyword) {
 		detailMessage.textContent = ` 주제 : ${topic}  키워드 : ${keyword}`;
+		document.getElementById('topic').textContent = `주제 ${topic}`;
+		document.getElementById('keyword').textContent = `제시어 ${keyword}`;
+		document.getElementById('explanation-msg').textContent = `라이어를 찾아주세요.`;
 	} else {
 		detailMessage.textContent = `라이어입니다. 다른 플레이어들의 주제를 맞춰주세요!`;
+		document.getElementById('topic').textContent = `주제 ${topic}`;
+		document.getElementById('keyword').textContent = '당신은 라이어 입니다';
+		document.getElementById('explanation-msg').textContent = `제시어를 유추하세요.`;
 	}
 	detailMessage.style.textAlign ="center"
 

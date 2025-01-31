@@ -2,14 +2,16 @@
 
 #root {
 	position: relative;
+
 }
 
 #chat-area {
 	position: relative;
 	width: 500px;
-	height: 90vh;
+	height: 100%;
 	padding: 20px;
 	background-color: var(--background-color);
+	border-radius: 20px;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
