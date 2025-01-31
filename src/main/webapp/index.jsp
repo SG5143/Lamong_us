@@ -13,6 +13,8 @@
 <script type="module" src="resources/script/main-modal.js"></script>
 <script type="module" src="resources/script/validation/validation-login.js"></script>
 <script type="module" src="resources/script/validation/validation-join.js"></script>
+
+
 </head>
 <body>
 	<div class="container">
@@ -80,12 +82,10 @@
 				<form id="login-form" method="POST" action="/v1/login">
 					<input id="username-login" name="username" type="text" placeholder="아이디">
 					<input id="password-login" name="password" type="password" placeholder="비밀번호">
-					<ul class="error-msg-group">
-						<li id="error-msg-username-empty">아이디: 필수 정보입니다.</li>
-						<li id="error-msg-username-pattern">아이디: 유효하지 않은 값입니다.</li>
-						<li id="error-msg-password-empty">비밀번호: 필수 정보입니다.</li>
-						<li id="error-msg-password-pattern">비밀번호: 유효하지 않은 값입니다.</li>
-					</ul>
+					<div id="error-msg-username-empty" class="error-msg">아이디: 필수 정보입니다.</div>
+					<div id="error-msg-username-pattern" class="error-msg">아이디: 유효하지 않은 값입니다.</div>
+					<div id="error-msg-password-empty" class="error-msg">비밀번호: 필수 정보입니다.</div>
+					<div id="error-msg-password-pattern" class="error-msg">비밀번호: 유효하지 않은 값입니다.</div>
 					<button id="login-btn" type="submit">로그인</button>
 				</form>
 				<div class="line-text">or</div>
@@ -101,39 +101,32 @@
 				<h2>회원가입</h2>
 				<form id="form-join" method="POST" action="/v1/join">
 					<input id="username-join" name="username" type="text" placeholder="아이디">
-					<ul class="error-msg-group">
-						<li id="error-msg-username-empty">아이디: 필수 정보입니다.</li>
-						<li id="error-msg-username-pattern">아이디: 유효하지 않은 값입니다.</li>
-						<li id="error-msg-username-duplicate">아이디: 이미 사용 중입니다.</li>
-					</ul>
-					<input id="password-join" name="password" type="password" placeholder="비밀번호">
-					<ul class="error-msg-group">
-						<li id="error-msg-password-empty">비밀번호: 필수 정보입니다.</li>
-						<li id="error-msg-password-pattern">비밀번호: 유효하지 않은 값입니다.</li>
-					</ul>
+					<div id="error-msg-username-empty" class="error-msg">아이디: 필수 정보입니다.</div>
+					<div id="error-msg-username-pattern" class="error-msg">아이디: 유효하지 않은 값입니다.</div>
+					<div id="error-msg-username-duplicate" class="error-msg">아이디: 이미 사용 중입니다.</div>
+
+					<input id="new-password" name="password" type="password" placeholder="비밀번호">
+					<div id="error-msg-password-empty" class="error-msg">비밀번호: 필수 정보입니다.</div>
+					<div id="error-msg-password-pattern" class="error-msg">비밀번호: 유효하지 않은 값입니다.</div>
+
+					<input id="confirm-password" name="password" type="password" placeholder="비밀번호 확인">
+					<div id="error-msg-checkpassword-empty" class="error-msg">비밀번호 확인: 필수 정보입니다.</div>
+					<div id="error-msg-checkpassword-pattern" class="error-msg">비밀번호가 일치하지 않습니다.</div>
+
 					<input id="nickname-join" name="nickname" type="text" placeholder="닉네임">
-					<ul class="error-msg-group">
-						<li id="error-msg-nickname-empty">닉네임: 필수 정보입니다.</li>
-						<li id="error-msg-nickname-pattern">닉네임: 유효하지 않은 값입니다.</li>
-						<li id="error-msg-nickname-duplicate">닉네임: 이미 사용 중입니다.</li>
-					</ul>
+					<div id="error-msg-nickname-empty" class="error-msg">닉네임: 필수 정보입니다.</div>
+					<div id="error-msg-nickname-pattern" class="error-msg">닉네임: 유효하지 않은 값입니다.</div>
+					<div id="error-msg-nickname-duplicate" class="error-msg">닉네임: 이미 사용 중입니다.</div>
+
 					<input id="phone-join" name="phone" type="tel" placeholder="전화번호">
-					<ul class="error-msg-group">
-						<li id="error-msg-phone-empty">전화번호: 필수 정보입니다.</li>
-						<li id="error-msg-phone-pattern">전화번호: 유효하지 않은 값입니다.</li>
-						<li id="error-msg-phone-duplicate">전화번호: 이미 사용 중입니다.</li>
-					</ul>
+					<div id="error-msg-phone-empty" class="error-msg">전화번호: 필수 정보입니다.</div>
+					<div id="error-msg-phone-pattern" class="error-msg">전화번호: 유효하지 않은 값입니다.</div>
+					<div id="error-msg-phone-duplicate" class="error-msg">전화번호: 이미 사용 중입니다.</div>
+
 					<input id="email-join" name="email" type="email" placeholder="이메일">
-					<ul class="error-msg-group">
-						<li id="error-msg-email-empty">이메일: 필수 정보입니다.</li>
-						<li id="error-msg-email-pattern">이메일: 유효하지 않은 값입니다.</li>
-						<li id="error-msg-email-duplicate">이메일: 이미 사용 중입니다.</li>
-					</ul>
-					<select id="login_type-join" name="login_type">
-						<option value="">소셜 계정</option>
-						<option value="1">kakao</option>
-						<option value="2">google</option>
-					</select>
+					<div id="error-msg-email-empty" class="error-msg">이메일: 필수 정보입니다.</div>
+					<div id="error-msg-email-pattern" class="error-msg">이메일: 유효하지 않은 값입니다.</div>
+					<div id="error-msg-email-duplicate" class="error-msg">이메일: 이미 사용 중입니다.</div>
 					<button type="submit">회원가입</button>
 				</form>
 				<ul class="error-msg-group">
