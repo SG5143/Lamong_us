@@ -8,7 +8,8 @@ import util.*;
 public class BlockDao {
 	private static final String GET_BLOCKED_USERS = "SELECT blocked_user FROM BlockedUsers WHERE blocking_user = ? LIMIT ? OFFSET ?";
 	private static final String CREATE_BLOCK = "INSERT INTO BlockedUsers (blocking_user, blocked_user) VALUES (?, ?)";
-	//private static final String DELETE_BLOCK = "DELETE FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
+	// private static final String DELETE_BLOCK = "DELETE FROM BlockedUsers WHERE
+	// blocking_user = ? AND blocked_user = ?";
 	private static final String GET_TOTAL_BLOCKED_USERS_COUNT = "SELECT COUNT(*) FROM BlockedUsers WHERE blocking_user = ?";
 	private static final String FIND_BLOCKED_USER = "SELECT COUNT(*) FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ? LIMIT 1";
 	private static final String CANCEL_BLOCKED_USER = "DELETE FROM BlockedUsers WHERE blocking_user = ? AND blocked_user = ?";
@@ -67,6 +68,9 @@ public class BlockDao {
 	public List<Block> getBlockedUser(String blockingUser, int page) {
 		List<Block> blockedUsers = new ArrayList<>();
 		int offset = (page - 1) * PAGE_SIZE;
+		System.out.println("[DEBUG] getBlockedUser() - Start: blockingUser = " + blockingUser + ", page = " + page
+				+ ", offset = " + offset);
+
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(GET_BLOCKED_USERS)) {
 
@@ -80,7 +84,6 @@ public class BlockDao {
 				block.setBlockingUser(blockingUser);
 				block.setBlockedUser(rs.getString("blocked_user"));
 				block.setRegDate(rs.getTimestamp("reg_date"));
-
 				blockedUsers.add(block);
 			}
 

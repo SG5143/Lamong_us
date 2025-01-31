@@ -193,6 +193,8 @@ public class UserDao {
 	public User updateUserInfo(UserRequestDto userDto) {
 		User updatedUser = null;
 
+		System.out.println("새 비밀번호3: " + userDto.getPassword());
+
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(UPDATE_USER_INFO)) {
 

@@ -3,6 +3,7 @@ package user.action.user;
 import java.io.*;
 
 import org.json.*;
+import org.mindrot.jbcrypt.*;
 
 import controller.*;
 import jakarta.servlet.*;
@@ -15,7 +16,6 @@ public class UpdateFormAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String apiKeyFromHeader = request.getHeader("Authorization");
-
 		if (apiKeyFromHeader == null || !apiKeyFromHeader.startsWith("Bearer ")) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "API 키가 제공되지 않았습니다.");
 			return;
@@ -46,31 +46,69 @@ public class UpdateFormAction implements Action {
 		try {
 			JSONObject jsonObject = new JSONObject(jsonRequest);
 
+			System.out.println("Received JSON: " + jsonRequest);
+
 			String uuid = jsonObject.optString("uuid");
-			String password = jsonObject.optString("password", null);
-			String nickname = jsonObject.optString("nickname", null);
-			String email = jsonObject.optString("email", null);
-			String phone = jsonObject.optString("phone", null);
-			String profileInfo = jsonObject.optString("profile_info", null);
-			String profileImage = jsonObject.optString("profile_image", null);
-			String loginType = jsonObject.optString("loginType", null);
-			
+			String password = jsonObject.optString("password");
+			String nickname = jsonObject.optString("nickname");
+			String email = jsonObject.optString("email");
+			String phone = jsonObject.optString("phone");
+			String profileInfo = jsonObject.optString("profile_info");
+			String profileImage = jsonObject.optString("profile_image");
+			String loginType = jsonObject.optString("loginType");
 
 			UserRequestDto userDto = new UserRequestDto();
 			userDto.setUuid(uuid);
-			userDto.setPassword(password);
-			userDto.setNickname(nickname);
-			userDto.setEmail(email);
-			userDto.setPhone(phone);
-			userDto.setProfileInfo(profileInfo);
-			userDto.setProfileImage(profileImage != null ? profileImage.getBytes() : null);
-			userDto.setLoginType(loginType);
 
-			boolean isUpdated = updateUserInfo(userDto);
+			if (password != null && !password.isEmpty()) {
+				System.out.println("새 비밀번호1: " + password); // 디버깅: 어떤 값이 들어왔는지 출력
+				userDto.setPassword(password);
+			} else {
+				userDto.setPassword(null);
+				System.out.println("새 비밀번호가 비어있거나 null입니다."); // 비어있거나 null일 때 출력
+			}
 
-			if (isUpdated) 
+			if (nickname != null && !nickname.isEmpty()) {
+				userDto.setNickname(nickname);
+			} else {
+				userDto.setNickname(null);
+			}
+
+			if (email != null && !email.isEmpty()) {
+				userDto.setEmail(email);
+			} else {
+				userDto.setEmail(null);
+			}
+
+			if (phone != null && !phone.isEmpty()) {
+				userDto.setPhone(phone);
+			} else {
+				userDto.setPhone(null);
+			}
+
+			if (profileInfo != null && !profileInfo.isEmpty()) {
+				userDto.setProfileInfo(profileInfo);
+			} else {
+				userDto.setProfileInfo(null);
+			}
+
+			if (profileImage != null && !profileImage.isEmpty()) {
+				userDto.setProfileImage(profileImage.getBytes());
+			} else {
+				userDto.setProfileImage(null);
+			}
+
+			if (loginType != null && !loginType.isEmpty()) {
+				userDto.setLoginType(loginType);
+			} else {
+				userDto.setLoginType(null);
+			}
+
+			boolean isUpdated = updateUserInfo(userDto, request);
+
+			if (isUpdated)
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "회원 정보가 성공적으로 업데이트되었습니다.");
-			else 
+			else
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "회원 정보 업데이트에 실패했습니다.");
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -78,11 +116,18 @@ public class UpdateFormAction implements Action {
 		}
 	}
 
-	private boolean updateUserInfo(UserRequestDto userDto) {
+	private boolean updateUserInfo(UserRequestDto userDto, HttpServletRequest request) {
+		System.out.println("새 비밀번호2: " + userDto.getPassword());
+
 		UserDao userDao = UserDao.getInstance();
 		User updatedUser = userDao.updateUserInfo(userDto);
+
 		if (updatedUser != null) {
 			System.out.println("사용자 정보 업데이트 성공: " + updatedUser.getUuid());
+
+			HttpSession session = request.getSession();
+			session.setAttribute("log", updatedUser);
+
 			return true;
 		} else {
 			System.out.println("사용자 정보 업데이트 실패: " + userDto.getUuid());

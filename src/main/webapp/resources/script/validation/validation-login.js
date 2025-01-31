@@ -1,13 +1,15 @@
 import { updateErrorElementStyle, validateUsername, validatePassword } from "./validation.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+
 	const form = document.querySelector("form");
-	
+
 	const usernameInput = document.getElementById("username-login");
 	const passwordInput = document.getElementById("password-login");
 
 	const usernameErrorEmpty = document.getElementById("error-msg-username-empty");
 	const usernameErrorPattern = document.getElementById("error-msg-username-pattern");
+
 	const passwordErrorEmpty = document.getElementById("error-msg-password-empty");
 	const passwordErrorPattern = document.getElementById("error-msg-password-pattern");
 	const loginButton = form.querySelector("button[type='submit']");
@@ -58,11 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (!isUsernameValid || !isPasswordValid)
 			return;
 
-		// 로그인 버튼 비활성화 (중복 클릭 방지)
 		loginButton.disabled = true;
 
 		try {
-			// 로그인 API 요청
 			const response = await fetch("/v1/members?command=login", {
 				method: "POST",
 				headers: {
@@ -78,16 +78,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (data.status === 200) {
 				alert("로그인 성공!");
+				sessionStorage.setItem('nickname', data.nickname);
+				sessionStorage.setItem('uuid', data.uuid);
+				sessionStorage.setItem('apiKey', data.apiKey);
+
 				window.location.href = "/lobby";
+			} else if (data.status === 403) {
+				alert("계정이 비활성화되었습니다. 관리자에게 문의하세요.");
 			} else {
-				console.error("Login failed:", data);
+				console.error("로그인 실패:", data);
 				alert(data.message || "아이디 또는 비밀번호가 틀립니다.");
 			}
 		} catch (error) {
 			console.error("Error during login:", error);
 			alert("로그인 요청 중 오류가 발생했습니다.");
 		} finally {
-			// 요청 완료 후 버튼 다시 활성화
 			loginButton.disabled = false;
 		}
 	});

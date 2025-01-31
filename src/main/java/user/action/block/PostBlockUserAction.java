@@ -16,13 +16,22 @@ public class PostBlockUserAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String authorization = request.getHeader("Authorization");
 
+
 		if (!isValidAuthorization(authorization)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, null);
 			return;
 		}
 
-		String blockingUserNickname = request.getParameter("blocking_user");
-		String blockedUserNickname = request.getParameter("blocked_user");
+		BufferedReader reader = request.getReader();
+		StringBuilder sb = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+		}
+
+		JSONObject requestBody = new JSONObject(sb.toString());
+		String blockingUserNickname = requestBody.optString("blocking_user");
+		String blockedUserNickname = requestBody.optString("blocked_user");
 
 		if (blockingUserNickname == null || blockedUserNickname == null) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "유효하지 않은 사용자 정보입니다.");
@@ -39,11 +48,11 @@ public class PostBlockUserAction implements Action {
 		}
 
 		boolean result = blockDao.blockUser(blockingUserUuid, blockedUserUuid);
+
 		sendResponse(response, result ? "차단 성공" : "차단 싫패",
 				result ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	}
 
-	// Authorization 유효성 검사
 	private boolean isValidAuthorization(String authorization) {
 		return authorization != null && !authorization.trim().isEmpty();
 	}
