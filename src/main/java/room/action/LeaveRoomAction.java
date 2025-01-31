@@ -9,8 +9,10 @@ import controller.Action;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import room.model.RoomDao;
 import room.model.RoomRequestDto;
+import user.model.user.User;
 
 public class LeaveRoomAction implements Action {
 
@@ -18,32 +20,40 @@ public class LeaveRoomAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String authorization = request.getHeader("Authorization");
 
-		if (authorization == null || !isValidAuthorization(authorization)) {
+		if (!isValidAuthorization(authorization)) {
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "인증에 실패했습니다.");
 			return;
 		}
-		
+
+		HttpSession session = request.getSession();
+		User log = (User) session.getAttribute("log");
+
+		if (log == null) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "세션이 만료되었거나 인증되지 않았습니다.");
+			return;
+		}
+
 		try {
 			BufferedReader reader = request.getReader();
 			StringBuilder jsonBuilder = new StringBuilder();
 			String line;
-			
-			while((line = reader.readLine()) != null) {
+
+			while ((line = reader.readLine()) != null) {
 				jsonBuilder.append(line);
 			}
-			
+
 			String requestBody = jsonBuilder.toString();
-			
+
 			JSONObject reqData = new JSONObject(requestBody);
-			
-			String userCode = reqData.optString("user_code",null);
+
 			String roomCode = reqData.optString("room_code", null);
-			
+
 			if (roomCode == null) {
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 요청 데이터가 누락되었습니다.!!");
 				return;
 			}
 
+			String userCode = log.getUuid();
 			RoomDao roomDao = RoomDao.getInstance();
 			RoomRequestDto roomDto = new RoomRequestDto(userCode, roomCode);
 
