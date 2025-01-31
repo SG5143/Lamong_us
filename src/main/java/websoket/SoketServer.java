@@ -27,12 +27,18 @@ public class SoketServer {
 	private final Logger LOGGER = Logger.getLogger(SoketServer.class.getName());
 
 	private LiarGameManager liarGameManager = LiarGameManager.getInstance();
+	private WaitRoomManager waitRoomManager = WaitRoomManager.getInstance();
 	private ChatRoomManager chatRoomManager = ChatRoomManager.getInstance();
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID, EndpointConfig config) {
+		
+		if (roomType == null && roomUUID == null) {
+			return;
+		}
+		
 		HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
-
+		
 		if (httpSession.getAttribute("log") != null) {
 			User user = (User) httpSession.getAttribute("log");
 			String uuid = user.getUuid();
@@ -67,7 +73,7 @@ public class SoketServer {
 			return;
 		}
 
-		if ("playing".equals(roomType)) {
+		if ("play".equals(roomType)) {
 			Set<Session> clients = chatRoomManager.getClientsInRoom(roomType, roomUUID);
 			if (clients.size() == 2)
 				startGameForAllClients(roomType, roomUUID, clients);
@@ -96,8 +102,17 @@ public class SoketServer {
 
 		System.out.println(message);
 		
-		if ("playing".equals(roomType)) {
+		if ("play".equals(roomType)) {
 			if (liarGameManager.handleGameMessage(roomKey, session, message)) {
+				JSONObject jsonObject = new JSONObject(message);
+				String extractedMessage = jsonObject.getString("message");
+				Map<String, Object> userInfo = (Map<String, Object>) session.getUserProperties().get("userInfo");
+				ChatRequestDto chatRequest = new ChatRequestDto((String) userInfo.get("uuid"), extractedMessage);
+				chatRoomManager.addChatToRoomHistory(roomType, roomUUID, chatRequest);
+			}
+		}else if("wait".equals(roomType)) {
+			Set<Session> clients = chatRoomManager.getClientsInRoom(roomType, roomUUID);
+			if(waitRoomManager.handleRoomMessage(roomKey, session, clients, message)) {
 				JSONObject jsonObject = new JSONObject(message);
 				String extractedMessage = jsonObject.getString("message");
 				Map<String, Object> userInfo = (Map<String, Object>) session.getUserProperties().get("userInfo");

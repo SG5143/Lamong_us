@@ -1,6 +1,6 @@
 package websoket;
 
-public class GameConstants {
+public class MessageConstants {
 	
 	// 웹소켓 상수 정의
     public static final String TYPE_MESSAGE = "MESSAGE";
