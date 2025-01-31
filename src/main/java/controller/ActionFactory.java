@@ -43,12 +43,14 @@ public class ActionFactory {
 	}
 
 	private Action getMemberAction(String command, HttpMethod method) {
+
 		return switch (method) {
 		case POST -> switch (command) {
 		case "login" -> new LoginFormAction();
 		case "logout" -> new LogoutFormAction();
 		case "join" -> new JoinFormAction();
 		case "block" -> new PostBlockUserAction();
+		case "check-password" -> new CheckUserPassword();
 		case "search-username" -> new SearchUsernameAction();
 		case "search-email" -> new SearchUserEmailAction();
 		case "search-phone" -> new SearchUserPhoneAction();
@@ -60,7 +62,7 @@ public class ActionFactory {
 		case "all_users_info" -> new GetAllUserAction();
 		case "history" -> new GetGameHistoryAction();
 		case "user_info" -> new GetUserPublicInfoAction();
-		case "Blocked_list" -> new GetBlockUserListAction();
+		case "blocked_list" -> new GetBlockUserListAction();
 		default -> null;
 		};
 		case PATCH -> switch (command) {
@@ -76,7 +78,6 @@ public class ActionFactory {
 		default -> null;
 		};
 	}
-
 
 	private Action getGameRoomAction(String command, HttpMethod method) {
 		Action action = null;
