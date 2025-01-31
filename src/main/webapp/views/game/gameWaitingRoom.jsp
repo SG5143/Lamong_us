@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,10 +10,9 @@
 <title>Lamong Us Lobby</title>
 </head>
 
-<div id="wrap">
-	<div id="header">Lamong Us</div>
-
-	<body>
+<body>
+	<div id="wrap">
+		<div id="header">Lamong Us</div>
 		<div id="main">
 			<div id="cont-wrap">
 				<div id="left-cont">
@@ -27,9 +26,9 @@
 					</div>
 					<div id="user-list"></div>
 				</div>
-				<div id="right-cont">채팅영역</div>
+				<div id="right-cont"><c:import url="/chat" /></div>
 			</div>
 		</div>
-	</body>
-</div>
+	</div>
+</body>
 </html>

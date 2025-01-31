@@ -17,7 +17,7 @@ window.onload = () => {
                     <div class="nickname">${user.nickname}</div>
                 </div>
             `;
-		}).join(""); 
+		}).join("");
 
 		userListContainer.innerHTML = userListHTML;
 	} else {
@@ -26,9 +26,8 @@ window.onload = () => {
 	}
 
 	const leaveRoom = async (roomCode) => {
-		const userCode = "95399f04-dd81-11ef-b3f2-025c4feb1d05";
 		const authorizationToken = "sunsun";
-		const requestBody = { user_code: userCode, room_code: roomCode };
+		const requestBody = { room_code: roomCode };
 
 		try {
 			const response = await fetch("/v1/game-room?command=update-leave", {
@@ -40,14 +39,12 @@ window.onload = () => {
 				body: JSON.stringify(requestBody)
 			});
 
-			if (!response.ok) {
-				handleFetchError(response);
-				return;
-			}
-
 			const result = await response.json();
 			if (result.status === 200) {
 				window.location.href = "/lobby";
+			} else if (result.status === 401) {
+				alert("로그인이 필요합니다.");
+				window.location.href = "/";
 			} else {
 				alert("퇴장중 오류가 발생하였습니다.");
 			}
@@ -58,9 +55,9 @@ window.onload = () => {
 		}
 	};
 
-	
+
 	document.getElementById("leave-btn").addEventListener("click", () => {
-		const roomCode = roomData.GameRoom.room_code; 
+		const roomCode = roomData.GameRoom.room_code;
 		leaveRoom(roomCode);
 	});
 };

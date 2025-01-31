@@ -9,9 +9,10 @@ import controller.Action;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import room.model.Room;
+import jakarta.servlet.http.HttpSession;
 import room.model.RoomDao;
 import room.model.RoomRequestDto;
+import user.model.user.User;
 
 public class CreateAttendanceLog implements Action {
 
@@ -24,13 +25,13 @@ public class CreateAttendanceLog implements Action {
 			return;
 		}
 
-//		HttpSession session = request.getSession();
-//		User log = (User) session.getAttribute("log");
-//		
-//	    if (log == null) {
-//            sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "세션이 만료되었거나 인증되지 않았습니다.");
-//            return;
-//        }
+		HttpSession session = request.getSession();
+		User log = (User) session.getAttribute("log");
+
+		if (log == null) {
+			sendResponseStatusAndMessage(response, HttpServletResponse.SC_UNAUTHORIZED, "세션이 만료되었거나 인증되지 않았습니다.");
+			return;
+		}
 
 		try {
 			BufferedReader reader = request.getReader();
@@ -54,12 +55,10 @@ public class CreateAttendanceLog implements Action {
 
 			RoomDao roomDao = RoomDao.getInstance();
 
-			String userCode = reqData.optString("user_code", null);
+			String userCode = log.getUuid();
 
 			String existingStatus = roomDao.checkUserRoomStatus(userCode, roomCode);
-			// String userCode = log.getUuid();
 			RoomRequestDto roomDto = new RoomRequestDto(userCode, roomCode);
-
 
 			if ("exists".equals(existingStatus) || "in_progress".equals(existingStatus)) {
 				try {

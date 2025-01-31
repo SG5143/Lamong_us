@@ -106,9 +106,8 @@ const clickJoinRoomButton = (room) => {
 };
 
 const joinRoom = async (roomCode) => {
-	const userCode = "95399f04-dd81-11ef-b3f2-025c4feb1d05";
 	const authorizationToken = "sunsun";
-	const requestBody = { user_code: userCode, room_code: roomCode };
+	const requestBody = { room_code: roomCode };
 
 	try {
 		const response = await fetch("/v1/game-room?command=attend-log", {
@@ -119,13 +118,11 @@ const joinRoom = async (roomCode) => {
 			},
 			body: JSON.stringify(requestBody)
 		});
-
+		
 		const result = await response.json();
-		console.log('result', result);
-
-		if (!response.ok) {
-			handleFetchError(response);
-			return;
+		if (result.status === 401) {
+			alert("로그인이 필요합니다.");
+			window.location.href = "/";
 		}
 
 		if (result.message === "참가 기록이 성공적으로 저장되었습니다." || result.message === "참가 시간이 성공적으로 업데이트되었습니다.") {

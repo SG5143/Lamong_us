@@ -391,8 +391,8 @@ public class RoomDao {
 					user.put("profile_image", rs.getString("profile_image"));
 					String leaveTime = rs.getString("leave_time");
 
-					if (leaveTime == null) {
-						userList.add(user);
+					if (leaveTime == null || !leaveTime.isEmpty()) {
+					    userList.add(user);
 					}
 				}
 			}
