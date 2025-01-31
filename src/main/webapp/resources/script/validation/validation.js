@@ -6,6 +6,13 @@ export function updateErrorElementStyle(element, visible) {
 	}
 }
 
+export function resetErrorMessages() {
+	const errorMessages = document.querySelectorAll(".error-message");
+	errorMessages.forEach((msg) => {
+		msg.style.display = "none";
+	});
+}
+
 export const validateUsername = (username) => {
 	const usernamePattern = /^[a-zA-Z0-9-_!@#$%^&*\.]{5,20}$/;
 	return usernamePattern.test(username);
@@ -35,22 +42,83 @@ export const formatPhoneString = (phone) => {
 	return phone.replace(/[^\d]/g, '');
 };
 
-export async function checkDuplUsername(username) {
-	const response = await fetch("/v1/members?command=search-username", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			"username": username
-		})
-	});
-	const json = await response.json();
+export const checkPassword = () => {
+	const newPassword = document.getElementById("new-password");
+	const confirmPassword = document.getElementById("confirm-password");
 
-	return json.isValid;
+	if (newPassword.value.trim() !== confirmPassword.value.trim())
+		return false;
+
+
+	return true;
+};
+
+
+export async function checkCurrentPassword(currentPassword) {
+	let userUuid = sessionStorage.getItem('uuid');
+
+	if (!userUuid) {
+		console.error("사용자가 로그인되지 않았습니다.");
+		return false;
+	}
+
+	try {
+		const response = await fetch("http://localhost:8080/v1/members?command=check-password", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				uuid: userUuid,
+				password: currentPassword,
+			}),
+		});
+
+		if (!response.ok) {
+			console.error("서버 오류:", response.status);
+			return false;
+		}
+
+		const data = await response.json();
+
+		if (data.isValid === undefined) {
+			console.error("서버 응답이 유효한 isValid 값을 포함하지 않습니다.");
+			return false;
+		}
+
+		return data.isValid;
+	} catch (error) {
+		console.error("현재 비밀번호 확인 오류:", error);
+		return false;
+	}
 }
 
-export async function checkDuplnickname(nickname) {
+
+export async function checkDuplUsername(username) {
+	try {
+		const response = await fetch("/v1/members?command=search-username", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				"username": username
+			})
+		});
+		if (!response.ok) {
+			console.error("서버 오류:", response.status);
+			return false;
+		}
+
+		const json = await response.json();
+		return json.isValid;
+	} catch (error) {
+		console.error("닉네임 중복 확인 요청 실패:", error);
+		return false;
+	}
+}
+
+export async function checkDuplNickname(nickname) {
 	const response = await fetch("/v1/members?command=search-nickname", {
 		method: "POST",
 		headers: {
