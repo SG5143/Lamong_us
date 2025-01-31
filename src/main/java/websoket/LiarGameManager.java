@@ -54,9 +54,9 @@ public class LiarGameManager {
             String type = json.getString("type");
             
             switch (type) {
-                case GameConstants.TYPE_VOTE : return handleVoteAction(roomKey, message);
-                case GameConstants.TYPE_MESSAGE: return handleChatMessage(roomKey, client, message);
-                case GameConstants.TYPE_FINAL_CHANCE: return handleFinalChance(roomKey, client, message);
+                case MessageConstants.TYPE_VOTE : return handleVoteAction(roomKey, message);
+                case MessageConstants.TYPE_MESSAGE: return handleChatMessage(roomKey, client, message);
+                case MessageConstants.TYPE_FINAL_CHANCE: return handleFinalChance(roomKey, client, message);
             };
             return false;
         } catch (Exception e) {
@@ -225,7 +225,7 @@ public class LiarGameManager {
 	private void distributeTurns(GameSession session) {
 		List<Session> clients = session.getClients();
 		for (int i = 0; i < clients.size(); i++) {
-			clients.get(i).getUserProperties().put(GameConstants.TURN, i + 1);
+			clients.get(i).getUserProperties().put(MessageConstants.TURN, i + 1);
 			SGM.assignTurnToClient(clients.get(i), i + 1);
 		}
 	}

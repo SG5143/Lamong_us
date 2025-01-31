@@ -69,6 +69,15 @@
 		<servlet-name>gameWaitingRoom</servlet-name>
 		<url-pattern>/waiting-room</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>gamePlayRoom</servlet-name>
+		<jsp-file>/views/game/gamePlayRoom.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>gamePlayRoom</servlet-name>
+		<url-pattern>/play-room</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>chat</servlet-name>
