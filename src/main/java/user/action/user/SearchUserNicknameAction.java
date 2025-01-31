@@ -14,38 +14,43 @@ public class SearchUserNicknameAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		StringBuilder builder = new StringBuilder();
-
-		BufferedReader reader = request.getReader();
-		while (reader.ready()) {
-			builder.append(reader.readLine());
-		}
-
-		JSONObject reqData = new JSONObject(builder.toString());
 		JSONObject resData = new JSONObject();
 
-		if (!reqData.has("nickname")) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			resData.put("status", HttpServletResponse.SC_BAD_REQUEST);
-			resData.put("error", "BAD REQUEST");
-			resData.put("message", "잘못된 요청입니다. 필수 키 값이 누락되었습니다.");
+		try (BufferedReader reader = request.getReader()) {
+			StringBuilder builder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				builder.append(line);
+			}
+
+			JSONObject reqData = new JSONObject(builder.toString());
+
+			if (!reqData.has("nickname")) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				resData.put("status", HttpServletResponse.SC_BAD_REQUEST);
+				resData.put("error", "BAD REQUEST");
+				resData.put("message", "잘못된 요청입니다. 필수 키 값이 누락되었습니다.");
+				resData.put("timestamp", new Timestamp(System.currentTimeMillis()));
+			} else {
+				String nickname = reqData.getString("nickname");
+
+				UserDao userDao = UserDao.getInstance();
+				User user = userDao.findUserByUserNickname(nickname);
+
+				boolean isValid = (user == null);
+				resData.put("isValid", isValid);
+				resData.put("status", HttpServletResponse.SC_OK);
+			}
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			resData.put("status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			resData.put("error", "SERVER ERROR");
+			resData.put("message", "서버 처리 중 오류가 발생했습니다.");
 			resData.put("timestamp", new Timestamp(System.currentTimeMillis()));
-		} else {
-			String nickname = reqData.getString("nickname");
-
-			UserDao userDao = UserDao.getInstance();
-			User user = userDao.findUserByUserNickname(nickname);
-
-			boolean isValid = user == null;
-
-			resData.put("isValid", isValid);
 		}
 
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
-
-		PrintWriter out = response.getWriter();
-		out.append(resData.toString());
-		out.flush();
+		response.getWriter().write(resData.toString());
 	}
 }
