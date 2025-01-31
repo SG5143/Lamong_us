@@ -15,7 +15,7 @@ const roomUUID = 'room1';
 //const roomUUID = document.getElementById("roomUUID").value;
 
 // WebSocket 서버에 연결
-const ws = new WebSocket(`ws://localhost:8080/ws/play/${roomUUID}`);
+const ws =  new WebSocket(`${window.location.protocol}//${window.location.host}/ws/play/${roomUUID}`);
 
 ws.onopen = function () {
 	ws.send('TEST_SESSION_ID')
