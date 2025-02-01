@@ -107,6 +107,16 @@
 	</servlet-mapping>
 	
 	<servlet>
+		<servlet-name>waitChat</servlet-name>
+		<jsp-file>/views/chat/waitChat.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>waitChat</servlet-name>
+		<url-pattern>/wait-chat</url-pattern>
+	</servlet-mapping>
+	
+	
+	<servlet>
 		<servlet-name>upload</servlet-name>
 		<jsp-file>/views/chat/upload.jsp</jsp-file>
 	</servlet>

@@ -18,6 +18,8 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
+import room.model.Room;
+import room.model.RoomDao;
 import user.model.user.User;
 
 import org.json.JSONObject;
@@ -43,7 +45,7 @@ public class SoketServer {
 			User user = (User) httpSession.getAttribute("log");
 			String uuid = user.getUuid();
 			String nickname = user.getNickname();
-			byte[] profileImage = user.getProfileImage();
+			String profileImage = "resources/images/Default" + String.format("%02d", new Random().nextInt(11) + 1) + ".jpg"; //user.getProfileImage();
 			Integer score = user.getScore();
 
 			Map<String, Object> userInfo = new HashMap<>();
@@ -63,8 +65,6 @@ public class SoketServer {
 			userInfo.put("nickname", nickname);
 			userInfo.put("profileImage", profileImage);
 			userInfo.put("score", score);
-
-			System.out.println("uuid:" + uuid);
 			session.getUserProperties().put("userInfo", userInfo);
 		}
 
@@ -75,8 +75,20 @@ public class SoketServer {
 
 		if ("play".equals(roomType)) {
 			Set<Session> clients = chatRoomManager.getClientsInRoom(roomType, roomUUID);
-			if (clients.size() == 2)
+			if (clients.size() == 3)
 				startGameForAllClients(roomType, roomUUID, clients);
+		} else if ("wait".equals(roomType)) {
+			String roomKey = roomType + "/" + roomUUID;
+			if (!waitRoomManager.findRoomByRoomKey(roomKey)) {
+				RoomDao roomDao = RoomDao.getInstance();
+				Room room = roomDao.getRoomByCode(roomUUID);
+
+				RoomSession roomSession = new RoomSession(
+						roomUUID, room.getHost(), room.getTitle(), room.isPrivate(),
+						room.getPassword(), room.getRoundCount());
+				waitRoomManager.initializeRoom(roomKey, roomSession);
+			}
+			waitRoomManager.broadcastPlayersInfo(roomKey);
 		}
 	}
 
@@ -84,11 +96,6 @@ public class SoketServer {
 	@SuppressWarnings("unchecked")
 	public void onMessage(String message, Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) throws IOException {
 		String roomKey = roomType + "/" + roomUUID;
-
-		// if ("GET_CHAT_HISTORY".equals(message)) {
-		// sendChatHistory(session, roomType, roomUUID);
-		// return;
-		// }
 
 		if ("TEST_SESSION_ID".equals(message)) {
 			JSONObject sessionIdMessage = new JSONObject();
@@ -111,8 +118,7 @@ public class SoketServer {
 				chatRoomManager.addChatToRoomHistory(roomType, roomUUID, chatRequest);
 			}
 		}else if("wait".equals(roomType)) {
-			Set<Session> clients = chatRoomManager.getClientsInRoom(roomType, roomUUID);
-			if(waitRoomManager.handleRoomMessage(roomKey, session, clients, message)) {
+			if(waitRoomManager.handleRoomMessage(roomKey, session, message)) {
 				JSONObject jsonObject = new JSONObject(message);
 				String extractedMessage = jsonObject.getString("message");
 				Map<String, Object> userInfo = (Map<String, Object>) session.getUserProperties().get("userInfo");
@@ -123,10 +129,12 @@ public class SoketServer {
 	}
 
 	@OnClose
-	public void onClose(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) {	    
-		if ("playing".equals(roomType)) {
-	        liarGameManager.manageClientDisconnection(roomType + "/" + roomUUID, session);
-	    }
+	public void onClose(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) {
+		if ("play".equals(roomType)) {
+			liarGameManager.manageClientDisconnection(roomType + "/" + roomUUID, session);
+		} else if ("wait".equals(roomType)) {
+			waitRoomManager.manageClientDisconnection(roomType + "/" + roomUUID, session);
+		}
 		chatRoomManager.removeClientFromRoom(roomType, roomUUID, session);
 	}
 
@@ -149,13 +157,5 @@ public class SoketServer {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
-
-//    private void sendChatHistory(Session session, String roomType, String roomUUID) throws IOException {
-//        List<ChatRequestDto> chatHistory = chatRoomManager.getRoomChatHistory(roomType, roomUUID);
-//        JSONArray chatHistoryJson = new JSONArray(chatHistory);
-//        JSONObject chatHistoryMessage = new JSONObject();
-//        chatHistoryMessage.put("type", "CHAT_HISTORY");
-//        chatHistoryMessage.put("chatHistory", chatHistoryJson);
-//        session.getBasicRemote().sendText(chatHistoryMessage.toString());
-//    }
+	
 }
