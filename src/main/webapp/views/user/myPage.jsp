@@ -25,7 +25,6 @@
 		</div>
 
 		<div class="user-actions">
-			<button id="logout-button" class="header-menu-button">로그아웃</button>
 			<button id="delete-account-btn" class="header-menu-button" data-modal="delete-modal">회원 탈퇴</button>
 		</div>
 	</div>
