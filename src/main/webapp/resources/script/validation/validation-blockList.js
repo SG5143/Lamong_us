@@ -8,13 +8,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const userUuid = sessionStorage.getItem("uuid"); 
 
 	let currentPage = parseInt("${page}".trim());
-	if (isNaN(currentPage)) {
+	if (isNaN(currentPage)) 
 		currentPage = 1; 
-	}
+	
 
-	if (!apiKey) {
+	if (!apiKey) 
 		console.error("apiKey가 존재하지 않습니다. 로그인 상태를 확인하세요.");
-	}
+	
 
 	async function fetchBlockList(currentPage) {
 		try {
@@ -27,9 +27,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 				}
 			});
 
-			if (!blockResponse.ok) {
+			if (!blockResponse.ok) 
 				throw new Error(`HTTP error! status: ${blockResponse.status}`);
-			}
 
 			const data = await blockResponse.json();
 
