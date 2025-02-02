@@ -74,33 +74,18 @@ body {
 	background-color: #578FFF;
 }
 
-#header .user-actions {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	gap: 10px;
-	margin-top: 20px;
-	z-index: 10;
-	align-self: flex-start;
-}
-
-#header .user-actions button {
+#delete-account-btn {
 	background-color: transparent;
-	color: white;
 	border: none;
 	border-radius: 8px;
+	color: white;
 	padding: 10px;
 	margin: 5px;
 	cursor: pointer;
-	transition: background-color 0.3s;
-}
-
-#delete-account-btn {
-	margin-left: 100px;
-}
-
-#header .user-actions button:hover {
-	color: #A9AEBA;
+	position: absolute;
+	left: 100px;
+	bottom: 20px;
+	z-index: 100;
 }
 
 .main {
@@ -182,8 +167,7 @@ form {
 	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
-	padding: 20px 20px; /* 패딩 값 줄임 /
-/ max-height: 700px;  최대 높이 설정 삭제 */
+	padding: 20px 80px;
 }
 
 .update-section h3 {
@@ -192,6 +176,10 @@ form {
 	margin-bottom: 20px;
 	font-size: 1.5em;
 	color: #333;
+}
+
+.udate-section button {
+	width: 70%;
 }
 
 .info-section {
@@ -213,10 +201,6 @@ form input, form textarea {
 
 form input:focus, form textarea:focus {
 	border-color: #578FFF;
-}
-
-.inline-div button {
-	width: 100px;
 }
 
 form button {
@@ -249,46 +233,40 @@ form button:hover {
 
 .inline-div {
 	display: flex;
-	gap: 10px;
-	margin-bottom: 10px;
-	align-items: center;
+	padding: 10px;
 	position: relative;
-}
-
-.inline-div::after {
-	content: '';
-	position: absolute;
-	left: 0;
-	bottom: -10px;
-	width: 100%;
-	height: 1px;
-	background-color: #d9d9d9;
+	align-items: center;
+	border-bottom: 1px solid #d9d9d9;
 }
 
 .inline-div p {
 	text-align: left;
 	font-size: 1em;
 	margin: 0;
-	width: 190px;
+	width: 30%;
 }
 
 .inline-div input {
-	width: 40%;
+	justify-content: center;
+	align-content: center;
 	height: 30px;
+	margin-left: 10px;
+	margin-right: 10px;
 	font-size: 15px;
 	border: 0.5px solid #d9d9d9;
 	box-sizing: border-box;
 	font-family: 'SB_Aggro_Light';
 	font-weight: lighter;
 	padding: 5px;
+	width: 40%;
 }
 
-.inline-div .error-msg {
-	width: 140px;
-	text-align: rigth;
+.error-msg {
+	width: 20%;
+	text-align: left;
 	color: red;
-	font-size: 14px;
-	margin-top: 5px;
+	flex-grow: 1;
+	font-size: 10px;
 }
 
 @media ( max-width : 768px) {
@@ -494,37 +472,6 @@ body {
 	border: 5px solid #A9AEBA;
 	border-radius: 50%;
 	object-fit: cover;
-}
-
-#header .user-actions {
-	background-color: transparent;
-	color: white;
-	justify-content: flex-start;
-	border: none;
-	border-radius: 8px;
-	color: white;
-	padding: 10px;
-	margin: 5px;
-	cursor: pointer;
-	margin-top: auto;
-	transition: background-color 0.3s;
-	z-index: 10;
-}
-
-#myPage-button {
-	position: relative;
-	z-index: 10;
-	width: 30%;
-	max-width: 50px;
-	height: auto;
-	border: 3px solid #A9AEBA;
-	border-radius: 50%;
-	bottom: 15px;
-	background-color: white;
-	cursor: pointer;
-	object-fit: cover;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 #header .user-actions button:hover {
