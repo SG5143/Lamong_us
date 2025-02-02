@@ -2,16 +2,17 @@ const chat = document.getElementById('chat');
 const message = document.getElementById('message');
 const send = document.getElementById('send');
 
-let players = null;
+let users = null;
 let userUUID = null;
 
-const roomUUID = 'room1';
-//const roomUUID = document.getElementById("roomUUID").value;
+//const roomUUID = "e3311517-e088-11ef-b3f2-025c4feb1d05";
+const roomUUID = document.getElementById("roomUUID").value;
 
 const ws = new WebSocket(`ws://localhost:8080/ws/wait/${roomUUID}`);
 
 ws.onopen = function() {
 	ws.send('TEST_SESSION_ID')
+	ws.send(JSON.stringify({ type: 'PLAYER_INFO', message: "PLAYER_INFO" }));
 };
 
 send.addEventListener('click', sendMessage);
@@ -34,12 +35,24 @@ ws.onmessage = function(event) {
 
 	switch (data.type) {
 		case 'MESSAGE':
-			displayMessage(data.senderUUID, data.senderNickname, data.message);
+			displayMessage(data.senderUUID, data.image, data.senderNickname, data.message);
+			break;
+		case 'SESSION_ID':
+			userUUID = data.uuid;
+			break;
+		case 'READY':
+			changeReadyState();
+			break;
+		case 'START':
+			gameStart();
+			break;
+		case 'USER_UPDATE':
+			users = data.clientInfo;
 			break;
 	}
 };
 
-function displayMessage(senderId, senderName, message) {
+function displayMessage(senderId, profileImage, senderName, message) {
 	const msgBox = document.createElement('div');
 	msgBox.className = "user-msg-container"
 
@@ -81,17 +94,25 @@ function displayMessage(senderId, senderName, message) {
 		time.style.order = 1;
 	}
 
-	players.forEach(player => {
-		if (player.uuid === senderId) {
-			if (player.profileImage.startsWith("resources/images/Default")) {
-				profileImg.style.backgroundImage = `url('${player.profileImage}')`;
-			} else {
-				profileImg.style.backgroundImage = `url('data:image/png;base64,${player.profileImage}')`;
-			}
-		}
-	});
+
+	if (typeof profileImage === "string" && profileImage.startsWith("resources/images/Default")) {
+	    profileImg.style.backgroundImage = `url('${profileImage}')`;
+	} else {
+	    profileImg.style.backgroundImage = `url('resources/images/Default01.jpg')`;
+	}
 
 	chat.appendChild(msgBox);
 	chat.scrollTop = chat.scrollHeight;
 }
+
+
+function changeReadyState(sender, state){
+	// 헤딩 유저 레디상태 조회
+}
+
+function gameStart(){
+	// 화면이동로직
+}
+
+
 

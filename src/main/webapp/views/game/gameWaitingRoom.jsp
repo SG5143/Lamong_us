@@ -14,6 +14,7 @@
 	<div id="wrap">
 		<div id="header">Lamong Us</div>
 		<div id="main">
+			<input type="hidden" id="roomUUID" value="${param.roomUUID}">
 			<div id="cont-wrap">
 				<div id="left-cont">
 					<div id="left-top">
@@ -26,7 +27,7 @@
 					</div>
 					<div id="user-list"></div>
 				</div>
-				<div id="right-cont"><c:import url="/chat" /></div>
+				<div id="right-cont"><c:import url="/wait-chat" /></div>
 			</div>
 		</div>
 	</div>
