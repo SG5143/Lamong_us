@@ -61,11 +61,11 @@ public class UpdateFormAction implements Action {
 			userDto.setUuid(uuid);
 
 			if (password != null && !password.isEmpty()) {
-				System.out.println("새 비밀번호1: " + password); // 디버깅: 어떤 값이 들어왔는지 출력
+				System.out.println("새 비밀번호1: " + password);
 				userDto.setPassword(password);
 			} else {
 				userDto.setPassword(null);
-				System.out.println("새 비밀번호가 비어있거나 null입니다."); // 비어있거나 null일 때 출력
+				System.out.println("새 비밀번호가 비어있거나 null입니다."); 
 			}
 
 			if (nickname != null && !nickname.isEmpty()) {
