@@ -89,6 +89,24 @@ button:hover, .btn:hover, [type="submit"]:hover, [type="button"]:hover {
 	width: 100%;
 }
 
+.social-login {
+	width: 60%;
+	height: 45px;
+	border: none;
+	padding: 0;
+	background-image: url('/resources/images/kakao_login_medium_wide.png');
+	cursor: pointer;
+	overflow: hidden;
+	border-radius: 8px;
+	transition: opacity 0.3s ease;
+	position: relative; /* 추가 */
+}
+
+.social-login:hover {
+	opacity: 0.85;
+}
+
+*
 .modal-overlay {
 	display: none;
 	position: fixed;
