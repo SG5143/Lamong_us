@@ -14,21 +14,15 @@
 <script type="module" src="resources/script/validation/validation-login.js"></script>
 <script type="module" src="resources/script/validation/validation-join.js"></script>
 
-<!-- favicon image -->
-<link rel="shortcut icon" href="파비콘이미지.png">
-
-<meta property="og:title" content="링크타이틀">
-<meta property="og:description" content="링크에대한설명">
-<meta property="og:image" content="이미지주소">
-
-<!-- ... -->
 
 </head>
 <body>
-	<div class="container">
+	<header>
 		<h1>LAMONG US</h1>
 		<h2>Web 라이어 게임</h2>
+	</header>
 
+	<div class="container">
 		<div class="button-container">
 			<button class="btn btn-top" data-modal="play-method-modal">플레이 방법</button>
 			<div class="btn-group btn-group-mid">
@@ -86,6 +80,7 @@
 		<div class="modal" id="login-modal">
 			<span class="close" data-close>&times;</span>
 			<div class="modal-content">
+				<h3>LAMONG US</h3>
 				<h2>로그인</h2>
 				<form id="login-form" method="POST" action="/v1/login">
 					<input id="username-login" name="username" type="text" placeholder="아이디">
@@ -106,6 +101,7 @@
 		<div class="modal" id="join-modal">
 			<span class="close" data-close>&times;</span>
 			<div class="modal-content">
+				<h3>LAMONG US</h3>
 				<h2>회원가입</h2>
 				<form id="form-join" method="POST" action="/v1/join">
 					<input id="username-join" name="username" type="text" placeholder="아이디">
