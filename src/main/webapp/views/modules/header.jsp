@@ -26,7 +26,8 @@
 		<h1>Lamong Us</h1>
 
 		<div class="profile-container">
-			<img id="profile-image" src="/resources/images/default_image.jpg" alt="Profile Image"> <img id="myPage-button" src="/resources/images/myPage_button.png" alt="Setting Image" onclick="window.location.href='/myPage';" style="cursor: pointer;">
+			<img id="profile-image" src="/resources/images/default_image.jpg" alt="Profile Image"> 
+			<img id="myPage-button" src="/resources/images/myPage_button.png" alt="Setting Image" onclick="window.location.href='/myPage';" style="cursor: pointer;">
 		</div>
 
 		<h2>${log.nickname}</h2>
