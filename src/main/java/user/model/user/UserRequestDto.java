@@ -1,5 +1,10 @@
 package user.model.user;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Random;
+
 public class UserRequestDto {
 	private String uuid;
 	private String username;
@@ -15,7 +20,8 @@ public class UserRequestDto {
 	private int score;
 	private String apiKey;
 
-	public UserRequestDto() {}
+	public UserRequestDto() {
+	}
 
 	public UserRequestDto(String username, String password, String nickname, String phone, String email,
 			String loginType) {
@@ -25,6 +31,31 @@ public class UserRequestDto {
 		this.phone = phone;
 		this.email = email;
 		this.loginType = loginType;
+		this.profileImage = getRandomProfileImage();
+	}
+
+	private byte[] getRandomProfileImage() {
+		try {
+			String imagePath = "webapp/resources/images/";
+
+			String[] imageFiles = new String[] { "Default01.jpg", "Default02.jpg", "Default03.jpg", "Default04.jpg",
+					"Default05.jpg", "Default06.jpg", "Default07.jpg", "Default08.jpg", "Default09.jpg",
+					"Default10.jpg", "Default11.jpg" };
+
+			Random random = new Random();
+			int index = random.nextInt(imageFiles.length);
+
+			File imageFile = new File(imagePath + imageFiles[index]);
+
+			if (imageFile.exists())
+				return Files.readAllBytes(imageFile.toPath());
+			else
+				throw new IOException("Default image not found");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new byte[0];
+		}
 	}
 
 	public String getUuid() {
