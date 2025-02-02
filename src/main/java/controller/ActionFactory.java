@@ -48,11 +48,11 @@ public class ActionFactory {
 		case POST -> switch (command) {
 		case "login" -> new LoginFormAction();
 		case "logout" -> new LogoutFormAction();
-		case "join" -> new JoinFormAction();
+		case "join" -> new JoinFormAction(); 
 		case "block" -> new PostBlockUserAction();
 		case "check-password" -> new CheckUserPassword();
 		case "search-username" -> new SearchUsernameAction();
-		case "search-email" -> new SearchUserEmailAction();
+		case "search-email" -> new SearchUserEmailAction(); 
 		case "search-phone" -> new SearchUserPhoneAction();
 		case "search-nickname" -> new SearchUserNicknameAction();
 
@@ -63,6 +63,8 @@ public class ActionFactory {
 		case "history" -> new GetGameHistoryAction();
 		case "user_info" -> new GetUserPublicInfoAction();
 		case "blocked_list" -> new GetBlockUserListAction();
+		case "get_nickname" -> new GetUserNicknameByUuid();
+
 		default -> null;
 		};
 		case PATCH -> switch (command) {
