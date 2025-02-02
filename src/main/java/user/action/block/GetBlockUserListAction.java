@@ -17,15 +17,12 @@ public class GetBlockUserListAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String authorization = request.getHeader("Authorization");
 
-		System.out.println("[DEBUG] Authorization: " + authorization);
-
 		if (!isValidAuthorization(authorization)) {
 			sendJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, null, "인증되지 않은 사용자입니다.");
 			return;
 		}
 
 		String blockingUser = request.getParameter("blocking_user");
-		System.out.println("[DEBUG] blocking_user: " + blockingUser);
 
 		if (blockingUser == null || blockingUser.isEmpty() || blockingUser.length() > 100) {
 			sendJsonResponse(response, HttpServletResponse.SC_BAD_REQUEST, null, "잘못된 차단 사용자 파라미터입니다.");
@@ -33,7 +30,6 @@ public class GetBlockUserListAction implements Action {
 		}
 
 		String pageParam = request.getParameter("page");
-		System.out.println("[DEBUG] page: " + pageParam);
 
 		int page = parsePageParameter(request.getParameter("page"));
 		try {
@@ -58,7 +54,6 @@ public class GetBlockUserListAction implements Action {
 		}
 	}
 
-	// 페이지 형변환 (기본값 1)
 	private int parsePageParameter(String pageParam) {
 		try {
 			return Integer.parseInt(pageParam);
@@ -100,9 +95,8 @@ public class GetBlockUserListAction implements Action {
 
 		jsonResponse.put("status_code", statusCode);
 
-		if (resData == null) {
+		if (resData == null)
 			resData = new JSONArray();
-		}
 
 		jsonResponse.put("Meta", resData.length() > 0 ? resData.get(0) : new JSONObject());
 		jsonResponse.put("Block_info", resData.length() > 1 ? resData.get(1) : new JSONArray());
