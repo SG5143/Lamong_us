@@ -27,7 +27,7 @@ public class UserDao {
 	private static final String COL_MOD_DATE = "mod_date";
 
 	private static final String COUNT_USERS = "SELECT COUNT(*) FROM users";
-	private static final String CREATE_USER = "INSERT INTO Users (username, password, nickname, phone, email, login_type) VALUES (?, ?, ?, ?, ?, ?)";
+	private static final String CREATE_USER = "INSERT INTO Users (username, password, nickname, phone, email, login_type, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private static final String FIND_ALL_USERS = "SELECT * FROM Users";
 	private static final String FIND_USER_BY_UUID = "SELECT * FROM Users WHERE uuid=?";
 	private static final String FIND_USER_BY_USERNAME = "SELECT * FROM Users WHERE username=?";
@@ -79,11 +79,12 @@ public class UserDao {
 			pstmt.setString(4, userDto.getPhone());
 			pstmt.setString(5, userDto.getEmail());
 
-			if (userDto.getLoginType() == null || "null".equalsIgnoreCase(userDto.getLoginType().trim())) {
+			if (userDto.getLoginType() == null || "null".equalsIgnoreCase(userDto.getLoginType().trim()))
 				pstmt.setNull(6, java.sql.Types.VARCHAR);
-			} else {
+			else
 				pstmt.setString(6, userDto.getLoginType().trim());
-			}
+
+			pstmt.setBytes(7, userDto.getProfileImage());
 
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -192,8 +193,6 @@ public class UserDao {
 
 	public User updateUserInfo(UserRequestDto userDto) {
 		User updatedUser = null;
-
-		System.out.println("새 비밀번호3: " + userDto.getPassword());
 
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(UPDATE_USER_INFO)) {
@@ -312,6 +311,33 @@ public class UserDao {
 			e.printStackTrace();
 		}
 		return userPublicInfo.toString();
+	}
+
+	public String getProfileImageAsBase64(String uuid) {
+		String sql = "SELECT profile_image FROM users WHERE uuid = ?";
+		byte[] profileImage = null;
+
+		try (Connection conn = DBManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, uuid);
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					Blob blob = rs.getBlob("profile_image");
+					if (blob != null) {
+						profileImage = blob.getBytes(1, (int) blob.length());
+					}
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		if (profileImage != null) {
+			return Base64.getEncoder().encodeToString(profileImage);
+		}
+
+		return "No image available";
 	}
 
 }

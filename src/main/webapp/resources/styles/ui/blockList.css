@@ -1,10 +1,14 @@
 @charset "UTF-8";
 
+html {
+	--background-color: #222;
+	--text-color: #eee;
+}
+
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	color: #fff;
 }
 
 html, body {
@@ -14,34 +18,32 @@ html, body {
 	color: var(--text-color);
 }
 
-body {
-	min-width: 1200px;
-}
-
 .main {
 	width: 100%;
 	height: 100%;
 	display: flex;
-	flex-direction: column; 
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 }
 
 .main-content {
 	width: 60%;
-	max-width: 1200px; 
-	height: 600px; 
-	margin: 20px auto; 
+	height: 60%;
+	max-width: 1200px;
+	min-height: 600px;
+	margin: 20px auto;
 	background-color: black;
-	border: 10px solid #333; 
-	border-radius: 8px; 
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-	display: flex; 
-	flex-direction: column; 
-	align-items: center; 
-	padding: 20px; 
+	border: 10px solid #333;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20px;
 	overflow-y: auto;
-	box-shadow: 3px 3px 0px #333; 
+	box-shadow: 3px 3px 0px #333;
+	position: relative;
 }
 
 .block-list-table {
@@ -73,12 +75,12 @@ body {
 	background-color: #c82333;
 }
 
-.main-content  h2 {
+.main-content h2 {
 	color: white;
-	text-align: center; 
+	text-align: center;
 	display: flex;
-	justify-content: center; 
-	align-items: center; 
+	justify-content: center;
+	align-items: center;
 }
 
 .back-button {
@@ -102,6 +104,12 @@ body {
 	transform: scale(1.1);
 }
 
+.pagination {
+	margin-top: auto;
+	padding-top: 20px;
+	text-align: center;
+}
+
 .pagination button {
 	background-color: #007bff;
 	color: white;
@@ -114,4 +122,13 @@ body {
 
 .pagination button:hover {
 	background-color: #0056b3;
+}
+
+.block-list-table img { /* 이미지 스타일 변경 */
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background-color: white;
+	object-fit: cover;
+	margin-right: 10px; /* 이미지 오른쪽 여백 추가 */
 }

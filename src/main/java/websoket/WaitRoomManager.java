@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.json.JSONObject;
-
 import jakarta.websocket.Session;
 import room.model.RoomDao;
 
@@ -16,7 +14,7 @@ public class WaitRoomManager {
 	private static final WaitRoomManager INSTANCE = new WaitRoomManager();
 	private static final RoomDao roomDao = RoomDao.getInstance();
 	private final Map<String, RoomSession> roomSessions = new ConcurrentHashMap<>();
-	
+
 	private WaitRoomManager() {};
 	
 	public static WaitRoomManager getInstance() {
@@ -148,8 +146,4 @@ public class WaitRoomManager {
 		
 	    return false;
 	}
-	
-	
-	
-	
 }

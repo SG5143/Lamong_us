@@ -53,7 +53,6 @@ export const checkPassword = () => {
 	return true;
 };
 
-
 export async function checkCurrentPassword(currentPassword) {
 	let userUuid = sessionStorage.getItem('uuid');
 
@@ -93,29 +92,24 @@ export async function checkCurrentPassword(currentPassword) {
 	}
 }
 
-
 export async function checkDuplUsername(username) {
-	try {
-		const response = await fetch("/v1/members?command=search-username", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				"username": username
-			})
-		});
-		if (!response.ok) {
-			console.error("서버 오류:", response.status);
-			return false;
-		}
-
-		const json = await response.json();
-		return json.isValid;
-	} catch (error) {
-		console.error("닉네임 중복 확인 요청 실패:", error);
+	const response = await fetch("/v1/members?command=search-username", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			"username": username
+		})
+	});
+	if (!response.ok) {
+		console.error("서버 오류:", response.status);
 		return false;
 	}
+
+	const json = await response.json();
+	return json.isValid;
+
 }
 
 export async function checkDuplNickname(nickname) {
@@ -129,7 +123,6 @@ export async function checkDuplNickname(nickname) {
 		})
 	});
 	const json = await response.json();
-
 	return json.isValid;
 }
 
@@ -145,7 +138,6 @@ export async function checkDuplPhone(phone) {
 		})
 	});
 	const json = await response.json();
-
 	return json.isValid;
 }
 
@@ -160,9 +152,36 @@ export async function checkDuplEmail(email) {
 		})
 	});
 	const json = await response.json();
-
 	return json.isValid;
 }
 
+export async function getNicknameByUuid(uuid, apiKey) {
+	try {
+		const response = await fetch(`/v1/members?command=get_nickname&user_uuid=${uuid}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${apiKey}`
+			},
+		});
+		console.log("응답 상태:", response.status);
+
+		if (!response.ok)
+			throw new Error(`HTTP error! status: ${response.status}, 응답 내용: ${await response.text()}`);
+
+
+		const data = await response.json();
+		console.log("받은 데이터:", data);
+		if (data && data.nickname)
+			return data.nickname;
+		else
+			console.error('닉네임 데이터 구조 오류:', data);
+		return "알 수 없음";
+
+	} catch (error) {
+		console.error('닉네임 조회 실패:', error);
+		return "알 수 없음";
+	}
+}
 
 

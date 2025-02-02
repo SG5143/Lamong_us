@@ -264,6 +264,7 @@ function handleStateChange(state) {
 		const roundTitle = document.createElement("h4");
 
 		roundTitle.textContent = `-- 30초 후 라이어 투표가 진행됩니다.  --`;
+
 		roundTitle.style.fontSize = "24px";
 		roundTitle.style.margin = "20px 0"
 		roundTitle.style.textAlign = "center"
