@@ -58,40 +58,5 @@
 			</div>
 		</div>
 	</main>
-
-	<div class="modal-overlay" id="modal-overlay">
-		<div class="modal" id="block-modal">
-			<div class="modal-content">
-				<div class="block-icon"></div>
-				<h2>유저 차단</h2>
-				<div class="deletion-notice">
-					<p>"차단할 유저의 닉네임을 입력하세요"</p>
-				</div>
-				<input type="text" id="blocked-user" placeholder="차단 유저 닉네임" />
-				<div class="button-group">
-					<button id="block-button">차단하기</button>
-					<button id="cancel-button" data-close>취소하기</button>
-				</div>
-			</div>
-		</div>
-
-		<div class="modal" id="delete-modal">
-			<div class="modal-content">
-				<div class="delete-icon"></div>
-				<h2>회원 탈퇴</h2>
-				<div class="deletion-notice">
-					<p>"회원 탈퇴 시, 계정은 삭제되며</p>
-					<p>복구할 수 없습니다!"</p>
-				</div>
-				<input type="password" id="delete-password" placeholder="비밀번호" />
-				<div id="err-msg-password-mismatch" class="error-msg">비밀번호가 일치하지 않습니다.</div>
-
-				<div class="button-group">
-					<button id="confirm-delete-button">탈퇴하기</button>
-					<button id="cancel-button" data-close>취소하기</button>
-				</div>
-			</div>
-		</div>
-	</div>
 </body>
 </html>
