@@ -83,6 +83,26 @@ function sendMessage() {
 // ================ 진행중인 게임 플레이어 저장 ================ 
 function setPlayerList(clientInfo) {
 	players = clientInfo;
+	
+	const playerList = document.getElementById("player-ilst");
+	playerList.innerHTML = ""; 
+
+	players.forEach(player => {
+		const li = document.createElement("li");
+		li.setAttribute("data-uuid", player.uuid); 
+
+		li.innerHTML = `
+			<div class="profile-container">
+				<img class="profile-image" src="${player.profileImage}" alt="${player.nickname}">
+			</div>
+			<div class="user-info">
+				<p class="nickname">${player.uuid === userUUID ? `${player.nickname}(나)` : player.nickname}</p>
+				<p class="user-explanation"></p>
+			</div>
+		`;
+
+		playerList.appendChild(li);
+	});
 }
 
 // ================ 기존 채팅 내역 출력 ================ 
@@ -146,6 +166,14 @@ function displayMessage(senderId, senderName, message) {
 			}
 		}
 	});
+	
+	const playerElement = document.querySelector(`[data-uuid="${senderId}"]`);
+	if (playerElement) {
+	    const userExplanation = playerElement.querySelector('.user-explanation');
+	    if (userExplanation) {
+	        userExplanation.textContent = message; 
+	    }
+	}
 	
     chat.appendChild(msgBox);
     chat.scrollTop = chat.scrollHeight;
@@ -228,14 +256,14 @@ function handleStateChange(state) {
 	if (state === "ROUND_END") {
 		clearInterval(countdownInterval);
 
-		let timeLeft = 10;
+		let timeLeft = 30;
 		message.disabled = false;
 		send.style.display = "block";
 
 		const infoBox = document.createElement('div');
 		const roundTitle = document.createElement("h4");
 
-		roundTitle.textContent = `-- 60초 후 라이어 투표가 진행됩니다.  --`;
+		roundTitle.textContent = `-- 30초 후 라이어 투표가 진행됩니다.  --`;
 		roundTitle.style.fontSize = "24px";
 		roundTitle.style.margin = "20px 0"
 		roundTitle.style.textAlign = "center"
@@ -297,7 +325,7 @@ function showVoteModal() {
 	voteBox.innerHTML = '';
 	modal.style.display = 'block';
 
-	let time = 30;
+	let time = 15;
 
 	const timer = setInterval(() => {
 	    if (time > 0) {
@@ -387,7 +415,7 @@ function finalChance(){
 	} else {
 		const modal = document.getElementById("liar-chance-modal");
 		modal.style.display = "block";
-		startCountdown(30);
+		startCountdown(15);
 		setupSubmitButton();
 	}
 }

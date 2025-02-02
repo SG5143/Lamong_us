@@ -128,7 +128,7 @@ public class LiarGameManager {
 			if (!startNewRound(session)) {
 				Executors.newSingleThreadScheduledExecutor().schedule(() -> {
 					initiateVoting(session);
-				}, 11, TimeUnit.SECONDS); // 10초후 투표시작
+				}, 31, TimeUnit.SECONDS); // 30초후 투표시작
 				return;
 			}
 		}
@@ -156,7 +156,7 @@ public class LiarGameManager {
 				session.setVoteInProgress(false);
 				processVoteResults(session);
 			}
-		}, 11, TimeUnit.SECONDS);
+		}, 15, TimeUnit.SECONDS);
 	}
 
 	private void processVoteResults(GameSession session) {
