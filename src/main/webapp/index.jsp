@@ -14,6 +14,14 @@
 <script type="module" src="resources/script/validation/validation-login.js"></script>
 <script type="module" src="resources/script/validation/validation-join.js"></script>
 
+<!-- favicon image -->
+<link rel="shortcut icon" href="파비콘이미지.png">
+
+<meta property="og:title" content="링크타이틀">
+<meta property="og:description" content="링크에대한설명">
+<meta property="og:image" content="이미지주소">
+
+<!-- ... -->
 
 </head>
 <body>
@@ -89,8 +97,8 @@
 					<button id="login-btn" type="submit">로그인</button>
 				</form>
 				<div class="line-text">or</div>
-				<button class="social-login" type="button">카카오 로그인</button>
-				<button class="social-login" type="button">구글 로그인</button>
+				<a class="social-login"> </a>
+
 			</div>
 		</div>
 
@@ -139,7 +147,7 @@
 			<span class="close" data-close>&times;</span>
 			<div class="modal-content">
 				<h2>아이디 찾기</h2>
-				<p>아이디 찾기 절차를 여기에 추가하세요.</p>
+				<p>서비스 준비중 입니다...</p>
 			</div>
 		</div>
 
@@ -148,7 +156,7 @@
 			<span class="close" data-close>&times;</span>
 			<div class="modal-content">
 				<h2>비밀번호 찾기</h2>
-				<p>비밀번호 찾기 절차를 여기에 추가하세요.</p>
+				<p>서비스 준비중 입니다...</p>
 			</div>
 		</div>
 	</div>
