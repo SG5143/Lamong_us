@@ -56,7 +56,6 @@ body {
 #profile-image {
 	width: 100%;
 	height: auto;
-	justify-content: center;
 	border: 5px solid #A9AEBA;
 	border-radius: 50%;
 	margin: 20px;
@@ -64,17 +63,23 @@ body {
 }
 
 #header .user-actions {
+	cursor: pointer;
+	margin-top: auto;
+}
+
+#logout-button {
 	background-color: transparent;
-	color: white;
-	justify-content: flex-start;
 	border: none;
 	border-radius: 8px;
 	color: white;
 	padding: 10px;
 	margin: 5px;
 	cursor: pointer;
-	margin-top: auto;
-	transition: background-color 0.3s;
+	position: absolute;
+	left: 10px;
+	bottom: 20px;
+	z-index: 100;
+	margin-top: 0;
 }
 
 #myPage-button {
