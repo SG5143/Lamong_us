@@ -18,9 +18,6 @@
 	<div id="header">
 		<jsp:include page="/header" />
 		<div class="header-menu">
-			<a href="/gameHistory">
-				<button>최근 플레이</button>
-			</a>
 			<button id="block-user-btn" data-modal="block-modal">유저 차단</button>
 			<a href="/blockList">
 				<button>차단 목록</button>
@@ -39,7 +36,7 @@
 			<form id="form-update">
 				<div class="grid-container">
 					<section class="profile-section">
-						<img id="profile-image" src="${log.profileImage != null ? log.profileImage : 'https://img.icons8.com/?size=100&id=Hj21JM30swCm&format=png&color=000000'}" alt="Profile Image">
+						<img id="user-profile-image" src="/resources/images/default_image.jpg" alt="Profile Image">
 						<button type="button" id="save-profile-image">이미지 저장</button>
 						<h2>${log.username}</h2>
 						<p>${log.email}</p>
