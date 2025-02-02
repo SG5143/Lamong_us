@@ -56,7 +56,7 @@ public class CreateFormAction implements Action {
 
 			try {
 				roomDao.createRoom(roomDto);
-				sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "게임방이 생성되었습니다.");
+				sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "게임방이 생성되었습니다.",roomNumber);
 			} catch (Exception e) {
 				e.printStackTrace();
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -71,12 +71,26 @@ public class CreateFormAction implements Action {
 	private boolean isValidAuthorization(String authorization) {
 		return authorization != null;
 	}
-
+	
 	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message)
 			throws IOException {
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("status", statusCode);
 		jsonResponse.put("message", message);
+
+		String json = jsonResponse.toString();
+
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(json);
+	}
+
+	private void sendResponseStatusAndMessage(HttpServletResponse response, int statusCode, String message, int roomNumber)
+			throws IOException {
+		JSONObject jsonResponse = new JSONObject();
+		jsonResponse.put("status", statusCode);
+		jsonResponse.put("message", message);
+		jsonResponse.put("room_number", roomNumber);
 
 		String json = jsonResponse.toString();
 
