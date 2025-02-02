@@ -3,16 +3,15 @@ const message = document.getElementById('message');
 const send = document.getElementById('send');
 
 let users = null;
-let userUUID = null;
+let uuid = null;
 
-//const roomUUID = "e3311517-e088-11ef-b3f2-025c4feb1d05";
-const roomUUID = document.getElementById("roomUUID").value;
-
-const ws = new WebSocket(`ws://localhost:8080/ws/wait/${roomUUID}`);
+const roomData = JSON.parse(sessionStorage.getItem("roomData"));
+const roomUUID = roomData.GameRoom.room_code;	
+const ws = new WebSocket(`${window.location.protocol}//${window.location.host}/ws/wait/${roomUUID}`);
 
 ws.onopen = function() {
 	ws.send('TEST_SESSION_ID')
-	ws.send(JSON.stringify({ type: 'PLAYER_INFO', message: "PLAYER_INFO" }));
+	ws.send(JSON.stringify({ type: 'PLAYER_INFO'}));
 };
 
 send.addEventListener('click', sendMessage);
@@ -35,10 +34,10 @@ ws.onmessage = function(event) {
 
 	switch (data.type) {
 		case 'MESSAGE':
-			displayMessage(data.senderUUID, data.image, data.senderNickname, data.message);
+			displayMessage(data.sender, data.profileImage, data.nickname, data.message);
 			break;
 		case 'SESSION_ID':
-			userUUID = data.uuid;
+			uuid = data.uuid;
 			break;
 		case 'READY':
 			changeReadyState();
@@ -64,7 +63,7 @@ function displayMessage(senderId, profileImage, senderName, message) {
 	msgBox.innerHTML = `
         <div class="message-content">
 			<div class = "message-writer-time">
-				<span class="message-writer">${senderId === userUUID ? senderName + "(나)" : senderName}</span>
+				<span class="message-writer">${senderId === uuid ? senderName + "(나)" : senderName}</span>
 				<span class="message-time">${formattedTime}</span>
 			</div>
             <p class="message-text">${message}</p>
@@ -78,7 +77,7 @@ function displayMessage(senderId, profileImage, senderName, message) {
 	const time = msgBox.querySelector('.message-time');
 	const text = msgBox.querySelector('.message-text');
 
-	if (senderId === userUUID) {
+	if (senderId === uuid) {
 		msgBox.style.justifyContent = "end";
 		writerTime.style.justifyContent = "end";
 		writer.style.textAlign = "right";

@@ -4,7 +4,6 @@ window.onload = () => {
 	if (roomData) {
 		console.log("Room Data:", roomData);
 		document.getElementById("room-tit").textContent = roomData.GameRoom.room_title;
-		document.getElementById("roomUUID").textContent = roomData.GameRoom.room_code;
 
 		const userList = roomData.GameRoom.user_list;
 

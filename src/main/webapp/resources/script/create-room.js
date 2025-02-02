@@ -97,21 +97,26 @@ export const createRoom = async (currentPage, fetchRoomList) => {
 		});
 
 		const result = await response.json();
-		handleRoomCreationResponse(result, currentPage, fetchRoomList);
+		handleRoomCreationResponse(result);
+		
+		const data = await fetchRoomByNumber(result.room_number);
+		sessionStorage.setItem("roomData", JSON.stringify(data));
 		window.location.href = "/waiting-room";
 	} catch (error) {
 		console.error("Error Details:", {
 			message: error.message,
 			stack: error.stack,
 			name: error.name,
-		});
+		});    
 		alert("게임방 생성에 실패했습니다.");
 	}
 };
 
 const buildRequestBody = (roomTitle, maxPlayers, roundCount, isPrivate, password) => {
+	const uuid = document.getElementById('uuid').value
+	
 	const requestBody = {
-		host_user: "ebbf307b-cf32-11ef-9079-025c4feb1d05",
+		host_user: uuid,
 		title: roomTitle,
 		is_private: isPrivate,
 		max_players: maxPlayers,
@@ -125,13 +130,23 @@ const buildRequestBody = (roomTitle, maxPlayers, roundCount, isPrivate, password
 	return requestBody;
 };
 
-const handleRoomCreationResponse = (result, currentPage, fetchRoomList) => {
+const handleRoomCreationResponse = (result) => {
 	if (result.status !== 201) {
 		alert("게임방 생성을 실패하였습니다.");
 		return;
 	}
 
 	alert("게임방이 성공적으로 생성되었습니다.");
-	fetchRoomList(currentPage);
 	closeRoomModal();
+};
+
+const fetchRoomByNumber = async (roomNumber) => {
+	try {
+		const response = await fetch(`/v1/game-room?room_number=${roomNumber}`);
+		const data = await response.json();
+		sessionStorage.setItem("roomData", JSON.stringify(data));
+		return data;
+	} catch (error) {
+		console.error("Error fetching room details:", error);
+	}
 };

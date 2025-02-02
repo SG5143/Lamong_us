@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,6 @@
 	<div id="wrap">
 		<div id="header">Lamong Us</div>
 		<div id="main">
-			<input type="hidden" id="roomUUID" value="${param.roomUUID}">
 			<div id="cont-wrap">
 				<div id="left-cont">
 					<div id="left-top">

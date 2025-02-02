@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +15,11 @@
 	<div id="header">Lamong Us</div>
 
 	<body>
+		<c:if test="${empty log}">
+			<c:redirect url="/" />
+		</c:if>
 		<div id="main">
+			<input type="hidden" id="uuid" value="${log.uuid}">
 			<div id="cont-wrap">
 				<div id="btn-wrap">
 					<div>

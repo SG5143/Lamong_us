@@ -34,81 +34,30 @@ public class SoketServer {
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID, EndpointConfig config) {
-		
 		if (roomType == null && roomUUID == null) {
 			return;
 		}
-		
-		HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
-		
-		if (httpSession.getAttribute("log") != null) {
-			User user = (User) httpSession.getAttribute("log");
-			String uuid = user.getUuid();
-			String nickname = user.getNickname();
-			String profileImage = "resources/images/Default" + String.format("%02d", new Random().nextInt(11) + 1) + ".jpg"; //user.getProfileImage();
-			Integer score = user.getScore();
 
-			Map<String, Object> userInfo = new HashMap<>();
-			userInfo.put("uuid", uuid);
-			userInfo.put("nickname", nickname);
-			userInfo.put("profileImage", profileImage);
-			userInfo.put("score", score);
-			session.getUserProperties().put("userInfo", userInfo);
-		} else {
-			String uuid = session.getId();
-			String nickname = "임시닉" + uuid;
-			String profileImage = "resources/images/Default" + String.format("%02d", new Random().nextInt(11) + 1) + ".jpg";
-			Integer score = 1000;
-
-			Map<String, Object> userInfo = new HashMap<>();
-			userInfo.put("uuid", uuid);
-			userInfo.put("nickname", nickname);
-			userInfo.put("profileImage", profileImage);
-			userInfo.put("score", score);
-			session.getUserProperties().put("userInfo", userInfo);
-		}
+		Map<String, Object> userInfo = getUserInfoFromSession(config, session);
+		session.getUserProperties().put("userInfo", userInfo);
 
 		if (!chatRoomManager.addClientToRoom(roomType, roomUUID, session)) {
 			closeSession(session);
 			return;
 		}
 
-		if ("play".equals(roomType)) {
-			Set<Session> clients = chatRoomManager.getClientsInRoom(roomType, roomUUID);
-			if (clients.size() == 3)
-				startGameForAllClients(roomType, roomUUID, clients);
-		} else if ("wait".equals(roomType)) {
-			String roomKey = roomType + "/" + roomUUID;
-			if (!waitRoomManager.findRoomByRoomKey(roomKey)) {
-				RoomDao roomDao = RoomDao.getInstance();
-				Room room = roomDao.getRoomByCode(roomUUID);
-
-				RoomSession roomSession = new RoomSession(
-						roomUUID, room.getHost(), room.getTitle(), room.isPrivate(),
-						room.getPassword(), room.getRoundCount());
-				waitRoomManager.initializeRoom(roomKey, roomSession);
-			}
-			waitRoomManager.broadcastPlayersInfo(roomKey);
-		}
+		handleRoomEntry(roomType, roomUUID, session);
 	}
 
 	@OnMessage
 	@SuppressWarnings("unchecked")
 	public void onMessage(String message, Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) throws IOException {
 		String roomKey = roomType + "/" + roomUUID;
+		System.out.println("Room key[" + roomKey + "] " + message);
 
-		if ("TEST_SESSION_ID".equals(message)) {
-			JSONObject sessionIdMessage = new JSONObject();
-			sessionIdMessage.put("type", "SESSION_ID");
-			Map<String, Object> info = (Map<String, Object>) session.getUserProperties().get("userInfo");
-			String uuid = (String) info.get("uuid");
-			sessionIdMessage.put("uuid", uuid);
-			session.getBasicRemote().sendText(sessionIdMessage.toString());
+		if (handleSessionIdRequest(message, session))
 			return;
-		}
 
-		System.out.println(message);
-		
 		if ("play".equals(roomType)) {
 			if (liarGameManager.handleGameMessage(roomKey, session, message)) {
 				JSONObject jsonObject = new JSONObject(message);
@@ -117,8 +66,8 @@ public class SoketServer {
 				ChatRequestDto chatRequest = new ChatRequestDto((String) userInfo.get("uuid"), extractedMessage);
 				chatRoomManager.addChatToRoomHistory(roomType, roomUUID, chatRequest);
 			}
-		}else if("wait".equals(roomType)) {
-			if(waitRoomManager.handleRoomMessage(roomKey, session, message)) {
+		} else if ("wait".equals(roomType)) {
+			if (waitRoomManager.handleRoomMessage(roomKey, session, message)) {
 				JSONObject jsonObject = new JSONObject(message);
 				String extractedMessage = jsonObject.getString("message");
 				Map<String, Object> userInfo = (Map<String, Object>) session.getUserProperties().get("userInfo");
@@ -156,6 +105,72 @@ public class SoketServer {
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
+	}
+
+	private Map<String, Object> getUserInfoFromSession(EndpointConfig config, Session session) {
+		HttpSession httpSession = (HttpSession) config.getUserProperties().get("httpSession");
+		if (httpSession.getAttribute("log") != null) {
+			User user = (User) httpSession.getAttribute("log");
+			return createUserInfo(user.getUuid(), user.getNickname(), user.getScore());
+		}
+		return createUserInfo(session.getId(), "유저-" + session.getId(), 1000);
+	}
+
+	private Map<String, Object> createUserInfo(String uuid, String nickname, int score) {
+		String profileImage = "resources/images/Default" + String.format("%02d", new Random().nextInt(11) + 1) + ".jpg";
+		Map<String, Object> userInfo = new HashMap<>();
+		userInfo.put("uuid", uuid);
+		userInfo.put("nickname", nickname);
+		userInfo.put("profileImage", profileImage);
+		userInfo.put("score", score);
+		return userInfo;
+	}
+	
+	private void handleRoomEntry(String roomType, String roomUUID, Session client) {
+		if ("play".equals(roomType)) {
+			startGameIfReady(roomType, roomUUID);
+		} else if ("wait".equals(roomType)) {
+			initializeWaitingRoom(roomType, roomUUID, client);
+		}
+	}
+	
+	private void startGameIfReady(String roomType, String roomUUID) {
+		Set<Session> clients = chatRoomManager.getClientsInRoom(roomType, roomUUID);
+		if (clients.size() == 3) {
+			startGameForAllClients(roomType, roomUUID, clients);
+		}
+	}
+	
+	private void initializeWaitingRoom(String roomType, String roomUUID, Session client) {
+		String roomKey = roomType + "/" + roomUUID;
+		if (!waitRoomManager.findRoomByRoomKey(roomKey)) {
+			RoomDao roomDao = RoomDao.getInstance();
+			Room room = roomDao.getRoomByCode(roomUUID);
+			
+			RoomSession roomSession = new RoomSession(
+					roomUUID,
+					room.getHost(),
+					room.getTitle(),
+					room.isPrivate(),
+					room.getPassword(),
+					room.getRoundCount());
+			waitRoomManager.initializeRoom(roomKey, roomSession);
+		}
+		waitRoomManager.enterClient(roomKey, client);
+		waitRoomManager.broadcastPlayersInfo(roomKey);
+	}
+	
+	private boolean handleSessionIdRequest(String message, Session session) throws IOException {
+		if ("TEST_SESSION_ID".equals(message)) {
+			JSONObject sessionIdMessage = new JSONObject();
+			sessionIdMessage.put("type", "SESSION_ID");
+			@SuppressWarnings("unchecked")
+			Map<String, Object> info = (Map<String, Object>) session.getUserProperties().get("userInfo");
+			sessionIdMessage.put("uuid", info.get("uuid"));
+			session.getBasicRemote().sendText(sessionIdMessage.toString());
+			return true;
+		}
+		return false;
 	}
 	
 }

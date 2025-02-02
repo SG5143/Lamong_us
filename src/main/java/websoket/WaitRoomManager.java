@@ -4,14 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
 
 import jakarta.websocket.Session;
+import room.model.RoomDao;
 
 public class WaitRoomManager {
 	private static final WaitRoomManager INSTANCE = new WaitRoomManager();
+	private static final RoomDao roomDao = RoomDao.getInstance();
 	private final Map<String, RoomSession> roomSessions = new ConcurrentHashMap<>();
 	
 	private WaitRoomManager() {};
@@ -31,6 +34,12 @@ public class WaitRoomManager {
 		this.roomSessions.put(roomKey, roomSession);
 	}
 	
+	public void enterClient(String roomKey, Session client) {
+		RoomSession session = roomSessions.get(roomKey);
+		session.addClient(client);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public void manageClientDisconnection(String roomKey, Session client) {
 		RoomSession session = roomSessions.get(roomKey);
 		if(session == null) {
@@ -38,9 +47,27 @@ public class WaitRoomManager {
 		}
 		
 		session.removeClient(client);
+		
+		Map<String, Object> userInfo = (Map<String, Object>) client.getUserProperties().get("userInfo");
+		String uuid = (String) userInfo.get("uuid");
+		
+		// 방장이 나갔을 경우
+		if (uuid.equals(session.getHostUUID())) {
+			Set<Session> clients = (Set<Session>) session.getClients();
+			if (!clients.isEmpty()) {
+				Session newHost = clients.iterator().next(); // 첫 번째 유저 선택
+				Map<String, Object> newHostInfo = (Map<String, Object>) newHost.getUserProperties().get("userInfo");
+				String newHostUUID = (String) newHostInfo.get("uuid");
+				session.setHostUUID(newHostUUID); // 새로운 방장 설정
+			}
+		}
+		
+		// 인원이 없으면 방삭제
 		if (session.getClients().size() == 0) {
 			roomSessions.remove(roomKey);
+			roomDao.deleteRoomByCode(roomKey.split("/")[1]); 
 		}
+
 	}
 	
 	public boolean handleRoomMessage(String roomKey, Session client, String message) {
@@ -80,10 +107,10 @@ public class WaitRoomManager {
 
 		JSONObject chatMessage = JsonUtil.createJsonMessage(
 				"MESSAGE",
-				MessageConstants.SENDER_UUID, uuid,
-				MessageConstants.SENDER_NICKNAME, nickname,
-				MessageConstants.SENDER_PROFILE_IMAGE, image,
-				MessageConstants.MESSAGE, extractedMsg);
+				"sender", uuid,
+				"nickname", nickname,
+				"profileImage", image,
+				"message", extractedMsg);
 		clients.forEach(client -> {
 			try {
 				client.getBasicRemote().sendText(chatMessage.toString());
