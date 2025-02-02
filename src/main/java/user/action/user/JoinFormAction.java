@@ -1,6 +1,8 @@
 package user.action.user;
 
 import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 import org.json.*;
 
@@ -31,15 +33,9 @@ public class JoinFormAction implements Action {
 			String phone = reqData.optString("phone", null);
 			String email = reqData.optString("email", null);
 			String loginType = reqData.optString("login_type", null);
+
 			if ("null".equals(loginType))
 				loginType = null;
-
-			System.out.println(username);
-			System.out.println(password);
-			System.out.println(email);
-			System.out.println(nickname);
-			System.out.println(phone);
-			System.out.println(loginType);
 
 			if (username == null || username.isEmpty() || password == null || password.isEmpty() || email == null
 					|| email.isEmpty() || nickname == null || nickname.isEmpty() || phone == null || phone.isEmpty()) {
@@ -47,16 +43,15 @@ public class JoinFormAction implements Action {
 				return;
 			}
 
-			if (loginType == null || loginType.isEmpty()) {
+			if (loginType == null || loginType.isEmpty())
 				loginType = "NULL";
-			}
 
 			UserRequestDto userDto = new UserRequestDto(username, password, nickname, phone, email, loginType);
+
 			UserDao userDao = UserDao.getInstance();
 
-			if (isDuplicate(userDao, username, nickname, email, phone, response)) {
+			if (isDuplicate(userDao, username, nickname, email, phone, response))
 				return;
-			}
 
 			userDao.createUser(userDto);
 			sendResponseStatusAndMessage(response, HttpServletResponse.SC_CREATED, "회원가입이 완료되었습니다.");
@@ -102,5 +97,4 @@ public class JoinFormAction implements Action {
 		response.getWriter().write(json);
 
 	}
-
 }
