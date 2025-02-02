@@ -33,7 +33,7 @@ public class SoketServer {
 	private ChatRoomManager chatRoomManager = ChatRoomManager.getInstance();
 
 	@OnOpen
-	public void onOpen(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID, EndpointConfig config) {
+	public void onOpen(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID, EndpointConfig config) throws IOException {
 		if (roomType == null && roomUUID == null) {
 			return;
 		}
@@ -45,18 +45,16 @@ public class SoketServer {
 			closeSession(session);
 			return;
 		}
-
+		
+		handleSessionIdRequest(session);
 		handleRoomEntry(roomType, roomUUID, session);
 	}
 
 	@OnMessage
 	@SuppressWarnings("unchecked")
-	public void onMessage(String message, Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) throws IOException {
+	public void onMessage(String message, Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID) {
 		String roomKey = roomType + "/" + roomUUID;
 		System.out.println("Room key[" + roomKey + "] " + message);
-
-		if (handleSessionIdRequest(message, session))
-			return;
 
 		if ("play".equals(roomType)) {
 			if (liarGameManager.handleGameMessage(roomKey, session, message)) {
@@ -160,16 +158,13 @@ public class SoketServer {
 		waitRoomManager.broadcastPlayersInfo(roomKey);
 	}
 	
-	private boolean handleSessionIdRequest(String message, Session session) throws IOException {
-		if ("TEST_SESSION_ID".equals(message)) {
+	private boolean handleSessionIdRequest(Session session) throws IOException {
 			JSONObject sessionIdMessage = new JSONObject();
 			sessionIdMessage.put("type", "SESSION_ID");
 			@SuppressWarnings("unchecked")
 			Map<String, Object> info = (Map<String, Object>) session.getUserProperties().get("userInfo");
 			sessionIdMessage.put("uuid", info.get("uuid"));
 			session.getBasicRemote().sendText(sessionIdMessage.toString());
-			return true;
-		}
 		return false;
 	}
 	

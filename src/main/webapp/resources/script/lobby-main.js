@@ -56,7 +56,7 @@ const fetchRoomList = async (page = 1) => {
 		pageableCount = data.Meta.pageable_count;
 		updateRoomList(data.GameRoom);
 	} catch (error) {
-		console.error("Error fetching room list:", error);
+		console.error(error);
 		alert("방 리스트를 불러오는 데 실패했습니다.");
 	}
 };

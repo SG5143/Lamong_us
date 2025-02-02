@@ -66,8 +66,10 @@ public class WaitRoomManager {
 		if (session.getClients().size() == 0) {
 			roomSessions.remove(roomKey);
 			roomDao.deleteRoomByCode(roomKey.split("/")[1]); 
+			return;
 		}
 
+		broadcastPlayersInfo(roomKey);
 	}
 	
 	public boolean handleRoomMessage(String roomKey, Session client, String message) {

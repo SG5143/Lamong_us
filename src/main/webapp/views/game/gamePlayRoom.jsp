@@ -32,31 +32,10 @@
 								<p id="keyword"></p>
 							</div>
 							<div id="role-explanation">
-								<p id="explanation-msg">라이어를 찾아주세요.</p>
+								<p id="explanation-msg">플레이어가 모이면 게임이 시작됩니다.</p>
 							</div>
 						</div>
 						<ul id="player-ilst">
-						
-							<li>
-								<div class="profile-container">
-									<img class="profile-image"/>
-								</div>
-								<div class="user-info">
-									<p class="nickname">오세린</p>
-									<p class="user-explanation">이건 마트에서 볼 수 있어</p>
-								</div>
-							</li>
-							
-							<li>
-								<div class="profile-container">
-									<img class="profile-image"/>
-								</div>
-								<div class="user-info">
-									<p class="nickname">오세린</p>
-									<p class="user-explanation">이건 마트에서 볼 수 있어</p>
-								</div>
-							</li>
-							
 						</ul>
 					</div>
 				</div>
