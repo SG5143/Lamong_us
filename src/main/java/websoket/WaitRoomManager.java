@@ -143,7 +143,6 @@ public class WaitRoomManager {
 				e.printStackTrace();
 			}
 		}
-		
 	    return false;
 	}
 }

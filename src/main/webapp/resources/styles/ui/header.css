@@ -39,14 +39,63 @@
 	margin: 0;
 }
 
-body {
+#header body {
 	margin: 0;
 	padding-left: 300px;
 }
 
-#profile-image {
+#header .profile-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
 	width: 70%;
+	margin: 20px;
+}
+
+#profile-image {
+	width: 100%;
 	height: auto;
+	border: 5px solid #A9AEBA;
 	border-radius: 50%;
-	object-fit: cover;
+	margin: 20px;
+	border: 5px solid #A9AEBA;
+}
+
+#header .user-actions {
+	cursor: pointer;
+	margin-top: auto;
+}
+
+#header #logout-button {
+	background-color: transparent;
+	border: none;
+	border-radius: 8px;
+	color: white;
+	padding: 10px;
+	margin: 5px;
+	cursor: pointer;
+	position: absolute;
+	left: 10px;
+	bottom: 20px;
+	z-index: 100;
+	margin-top: 0;
+}
+
+#header #myPage-button {
+	position: absolute;
+	z-index: 10;
+	width: 20%;
+	height: auto;
+	border: 3px solid #A9AEBA;
+	background: black;
+	border-radius: 50%;
+	bottom: 20px;
+	left: 70%;
+	z-index: 100;
+	border-radius: 50%;
+}
+
+#header .user-actions button:hover {
+	color: #A9AEBA;
 }

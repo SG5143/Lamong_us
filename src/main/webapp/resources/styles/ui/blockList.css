@@ -124,11 +124,19 @@ html, body {
 	background-color: #0056b3;
 }
 
+<<<<<<< HEAD
 .block-list-table img { /* 이미지 스타일 변경 */
+=======
+.block-list-table img {
+>>>>>>> origin/feature/user-main-view
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
 	background-color: white;
 	object-fit: cover;
+<<<<<<< HEAD
 	margin-right: 10px; /* 이미지 오른쪽 여백 추가 */
+=======
+	margin-right: 10px; 
+>>>>>>> origin/feature/user-main-view
 }

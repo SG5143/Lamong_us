@@ -58,7 +58,6 @@ public class GetBlockUserListAction implements Action {
 		}
 	}
 
-	// 페이지 형변환 (기본값 1)
 	private int parsePageParameter(String pageParam) {
 		try {
 			return Integer.parseInt(pageParam);
@@ -100,9 +99,8 @@ public class GetBlockUserListAction implements Action {
 
 		jsonResponse.put("status_code", statusCode);
 
-		if (resData == null) {
+		if (resData == null)
 			resData = new JSONArray();
-		}
 
 		jsonResponse.put("Meta", resData.length() > 0 ? resData.get(0) : new JSONObject());
 		jsonResponse.put("Block_info", resData.length() > 1 ? resData.get(1) : new JSONArray());

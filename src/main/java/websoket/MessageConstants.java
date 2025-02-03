@@ -27,7 +27,6 @@ public class MessageConstants {
     public static final String SENDER_UUID = "senderUUID";
     public static final String SENDER_NICKNAME = "senderNickname";
     public static final String SENDER_PROFILE_IMAGE = "senderProfileImage";
-
     
     public static final String CURRENT_TURN = "currentTurn";
     public static final String CLIENT_INFO = "clientInfo";

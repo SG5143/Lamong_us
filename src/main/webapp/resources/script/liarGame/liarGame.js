@@ -18,7 +18,6 @@ const roomUUID = 'room1';
 const ws =  new WebSocket(`${window.location.protocol}//${window.location.host}/ws/play/${roomUUID}`);
 
 ws.onopen = function () {
-	ws.send('TEST_SESSION_ID')
 };
 
 ws.onmessage = function (event) {
@@ -174,7 +173,6 @@ function displayMessage(senderId, senderName, message) {
 	        userExplanation.textContent = message; 
 	    }
 	}
-	
     chat.appendChild(msgBox);
     chat.scrollTop = chat.scrollHeight;
 }
@@ -264,7 +262,6 @@ function handleStateChange(state) {
 		const roundTitle = document.createElement("h4");
 
 		roundTitle.textContent = `-- 30초 후 라이어 투표가 진행됩니다.  --`;
-
 		roundTitle.style.fontSize = "24px";
 		roundTitle.style.margin = "20px 0"
 		roundTitle.style.textAlign = "center"

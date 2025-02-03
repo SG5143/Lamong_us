@@ -11,9 +11,8 @@
 </head>
 
 <body>
+	<div id="head"><c:import url="/header" /></div>
 	<div id="wrap">
-		<div id="header">Lamong Us</div>
-		
 		<div id="main">
 			<input type="hidden" id="roomUUID" value="${param.roomUUID}">
 			<div id="cont-wrap">
@@ -21,7 +20,7 @@
 					<div id="room-header">
 							<button id="leave-btn" aria-label="퇴장"></button>
 							<div id="room-info">
-								<h3 id="room-number">2번방</h3>
+								<h3 id="room-number">1번방</h3>
 								<h4 id="room-title">아무나 같이 하실분</h4>							
 							</div>
 					</div>

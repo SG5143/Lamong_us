@@ -21,7 +21,6 @@ import jakarta.websocket.server.ServerEndpoint;
 
 import room.model.Room;
 import room.model.RoomDao;
-
 import user.model.user.User;
 
 import org.json.JSONObject;
@@ -66,6 +65,7 @@ public class SoketServer {
 				ChatRequestDto chatRequest = new ChatRequestDto((String) userInfo.get("uuid"), extractedMessage);
 				chatRoomManager.addChatToRoomHistory(roomType, roomUUID, chatRequest);
 			}
+
 		} else if ("wait".equals(roomType)) {
 			if (waitRoomManager.handleRoomMessage(roomKey, session, message)) {
 				JSONObject jsonObject = new JSONObject(message);

@@ -2,18 +2,14 @@
 
 body {
 	background-color: var(--background-color);
+	display:grid;
+	grid-template-columns: 300px auto;
 }
 
 #wrap {
 	display: flex;
 }
 
-#header {
-	color: white;
-	min-width: 200px;
-	background-color: var(--background-color);
-	padding: 20px;
-}
 
 #main {
 	border-top-left-radius: 35px;
@@ -115,6 +111,7 @@ body {
 
 #cont-wrap>#room-container>#room-body>#player-ilst li {
     height: calc(100%-70px/8);
+    width:100%;
     display: flex;
     align-items: center;
     justify-content: flex-start;

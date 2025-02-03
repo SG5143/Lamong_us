@@ -55,7 +55,6 @@ public class ActionFactory {
 		case "search-email" -> new SearchUserEmailAction(); 
 		case "search-phone" -> new SearchUserPhoneAction();
 		case "search-nickname" -> new SearchUserNicknameAction();
-
 		default -> null;
 		};
 		case GET -> switch (command) {
@@ -63,8 +62,7 @@ public class ActionFactory {
 		case "history" -> new GetGameHistoryAction();
 		case "user_info" -> new GetUserPublicInfoAction();
 		case "blocked_list" -> new GetBlockUserListAction();
-//		case "get_nickname" -> new GetUserNicknameByUuid();
-
+		case "get_nickname" -> new GetUserNicknameByUuid();
 		default -> null;
 		};
 		case PATCH -> switch (command) {

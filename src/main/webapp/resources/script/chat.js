@@ -63,11 +63,7 @@ function displayMessage(senderId, profileImage, senderName, message) {
 	msgBox.innerHTML = `
         <div class="message-content">
 			<div class = "message-writer-time">
-<<<<<<< HEAD
 				<span class="message-writer">${senderId === uuid ? senderName + "(나)" : senderName}</span>
-=======
-				<span class="message-writer">${senderId === userUUID ? senderName + "(나)" : senderName}</span>
->>>>>>> origin/feature/user-main-view
 				<span class="message-time">${formattedTime}</span>
 			</div>
             <p class="message-text">${message}</p>
@@ -115,3 +111,4 @@ function changeReadyState(sender, state){
 function gameStart(){
 	// 화면이동로직
 }
+s

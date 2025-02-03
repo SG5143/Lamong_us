@@ -15,6 +15,9 @@
 <body>
 	<div id="header">
 		<jsp:include page="/header" />
+		<div class="header-menu">
+			<button id="block-user-btn" data-modal="block-modal">유저 차단</button>
+		</div>
 	</div>
 
 	<a id="backButton" class="back-button" href="/myPage"></a>
@@ -40,7 +43,7 @@
 									<span class="no">${size - status.index - ((page - 1) * 10)}</span>
 								</td>
 								<td>
-									<img src="/resources/images/default-profile.png" alt="프로필 이미지" />
+									<img src="/resources/images/blockedUsersImage.png" alt="프로필 이미지" />
 								</td>
 								<td>
 									<span class="blocked-User-nickname">${block.blockedUserNickname}</span>
@@ -53,16 +56,6 @@
 					</tbody>
 				</table>
 			</div>
-		</div>
-		<!-- 페이지네이션 -->
-		<div class="pagination">
-			<c:if test="${currentPage > 1}">
-				<button onclick="location.href='?page=${currentPage - 1}'">이전</button>
-			</c:if>
-			<span>${currentPage} / ${totalPageCount}</span>
-			<c:if test="${currentPage < totalPageCount}">
-				<button onclick="location.href='?page=${currentPage + 1}'">다음</button>
-			</c:if>
 		</div>
 	</main>
 </body>

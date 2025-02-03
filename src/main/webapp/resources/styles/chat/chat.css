@@ -118,13 +118,12 @@
 }
 
 #vote-modal {
-	position: absolute;
+	position: fixed;
 	display:none;
 	top: 25%;
-	left: 10%; 
-	width : 70vw;
-	background-color: pink;
-	width: 70vw;
+	left: 25%; 
+	width : 50vw;
+	background-color: white;
 }
 
 #vote-modal .modal-content {
@@ -198,13 +197,12 @@
 }
 
 #liar-chance-modal {
-	position: absolute;
+	position: fixed;
 	display: none;
 	top: 25%;
-	left: 10%;
-	width: 70vw;
-	background-color: pink;
-	width: 70vw;
+	left: 25%;
+	width: 50vw;
+	background-color: white;
 }
 
 #liar-chance-modal .modal-content{
@@ -234,12 +232,11 @@
 }
 
 #game-result-modal {
-	position: absolute; 
-	display: none; 
+	position: fixed;
+	display: none;
 	top: 25%;
-	left: 10%;
-	width: 70vw;
-	background-color: pink;
-	width: 70vw;
+	left: 25%;
+	width: 50vw;
+	background-color: white;
 }
 
