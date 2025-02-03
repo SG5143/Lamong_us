@@ -19,17 +19,19 @@
 				<div id="left-cont">
 					<div id="left-top">
 						<div>
-							<button id="leave-btn">퇴장</button>
-							<h2 id="room-tit"></h2>
+							<button id="leave-btn" aria-label="퇴장"></button>
+							<h3 id="room-number"></h3>
+							<h4 id="room-tit"></h4>
 						</div>
-						<div>방설정 btn</div>
+						<button id="start-btn">게임시작</button>
 
 					</div>
 					<div id="user-list"></div>
 				</div>
-				<div id="right-cont"><c:import url="/wait-chat" /></div>
+				<div id="right-cont">
+					<c:import url="/wait-chat" />
+				</div>
 			</div>
 		</div>
-	</div>
 </body>
 </html>

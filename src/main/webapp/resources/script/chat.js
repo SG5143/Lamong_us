@@ -6,12 +6,14 @@ let users = null;
 let uuid = null;
 
 const roomData = JSON.parse(sessionStorage.getItem("roomData"));
-const roomUUID = roomData.GameRoom.room_code;	
+const roomUUID = roomData.GameRoom.room_code;
 const ws = new WebSocket(`${window.location.protocol}//${window.location.host}/ws/wait/${roomUUID}`);
+
+const hostUUID = roomData.GameRoom.host_user;
 
 ws.onopen = function() {
 	ws.send('TEST_SESSION_ID')
-	ws.send(JSON.stringify({ type: 'PLAYER_INFO'}));
+	ws.send(JSON.stringify({ type: 'PLAYER_INFO' }));
 };
 
 send.addEventListener('click', sendMessage);
@@ -47,9 +49,37 @@ ws.onmessage = function(event) {
 			break;
 		case 'USER_UPDATE':
 			users = data.clientInfo;
+			updateUserList();
+			checkHost();
 			break;
 	}
 };
+
+function updateUserList() {
+	const userListContainer = document.getElementById('user-list');
+	userListContainer.innerHTML = '';
+
+	users.forEach(user => {
+		const userItem = document.createElement('div');
+		userItem.classList.add('user-item');
+		userItem.innerHTML = `
+		<div class="user-profile">
+				<img src="${user.profileImage || 'resources/images/Default01.jpg'}" alt="${user.nickname}'s profile" class="user-img">
+		</div>
+		<div class="user-name">${user.nickname}</div>
+		`;
+		userListContainer.appendChild(userItem);
+	});
+}
+
+function checkHost() {
+	const startBtn = document.getElementById('start-btn');
+	const isHost = users.some(user => user.uuid === hostUUID);
+	if (isHost)
+		startBtn.style.display = 'block';
+	else
+		startBtn.style.display = 'none';
+}
 
 function displayMessage(senderId, profileImage, senderName, message) {
 	const msgBox = document.createElement('div');
@@ -95,9 +125,9 @@ function displayMessage(senderId, profileImage, senderName, message) {
 
 
 	if (typeof profileImage === "string" && profileImage.startsWith("resources/images/Default")) {
-	    profileImg.style.backgroundImage = `url('${profileImage}')`;
+		profileImg.style.backgroundImage = `url('${profileImage}')`;
 	} else {
-	    profileImg.style.backgroundImage = `url('resources/images/Default01.jpg')`;
+		profileImg.style.backgroundImage = `url('resources/images/Default01.jpg')`;
 	}
 
 	chat.appendChild(msgBox);
@@ -105,11 +135,11 @@ function displayMessage(senderId, profileImage, senderName, message) {
 }
 
 
-function changeReadyState(sender, state){
+function changeReadyState(sender, state) {
 	// 헤딩 유저 레디상태 조회
 }
 
-function gameStart(){
+function gameStart() {
 	// 화면이동로직
 }
 
