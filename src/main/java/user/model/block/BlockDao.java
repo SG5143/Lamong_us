@@ -69,10 +69,6 @@ public class BlockDao {
 		page = Math.max(1, page);
 		int offset = (page - 1) * PAGE_SIZE;
 
-		System.out.println("[DEBUG] getBlockedUser() - blockingUser: " + blockingUser);
-		System.out.println("[DEBUG] getBlockedUser() - page: " + page);
-		System.out.println("[DEBUG] getBlockedUser() - offset: " + offset);
-
 		try (Connection conn = DBManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(GET_BLOCKED_USERS)) {
 
