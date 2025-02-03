@@ -12,12 +12,14 @@
 </head>
 
 <div id="lobby-wrap">
-	<div id="header">Lamong Us</div>
 
 	<body>
 		<c:if test="${empty log}">
 			<c:redirect url="/" />
 		</c:if>
+		<div id="head">
+			<c:import url="/header" />
+		</div>
 		<div id="main">
 			<input type="hidden" id="uuid" value="${log.uuid}">
 			<div id="cont-wrap">
