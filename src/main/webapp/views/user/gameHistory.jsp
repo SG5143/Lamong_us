@@ -7,6 +7,7 @@
 
 <link rel="stylesheet" href="/resources/styles/globals.css">
 <link rel="stylesheet" href="/resources/styles/ui/gameHistory.css">
+<link rel="shortcut icon" href="resources/images/LAMONG.ico">
 <title>Game History</title>
 </head>
 <body>

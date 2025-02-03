@@ -12,6 +12,7 @@
 <script type="module" src="resources/script/validation/validation-logout.js"></script>
 <script type="module" src="resources/script/validation/validation-delete.js"></script>
 <script type="module" src="resources/script/validation/validation-block.js"></script>
+<link rel="shortcut icon" href="resources/images/LAMONG.ico">
 <title>User Profile Page</title>
 </head>
 <body>

@@ -7,6 +7,7 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" href="resources/styles/globals.css">
 <link rel="stylesheet" href="resources/styles/game/play-room.css">
+<link rel="shortcut icon" href="resources/images/LAMONG.ico">
 <title>Play</title>
 </head>
 

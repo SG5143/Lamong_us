@@ -8,6 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="/resources/styles/globals.css">
 <link rel="stylesheet" href="/resources/styles/ui/blockList.css">
+<link rel="shortcut icon" href="resources/images/LAMONG.ico">
 
 <script type="module" src="/resources/script/validation/validation-blockList.js"></script>
 <title>Blocked User List</title>

@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="resources/styles/game/lobby.css">
 <link rel="stylesheet" href="resources/styles/globals.css">
 <script type="module" src="resources/script/lobby-main.js"></script>
+<link rel="shortcut icon" href="resources/images/LAMONG.ico">
 <title>Lamong Us Lobby</title>
 </head>
 

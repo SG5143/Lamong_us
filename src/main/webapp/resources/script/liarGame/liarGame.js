@@ -464,6 +464,7 @@ function setupSubmitButton() {
 function endGameMessage(status) {
 	const modal = document.getElementById("game-result-modal");
 	const content = modal.querySelector('.modal-content');
+	content.innerHTML ="";
 	modal.style.display = "block";
 
 	const msgBox = document.createElement('div');

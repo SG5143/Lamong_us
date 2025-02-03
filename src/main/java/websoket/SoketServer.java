@@ -35,7 +35,7 @@ public class SoketServer {
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("roomType") String roomType, @PathParam("roomUUID") String roomUUID, EndpointConfig config) throws IOException {
-		if (roomType == null && roomUUID == null) {
+		if (roomType == null || roomUUID == null) {
 			return;
 		}
 
@@ -85,6 +85,8 @@ public class SoketServer {
 			waitRoomManager.manageClientDisconnection(roomType + "/" + roomUUID, session);
 		}
 		chatRoomManager.removeClientFromRoom(roomType, roomUUID, session);
+		
+		session.getUserProperties().remove("userInfo");
 	}
 
 	@OnError

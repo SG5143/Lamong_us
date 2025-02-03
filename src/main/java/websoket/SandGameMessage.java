@@ -89,11 +89,15 @@ public class SandGameMessage {
 
 	public void distributeWords(GameSession session) {
 		List<Session> clients = session.getClients();
+		
 		for (Session client : clients) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> clientInfo = (Map<String, Object>) client.getUserProperties().get("userInfo");
+			String uuid = (String) clientInfo.get("uuid");
 			JSONObject wordMessage = JsonUtil.createJsonMessage(
 					MessageConstants.TYPE_GAME_START,
 					MessageConstants.TOPIC, session.getTopic(), 
-					MessageConstants.KEYWORD, client.getId().equals(session.getLiarId()) ? null : session.getKeyword()); // 라이어는 키워드 제외
+					MessageConstants.KEYWORD, uuid.equals(session.getLiarId()) ? null : session.getKeyword()); // 라이어는 키워드 제외
 			sendJsonMessage(client, wordMessage);
 		}
 	}
