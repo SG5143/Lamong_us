@@ -15,12 +15,7 @@
 <script type="module" src="resources/script/validation/validation-join.js"></script>
 
 <!-- favicon image -->
-<link rel="shortcut icon" href="파비콘이미지.png">
-
-<meta property="og:title" content="링크타이틀">
-<meta property="og:description" content="링크에대한설명">
-<meta property="og:image" content="이미지주소">
-
+<link rel="shortcut icon" href="resources/images/LAMONG.ico">
 <!-- ... -->
 
 </head>
