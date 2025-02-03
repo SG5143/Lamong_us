@@ -13,7 +13,9 @@
 
 <body>
 	<div id="wrap">
-		<div id="header">Lamong Us</div>
+		<div id="head">
+			<c:import url="/header" />
+		</div>
 		<div id="main">
 			<div id="cont-wrap">
 				<div id="left-cont">

@@ -7,11 +7,12 @@ body {
 #main {
 	border-top-left-radius: 35px;
 	border-bottom-left-radius: 35px;
-	width: 100%;
+	width: calc(100% - 300px);
 	background-color: var(--color-theme-04);
 	text-align: center;
 	box-shadow: -5px 0 10px rgba(0, 0, 0, 0.3);
 	height: 100vh;
+	margin-left: 300px;
 }
 
 #cont-wrap {
@@ -179,5 +180,4 @@ modal {
 	font-size: 20px;
 	cursor: pointer;
 	background-color: var(--secondaryTextColor);
-	
 }
