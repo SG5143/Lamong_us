@@ -14,7 +14,7 @@ public class LogoutFormAction implements Action {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 
-		session.removeAttribute("user");
+		session.removeAttribute("log");
 		session.invalidate();
 
 		sendResponseStatusAndMessage(response, HttpServletResponse.SC_OK, "로그아웃 성공");
