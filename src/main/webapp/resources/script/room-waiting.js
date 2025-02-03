@@ -4,24 +4,9 @@ window.onload = () => {
 	if (roomData) {
 		console.log("Room Data:", roomData);
 		document.getElementById("room-tit").textContent = roomData.GameRoom.room_title;
+		document.getElementById("room-number").textContent = `${roomData.GameRoom.room_number}번방`;
 
-		const userList = roomData.GameRoom.user_list;
-
-		const userListContainer = document.getElementById("user-list");
-
-		const userListHTML = userList.map(user => {
-			const profileImg = user.profile_image ? user.profile_image : "/resources/images/default_image.jpg";
-			return `
-                <div class="user-item">
-                    <img src="${profileImg}" alt="${user.nickname}" class="profile-img">
-                    <div class="nickname">${user.nickname}</div>
-                </div>
-            `;
-		}).join("");
-
-		userListContainer.innerHTML = userListHTML;
 	} else {
-		alert("방 정보를 불러오지 못했습니다.");
 		window.location.href = "/lobby";
 	}
 
@@ -60,4 +45,9 @@ window.onload = () => {
 		const roomCode = roomData.GameRoom.room_code;
 		leaveRoom(roomCode);
 	});
+
+	document.getElementById("start-btn").addEventListener("click", function() {
+		window.location.href = "/play-room";
+	});
+
 };

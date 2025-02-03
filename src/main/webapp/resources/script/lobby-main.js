@@ -56,12 +56,12 @@ const fetchRoomList = async (page = 1) => {
 		pageableCount = data.Meta.pageable_count;
 		updateRoomList(data.GameRoom);
 	} catch (error) {
-		console.error(error);
-		alert("방 리스트를 불러오는 데 실패했습니다.");
+		console.error("Error fetching room list:", error);
 	}
 };
 
 const fetchRoomByNumber = async (roomNumber) => {
+	console.log("roomNumber", roomNumber);
 	try {
 		const response = await fetch(`/v1/game-room?room_number=${roomNumber}`);
 		if (!response.ok) {
@@ -79,15 +79,21 @@ const fetchRoomByNumber = async (roomNumber) => {
 };
 
 const handleRoomDetails = (room) => {
-	roomNumberInput.disabled = true;
-
-	if (room.is_private) {
-		passwordField.style.display = 'block';
-		const joinRoomBtn = document.getElementById('join-room-btn');
-		joinRoomBtn.addEventListener('click', clickJoinRoomButton(room));
+	if (!room || !room.room_code) {
+		showErrorModal("존재하지 않는 방입니다.");
+		return;
 	}
-	else
+
+	if (!room.is_private) {
 		joinRoom(room.room_code);
+		return;
+	}
+
+	roomNumberInput.disabled = true;
+	passwordField.style.display = 'block';
+
+	const joinRoomBtn = document.getElementById('join-room-btn');
+	joinRoomBtn.addEventListener('click', clickJoinRoomButton(room));
 };
 
 const clickJoinRoomButton = (room) => {
@@ -118,7 +124,7 @@ const joinRoom = async (roomCode) => {
 			},
 			body: JSON.stringify(requestBody)
 		});
-		
+
 		const result = await response.json();
 		if (result.status === 401) {
 			alert("로그인이 필요합니다.");
@@ -224,7 +230,7 @@ const handleRoomClick = async (roomNumber) => {
 				joinRoom(room.room_code);
 			}
 		} else {
-			alert("방 정보를 가져오는 데 실패했습니다.");
+			window.location.href = "/lobby";
 		}
 	} catch (error) {
 		console.error(error);
@@ -336,6 +342,5 @@ const handleQuickEnter = async () => {
 		joinRoom(randomRoom.room_code);
 	} catch (error) {
 		console.error("Error fetching room list:", error);
-		alert("방 리스트를 불러오는 데 실패했습니다.");
 	}
 };
