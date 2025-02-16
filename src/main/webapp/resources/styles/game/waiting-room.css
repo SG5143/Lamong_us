@@ -4,6 +4,29 @@ body {
 	background-color: var(--background-color);
 }
 
+input {
+	outline: none;
+	padding: 8px;
+	border-radius: 8px;
+}
+
+input:focus {
+	background-color: none;
+}
+
+form>h2 {
+	margin: 20px auto;
+}
+
+button {
+	min-width: 80px;
+	color: var(--background-color);
+	padding: 10px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+
 #main {
 	border-top-left-radius: 35px;
 	border-bottom-left-radius: 35px;
@@ -28,6 +51,7 @@ body {
 
 #cont-wrap>#left-cont {
 	flex: 1;
+	height: 93%;
 }
 
 #cont-wrap>#left-cont>#left-top {
@@ -44,10 +68,6 @@ body {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-}
-
-#cont-wrap>#left-cont>div:last-child {
-	min-height: 500px;
 }
 
 #cont-wrap>#right-cont {
@@ -75,7 +95,6 @@ body {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	margin-top: 20px;
 }
 
 #user-list>.user-item>.user-name {
@@ -180,4 +199,110 @@ modal {
 	font-size: 20px;
 	cursor: pointer;
 	background-color: var(--secondaryTextColor);
+}
+
+#user-wrap {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 20px;
+}
+
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 20px;
+	width: 30%;
+	min-width: 300px;
+	min-height: 200px;
+	border-radius: 8px;
+	background-color: var(--background-color);
+	color: white;
+}
+
+.close-btn {
+	color: var(--color-theme-04);
+	font-size: 28px;
+	font-weight: bold;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	font-size: 28px;
+	transition: 0.2s;
+}
+
+.close-btn:hover, .close-btn:focus {
+	text-decoration: none;
+	cursor: pointer;
+	color: white;
+}
+
+#submit-btn {
+	width: 100%;
+	margin-top: 20px;
+}
+
+.input-wrap {
+	display: flex;
+	align-items: center;
+	margin-bottom: 2px;
+}
+
+.input-wrap>input {
+	flex: 1;
+}
+
+.input-wrap>span {
+	width: 90px;
+	text-align: left;
+}
+
+.input-wrap>div {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+}
+
+.input-wrap>div>span {
+	text-align: left;
+	margin-right: 5px;
+}
+
+#pw-wrap {
+	display: flex;
+	align-items: center;
+}
+
+#pw-wrap>div:first-child {
+	width: 90px;
+	text-align: left;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+#pw-wrap>div:last-child {
+	flex: 1;
+}
+
+#pw-wrap>div:last-child>input {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#pw-wrap>div:last-child>span {
+	text-align: left;
 }

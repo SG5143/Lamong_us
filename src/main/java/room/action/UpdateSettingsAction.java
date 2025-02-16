@@ -38,17 +38,16 @@ public class UpdateSettingsAction implements Action {
 			String title = reqData.optString("title", null);
 			String password = reqData.optString("password", null);
 			String isPrivate = !password.equals("") ? "on" : "off";
-			String maxPlayers = reqData.optString("max_players", null);
 			String roundCount = reqData.optString("round", null);
 			String roomCode = reqData.optString("room_code", null);
 
-			if (title == null || password == null || maxPlayers == null || roundCount == null || roomCode == null) {
+			if (title == null || password == null || roundCount == null || roomCode == null) {
 				sendResponseStatusAndMessage(response, HttpServletResponse.SC_BAD_REQUEST, "필수 요청 데이터가 누락되었습니다.");
 				return;
 			}
 
 			RoomDao roomDao = RoomDao.getInstance();
-			RoomRequestDto roomDto = new RoomRequestDto(title, isPrivate, password, maxPlayers, roundCount, roomCode);
+			RoomRequestDto roomDto = new RoomRequestDto(title, isPrivate, password, roundCount, roomCode);
 
 			try {
 				roomDao.updateRoomSettings(roomDto);
