@@ -2,6 +2,10 @@ const chat = document.getElementById('chat');
 const message = document.getElementById('message');
 const send = document.getElementById('send');
 
+let waitRoomUUID = null;
+let waitRoomTitle =null;
+let waitRoomNumber =null;
+
 let players = null;
 let userUUID = null;
 let round = 1;
@@ -26,6 +30,11 @@ ws.onmessage = function (event) {
 	switch (data.type) {
 		case 'SESSION_ID':
 			userUUID = data.uuid;
+			break;
+		case 'ROOM_INFO':
+			waitRoomUUID = data.waitRoomUUID;
+			waitRoomTitle = data.waitRoomTitle;
+			waitRoomNumber = data.waitRoomNumber;
 			break;
 		case 'CHAT_HISTORY':
 			displayChatHistory(data.chatHistory);

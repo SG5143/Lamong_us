@@ -106,9 +106,9 @@ public class ActionFactory {
 		Action action = null;
 
 		if (method == HttpMethod.POST)
-			return new PostChatAction();
+			return new PostChat();
 		else if (method == HttpMethod.GET)
-			return new AdminGetChatMessagesAction();
+			return new AdminChatHistory();
 
 		return action;
 	}
@@ -117,9 +117,9 @@ public class ActionFactory {
 		Action action = null;
 
 		if (method == HttpMethod.POST)
-			return new CreateChatRoomAction();
+			return new CreateChatRoom();
 		else if (method == HttpMethod.GET)
-			return new GetChatRoomMessagesAction();
+			return new ChatRoomMessages();
 
 		return action;
 	}

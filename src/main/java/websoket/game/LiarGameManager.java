@@ -1,30 +1,32 @@
-package websoket;
+package websoket.game;
 
 import java.util.*;
 import java.util.concurrent.*;
 import org.json.JSONObject;
 import jakarta.websocket.Session;
 
+@SuppressWarnings("unchecked")
 public class LiarGameManager {
-	private static final LiarGameManager INSTANCE = new LiarGameManager();
+	private static final LiarGameManager instance = new LiarGameManager();
 	private final Map<String, GameSession> gameSessions = new ConcurrentHashMap<>();
-	private final SandGameMessage SGM = SandGameMessage.getInstance();
+	private final SandGameMessage sgm = SandGameMessage.getInstance();
 
 	private LiarGameManager() {}
 
 	public static LiarGameManager getInstance() {
-		return INSTANCE;
+		return instance;
 	}
 
-	@SuppressWarnings("unchecked")
 	// ================== 게임 초기화 ================== //
 	public void initializeNewGame(GameStartDto gameStartDto) {
+		sgm.sendRoomInfo(gameStartDto);
 		String roomKey = gameStartDto.getRoomKey();
 		List<Session> clients = new CopyOnWriteArrayList<>(gameStartDto.getClients());
 
 		Session liar = selectLiar(clients);
 		Map<String, String> randomSelection = LiarGameTopic.getRandomTopicAndWord();
 		Map<String, Object> liarInfo = (Map<String, Object>) liar.getUserProperties().get("userInfo");
+		
 		GameSession session = new GameSession(
 				roomKey,
 				(String) liarInfo.get("uuid"),
@@ -32,38 +34,37 @@ public class LiarGameManager {
 				randomSelection.get("keyword"),
 				gameStartDto.getRounds(),
 				clients);
-
 		gameSessions.put(roomKey, session);
 
-		distributeGameSetup(session);
-		SGM.sendChangeRound(clients, 1);
-		SGM.sendTurnInfo(clients, 1);
-	}
-
-	private void distributeGameSetup(GameSession session) {
-		broadcastClientInfo(session);
+		sgm.clientInfoMessage(session);
 		distributeTurns(session);
-		SGM.distributeWords(session);
+		sgm.distributeWords(session);
 		session.transitionState(GameSession.GameState.ROUND_START);
+		sgm.sendChangeRound(session);
+		sgm.sendTurnInfo(session);
 	}
 
 	// ================== 메시지 처리 ================== //
 	public boolean handleGameMessage(String roomKey, Session client, String message) {
-        try {
-            JSONObject json = new JSONObject(message);
-            String type = json.getString("type");
-            
-            switch (type) {
-                case MessageConstants.TYPE_VOTE : return handleVoteAction(roomKey, message);
-                case MessageConstants.TYPE_MESSAGE: return handleChatMessage(roomKey, client, message);
-                case MessageConstants.TYPE_FINAL_CHANCE: return handleFinalChance(roomKey, client, message);
-            };
-            return false;
-        } catch (Exception e) {
-        	System.out.println("메시지 처리 에러: " + e.getMessage());
-            return false;
-        }
-    }
+		try {
+			JSONObject json = new JSONObject(message);
+			String type = json.getString("type");
+
+			switch (type) {
+			case "VOTE":
+				return handleVoteAction(roomKey, message);
+			case "MESSAGE":
+				return handleChatMessage(roomKey, client, message);
+			case "FINAL_CHANCE":
+				return handleFinalChance(roomKey, client, message);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("메시지 처리 에러: " + e.getMessage());
+		}
+		
+		return false;
+	}
 
 	private boolean handleVoteAction(String roomKey, String message) {
 		GameSession session = gameSessions.get(roomKey);
@@ -81,26 +82,20 @@ public class LiarGameManager {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean handleChatMessage(String roomKey, Session client, String message) {
 		GameSession session = gameSessions.get(roomKey);
 
-		Map<String, Object> userInfo = (Map<String, Object>) client.getUserProperties().get("userInfo");
-		String uuid = (String) userInfo.get("uuid");
-		String nickname = (String) userInfo.get("nickname");
-
 		if (session.getState().equals(GameSession.GameState.ROUND_END)) {
-			SGM.broadcastMessage(session.getClients(), uuid, nickname, message);
+			sgm.broadcastMessage(session, client, message);
 			return true;
 		} else if (session.isCurrentPlayer(client)) {
-			SGM.broadcastMessage(session.getClients(), uuid, nickname, message);
+			sgm.broadcastMessage(session, client, message);
 			advanceGameTurn(session);
 			return true;
 		}
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean handleFinalChance(String roomKey, Session client, String message) {
 		GameSession session = gameSessions.get(roomKey);
 
@@ -113,9 +108,9 @@ public class LiarGameManager {
 
 		if (liarUUID.equals(senderUUID)) {
 			if (keyword.equals(session.getKeyword())) {
-				SGM.endGameMessage(session.getClients(), "liarVictory");
+				sgm.endGameMessage(session, "liarVictory");
 			} else {
-				SGM.endGameMessage(session.getClients(), "liarDefeat");
+				sgm.endGameMessage(session, "liarDefeat");
 			}
 		}
 		return false;
@@ -132,23 +127,23 @@ public class LiarGameManager {
 				return;
 			}
 		}
-		SGM.sendTurnInfo(session.getClients(), session.getCurrentTurn());
+		sgm.sendTurnInfo(session);
 	}
 
 	private boolean startNewRound(GameSession session) {
 		if (session.getCurrentRound() > session.getMaxRounds()) {
 			session.transitionState(GameSession.GameState.ROUND_END);
-			SGM.broadcastStateChange(session.getClients(), session.getState().toString());
+			sgm.broadcastStateChange(session);
 			return false;
 		}
-		SGM.sendChangeRound(session.getClients(), session.getCurrentRound());
+		sgm.sendChangeRound(session);
 		return true;
 	}
 
 	// ================== 투표 관리 ================== //
 	private void initiateVoting(GameSession session) {
 		session.transitionState(GameSession.GameState.VOTE_PHASE);
-		SGM.broadcastStateChange(session.getClients(), session.getState().toString());
+		sgm.broadcastStateChange(session);
 		session.setVoteInProgress(true);
 
 		Executors.newSingleThreadScheduledExecutor().schedule(() -> {
@@ -161,13 +156,13 @@ public class LiarGameManager {
 
 	private void processVoteResults(GameSession session) {
 		GameSession.VoteResult result = session.calculateVoteResult();
-		SGM.voteResult(session.getClients(), result);
+		sgm.voteResult(session, result);
 
 		if (result.isLiarCorrect()) {
 			session.transitionState(GameSession.GameState.FINAL_CHANCE);
-			SGM.broadcastStateChange(session.getClients(), session.getState().toString());
+			sgm.broadcastStateChange(session);
 		} else {
-			SGM.endGameMessage(session.getClients(), "liarVictory");
+			sgm.endGameMessage(session, "liarVictory");
 		}
 	}
 
@@ -187,14 +182,14 @@ public class LiarGameManager {
 			reassignTurn(session);
 			advanceGameTurn(session);
 		}
-		broadcastClientInfo(session);
+		sgm.clientInfoMessage(session);
 	}
 
 	// ================== 보조 메서드 ================== //
 	private void terminateGame(String roomKey) {
 		GameSession session = gameSessions.get(roomKey);
 		session.getClients().forEach(this::safeCloseSession);
-		SGM.endGameMessage(session.getClients(), "userLeave");
+		sgm.endGameMessage(session, "userLeave");
 	}
 
 	private void safeCloseSession(Session session) {
@@ -206,17 +201,6 @@ public class LiarGameManager {
 		}
 	}
 
-	private void broadcastClientInfo(GameSession session) {
-		List<Map<String, Object>> playersInfo = new ArrayList<>();
-		for (Session client : session.getClients()) {
-
-			@SuppressWarnings("unchecked")
-			Map<String, Object> clientInfo = (Map<String, Object>) client.getUserProperties().get("userInfo");
-			playersInfo.add(clientInfo);
-		}
-		SGM.clientInfoMessage(session.getClients(), playersInfo);
-	}
-
 	private Session selectLiar(List<Session> clients) {
 		Collections.shuffle(clients);
 		return clients.get(0);
@@ -225,8 +209,8 @@ public class LiarGameManager {
 	private void distributeTurns(GameSession session) {
 		List<Session> clients = session.getClients();
 		for (int i = 0; i < clients.size(); i++) {
-			clients.get(i).getUserProperties().put(MessageConstants.TURN, i + 1);
-			SGM.assignTurnToClient(clients.get(i), i + 1);
+			clients.get(i).getUserProperties().put("turn", i + 1);
+			sgm.assignTurnToClient(clients.get(i), i + 1);
 		}
 	}
 
