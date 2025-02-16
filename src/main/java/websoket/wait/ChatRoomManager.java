@@ -1,4 +1,4 @@
-package websoket;
+package websoket.wait;
 
 import java.util.*;
 import chat.model.ChatRequestDto;

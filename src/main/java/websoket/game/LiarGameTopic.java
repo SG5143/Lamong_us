@@ -1,4 +1,4 @@
-package websoket;
+package websoket.game;
 
 import java.util.HashMap;
 import java.util.List;

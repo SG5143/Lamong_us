@@ -1,4 +1,4 @@
-package websoket;
+package websoket.wait;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONObject;
 import jakarta.websocket.Session;
 import room.model.RoomDao;
+import websoket.JsonUtil;
+import websoket.RoomSession;
 
 public class WaitRoomManager {
 	private static final WaitRoomManager INSTANCE = new WaitRoomManager();
@@ -61,7 +63,7 @@ public class WaitRoomManager {
 		}
 		
 		// 인원이 없으면 방삭제
-		if (session.getClients().size() == 0) {
+		if (session.getClients().isEmpty()) {
 			roomSessions.remove(roomKey);
 			roomDao.deleteRoomByCode(roomKey.split("/")[1]); 
 			return;
@@ -76,7 +78,7 @@ public class WaitRoomManager {
             String type = json.getString("type");
             
             switch (type) {
-			case "PLYAER_INFO":
+			case "PLAYER_INFO":
 				return broadcastPlayersInfo(roomKey);
 			case "MESSAGE":
 				return handleChatMessage(roomKey, client, message);
