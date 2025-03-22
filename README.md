@@ -1,12 +1,12 @@
 <div align="center">
 
-![LOGO](https://github.com/user-attachments/assets/8a1e9f95-7883-4126-844f-d3d3c050050f)
+![LOGO](https://github.com/user-attachments/assets/1c543861-c734-4300-99d3-0dcdeb0460e9)
 
 ### 웹 라이어 게임 프로젝트 🖍️
 ![프로젝트 기간](https://img.shields.io/badge/프로젝트_기간-2025.01.03~2025.02.03-fab2ac?style=flat&logo=&logoColor=white&color=2F3239)
 <br/>
-![사용 언어 수](https://img.shields.io/github/languages/count/SG5143/2025Team-LamongUs?label=%EC%82%AC%EC%9A%A9%20%EC%96%B8%EC%96%B4%20%EC%88%98&color=green)
-![커밋수](https://badgen.net/github/commits/SG5143/2025Team-LamongUs/develop?label=%EC%BB%A4%EB%B0%8B%EC%88%98&color=green)
+![사용 언어 수](https://img.shields.io/github/languages/count/SG5143/Lamong_us?label=%EC%82%AC%EC%9A%A9%20%EC%96%B8%EC%96%B4%20%EC%88%98&color=DEAA3A)
+![커밋수](https://badgen.net/github/commits/SG5143/Lamong_us?label=%EC%BB%A4%EB%B0%8B%EC%88%98&color=DE3A86)
 <br/>
 ![Java 17](https://img.shields.io/badge/Java_17-white)
 ![JSP/JSTL](https://img.shields.io/badge/JSP/JSTL-white)
