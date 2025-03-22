@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import jakarta.websocket.Session;
 import room.model.RoomDao;
 import websoket.JsonUtil;
-import websoket.RoomSession;
 
 public class WaitRoomManager {
 	private static final WaitRoomManager INSTANCE = new WaitRoomManager();

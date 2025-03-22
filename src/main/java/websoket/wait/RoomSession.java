@@ -1,4 +1,4 @@
-package websoket;
+package websoket.wait;
 
 import java.util.ArrayList;
 import java.util.HashMap;

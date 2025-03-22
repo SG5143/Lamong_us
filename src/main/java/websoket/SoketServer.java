@@ -27,10 +27,12 @@ import user.model.user.User;
 import websoket.game.GameStartDto;
 import websoket.game.LiarGameManager;
 import websoket.wait.ChatRoomManager;
+import websoket.wait.RoomSession;
 import websoket.wait.WaitRoomManager;
 
 import org.json.JSONObject;
 
+@SuppressWarnings("unchecked")
 @ServerEndpoint(value = "/ws/{roomType}/{roomUUID}", configurator = CustomConfigurator.class)
 public class SoketServer {
 	private final String TYPE_PLAY = "play";
@@ -160,8 +162,7 @@ public class SoketServer {
 		waitRoomManager.enterClient(roomKey, client);
 		waitRoomManager.broadcastPlayersInfo(roomKey);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	private boolean sendSessionUUID(Session session) throws IOException {
 		Map<String, Object> info = (Map<String, Object>) session.getUserProperties().get("userInfo");
 			JSONObject sessionIdMessage = new JSONObject();
@@ -171,7 +172,6 @@ public class SoketServer {
 		return false;
 	} 
 	
-	@SuppressWarnings("unchecked")
 	private void handleMessage(String roomType, String roomUUID, Session session, String message) {
 		Map<String, Object> userInfo = (Map<String, Object>) session.getUserProperties().get("userInfo");
 	    JSONObject jsonObject = new JSONObject(message);
