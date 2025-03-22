@@ -1,16 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app
-    version="4.0"
-    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-    xmlns:javaee="http://xmlns.jcp.org/xml/ns/javaee"
-    xmlns:xml="http://www.w3.org/XML/1998/namespace"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
-  <display-name>Archetype Created Web Application</display-name>
-  
-  <error-page>
+<web-app version="4.0"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:javaee="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+	<display-name>Archetype Created Web Application</display-name>
+
+	<!-- ==================== -->
+	<!-- servlet Page Mapping -->
+	<!-- ==================== -->
+
+	<servlet>
+		<servlet-name>Service</servlet-name>
+		<servlet-class>controller.Service</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Service</servlet-name>
+		<url-pattern>/v1/*</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- ================ -->
+	<!-- JSP Page Mapping -->
+	<!-- ================ -->
+
+	<servlet>
+		<servlet-name>header</servlet-name>
+		<jsp-file>/views/modules/header.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>header</servlet-name>
+		<url-pattern>/header</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>main</servlet-name>
+		<jsp-file>/index.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>main</servlet-name>
+		<url-pattern>/main</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>myPage</servlet-name>
+		<jsp-file>/views/user/myPage.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>myPage</servlet-name>
+		<url-pattern>/myPage</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>blockList</servlet-name>
+		<jsp-file>/views/user/blockList.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>blockList</servlet-name>
+		<url-pattern>/blockList</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>gameHistory</servlet-name>
+		<jsp-file>/views/user/gameHistory.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>gameHistory</servlet-name>
+		<url-pattern>/gameHistory</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>gameLobby</servlet-name>
+		<jsp-file>/views/game/gameLobby.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>gameLobby</servlet-name>
+		<url-pattern>/lobby</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>gameWaitingRoom</servlet-name>
+		<jsp-file>/views/game/gameWaitingRoom.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>gameWaitingRoom</servlet-name>
+		<url-pattern>/waiting-room</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>gamePlayRoom</servlet-name>
+		<jsp-file>/views/game/gamePlayRoom.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>gamePlayRoom</servlet-name>
+		<url-pattern>/play-room</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>chat</servlet-name>
+		<jsp-file>/views/chat/liarGameChat.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>chat</servlet-name>
+		<url-pattern>/chat</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>waitChat</servlet-name>
+		<jsp-file>/views/chat/waitChat.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>waitChat</servlet-name>
+		<url-pattern>/wait-chat</url-pattern>
+	</servlet-mapping>
+	
+	
+	<servlet>
+		<servlet-name>upload</servlet-name>
+		<jsp-file>/views/chat/upload.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>upload</servlet-name>
+		<url-pattern>/upload</url-pattern>
+	</servlet-mapping>
+
 	<!-- 404 에러 페이지 매핑 -->
-  	<error-code>404</error-code>
-  	<location>/</location>
-  </error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/</location>
+	</error-page>
+
 </web-app>

@@ -1,29 +1,39 @@
 package util;
 
-import java.sql.Connection;
+import java.sql.*;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
+import javax.naming.*;
+import javax.sql.*;
 
 public class DBManager {
-	public static Connection getConnection() {
 
+	public static Connection getConnection() {
 		Connection conn = null;
 
 		try {
 			Context init = new InitialContext();
 			Context ctx = (Context) init.lookup("java:comp/env");
-
 			DataSource dataSource = (DataSource) ctx.lookup("jdbc/LamongDB");
+
 			conn = dataSource.getConnection();
-			
-			System.out.println("데이터베이스 연동 성공");
 		} catch (Exception e) {
-			System.out.println("데이터베이스 연동 실패");
 			e.printStackTrace();
 		}
 
 		return conn;
 	}
+
+	public static void close(Connection conn, PreparedStatement pstmt, ResultSet rs) {
+		try {
+			if (rs != null)
+				rs.close();
+			if (pstmt != null)
+				pstmt.close();
+			if (conn != null)
+				conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

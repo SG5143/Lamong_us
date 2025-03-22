@@ -1,0 +1,295 @@
+@charset "UTF-8";
+
+body {
+	background-color: #161719;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'SB_Aggro_Light', sans-serif;
+	color: white;
+}
+
+header {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 200PX 0 100px 0;
+}
+
+.container {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+h1 {
+	font-size: 100px;
+	margin: 20PX;
+	font-family: 'SB_Aggro_Medium', sans-serif;
+	font-weight: normal;
+}
+
+h2 {
+	font-size: 20px;
+	color: #A9AEBA;
+}
+
+.button-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 400px;
+	gap: 20px;
+}
+
+.btn {
+	font-size: 18px;
+	padding: 15px 10px;
+	border: none;
+	border-radius: 8px;
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+button, .btn, [type="submit"], [type="button"] {
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+button:hover, .btn:hover, [type="submit"]:hover, [type="button"]:hover {
+	opacity: 0.85;
+}
+
+.btn-top {
+	width: 100%;
+	background-color: #578FFF;
+}
+
+.btn-mid {
+	flex: 1;
+	width: 50%;
+	background-color: #484F5E;
+}
+
+.btn-bottom {
+	width: 150px;
+	background-color: #484F5E;
+}
+
+.btn-mid:hover, .btn-bottom:hover {
+	background-color: #DE3A86;
+}
+
+.btn-group {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+.btn-group-mid {
+	width: 100%;
+}
+
+.social-login {
+	width: 60%;
+	height: 45px;
+	border: none;
+	padding: 0;
+	background-image: url('/resources/images/kakao_login_medium_wide.png');
+	cursor: pointer;
+	overflow: hidden;
+	border-radius: 8px;
+	transition: opacity 0.3s ease;
+	position: relative; /* 추가 */
+}
+
+.social-login:hover {
+	opacity: 0.85;
+}
+
+*
+.modal-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 1000;
+	justify-content: center;
+	align-items: center;
+}
+
+.modal {
+	background: white;
+	border-radius: 8px;
+	position: relative;
+	padding: 30px;
+	max-width: 500px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal p {
+	color: #000;
+}
+
+.modal-content {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	display: flex;
+}
+
+#play-method-modal {
+	background: white;
+	color: black;
+	padding-top: 30px;
+}
+
+#play-method-modal h2 {
+	color: black;
+}
+
+#play-method-modal p {
+	color: black;
+}
+
+.play-method {
+	text-align: left;
+	padding: 20px;
+}
+
+.step {
+	margin-bottom: 20px;
+	position: relative;
+	padding-left: 50px;
+}
+
+.step-number {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 40px;
+	height: 40px;
+	background-color: #578FFF;
+	color: white;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.step h3 {
+	margin: 0 0 10px 0;
+	color: #578FFF;
+}
+
+.step p {
+	margin: 0;
+	line-height: 1.5;
+}
+
+strong {
+	color: #DE3A86;
+}
+
+#login-modal {
+	width: 70%;
+	height: 60%;
+}
+
+#join-modal {
+	width: 70%;
+	height: 70%;
+}
+
+.modal h3 {
+	color: black;
+	font-family: 'SB_Aggro_Bold', sans-serif;
+	font-size: 30px;
+	margin: 20px;
+}
+
+.modal h2 {
+	color: black;
+	font-family: 'SB_Aggro_Medium', sans-serif;
+	font-size: 30px;
+}
+
+.modal form {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.modal input, .modal select, .modal button {
+	width: 70%;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 5px;
+	margin: 10px;
+}
+
+.modal input {
+	height: 30px;
+}
+
+.modal [type="submit"] {
+	background-color: #578FFF;
+	margin: 30px;
+	height: 40px;
+	color: white;
+	height: 40px;
+}
+
+.line-text {
+	display: flex;
+	align-items: center;
+	color: #000;
+	width: 70%;
+	margin: 20px auto;
+}
+
+.line-text::before, .line-text::after {
+	content: "";
+	flex-grow: 1;
+	background: #ccc;
+	height: 1px;
+	margin: 0 10px;
+}
+
+.close {
+	position: absolute;
+	top: 10px;
+	left: 15px;
+	font-family: 'SB_Aggro_Medium', sans-serif;
+	font-size: 24px;
+	cursor: pointer;
+	color: black;
+}
+
+.close:hover {
+	color: #578FFF;
+}
+
+.error-msg {
+	display: none;
+	text-align: left; /* 텍스트 왼쪽 정렬 */
+	color: red;
+	font-size: 0.8rem;
+	width: 100%; /* 부모 요소의 너비에 맞게 */
+}

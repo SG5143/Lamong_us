@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+@font-face {
+	font-family: 'SB_Aggro_Bold';
+	src: url('../fonts/SB_aggro_B.ttf') format('truetype');
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'SB_Aggro_Light';
+	src: url('../fonts/SB_aggro_L.ttf') format('truetype');
+	font-weight: lighter;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'SB_Aggro_Medium';
+	src: url('../fonts/SB_aggro_M.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+:root {
+	--background-color: #161719;   
+	--color-theme-01: #3ADE3C;
+	--color-theme-02: #DE3A86;
+	--color-theme-03: #DEAA3A;
+	--color-theme-04: #484F5E;
+	--secondaryTextColor: #A9AEBA; 
+	--error-color: #D43F42;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	font-family: 'SB_Aggro_Medium';
+	font-weight: normal;
+	font-style: normal;
+}

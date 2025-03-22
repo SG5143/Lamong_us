@@ -1,0 +1,242 @@
+@charset "UTF-8";
+
+#root {
+	position: relative;
+
+}
+
+#chat-area {
+	position: relative;
+	width: 500px;
+	height: 100%;
+	padding: 20px;
+	background-color: var(--background-color);
+	border-radius: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+#chat {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	overflow-y: auto;
+	height: calc(90vh - 80px);
+	padding: 10px;
+	scrollbar-width: none; -ms-overflow-style : none;
+	gap: 10px;
+	-ms-overflow-style: none;
+}
+
+#chat>div {
+	color: white;
+}
+
+#msg-input-container {
+	position: relative;
+	display: flex;
+	gap: 10px;
+}
+
+#msg-input-container #message {
+	flex-grow: 1;
+	height: 40px;
+	padding-left: 10px;
+	padding-right: 50px;
+	border-radius: 10px;
+	border: none;
+	background-color: #353535;
+	color: white;
+	outline: none;
+}
+
+#msg-input-container #message::placeholder {
+	color: var(--secondaryTextColor);
+}
+
+#msg-input-container #send {
+	position: absolute;
+	right: 5px;
+	padding: 10px;
+	cursor: pointer;
+}
+
+.material-symbols-outlined {
+	font-size: 20px;
+	color: white;
+}
+
+.user-msg-container {
+	flex-shrink: 0;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	height: 80px;
+	background-color: rgba(0, 0, 0, 0.2);
+	width: 100%;
+	gap: 10px;
+}
+
+.profile-image {
+	flex-shrink: 0;
+	width: 60px;
+	height: 60px;
+	border-radius: 100px;
+	background-size: cover;
+	background-position: center;
+}
+
+.message-content {
+	display: flex;
+	flex-direction: column;
+	max-width: 100%;
+	gap: 5px;
+}
+
+.message-writer-time {
+	display: flex;
+	justify-content: end;
+	align-items: flex-end;
+	gap: 5px;
+}
+
+.message-content>p {
+	font-size: 16px;
+	word-wrap: break-word;
+	white-space: normal;
+	margin: 0;
+	line-height: 1.4;
+}
+
+.message-writer {
+	font-size: 20px;
+}
+
+.message-time {
+	font-size: 14px;
+}
+
+#vote-modal {
+	position: fixed;
+	display:none;
+	top: 25%;
+	left: 25%; 
+	width : 50vw;
+	background-color: white;
+}
+
+#vote-modal .modal-content {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+}
+
+#vote-modal .modal-content>span {
+	font-size: 24px;
+}
+
+#vote-modal .modal-content>h2 {
+	font-size: 32px;
+}
+
+#vote-modal .modal-content>p {
+	font-size: 28px;
+}
+
+#vote-modal #vote-options {
+	display: flex;
+	gap: 10px;
+}
+
+#vote-modal .vote-option {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100px;
+	gap: 10px;
+	padding: 5px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+#vote-modal .vote-option:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+#vote-modal .vote-option img {
+	width: 40px;
+	height: 40px;
+	border-radius: 100%;
+	object-fit: cover;
+	background-size: cover;
+	background-position: center;
+	background-color: green;
+}
+
+#vote-modal .vote-option span {
+	font-size: 16px;
+	transition: color 0.3s;
+}
+
+#vote-modal .vote-option input[type="radio"] {
+	/* display: none; */
+}
+
+#vote-modal #submit-vote {
+	width: 50%;
+	font-size: 24px;
+	padding: 15px 0;
+	border: none;
+	background-color: var(--color-theme-04);
+	color: white;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+#liar-chance-modal {
+	position: fixed;
+	display: none;
+	top: 25%;
+	left: 25%;
+	width: 50vw;
+	background-color: white;
+}
+
+#liar-chance-modal .modal-content{
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+}
+
+#liar-chance-modal #liar-chance-input{
+	outline: none;
+	padding: 10px;
+	height: 20px;
+	width: 80%;
+}
+
+#liar-chance-modal #submit-keyword {
+	width: 50%;
+	font-size: 24px;
+	padding: 15px 0;
+	border: none;
+	background-color: var(--color-theme-04);
+	color: white;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+#game-result-modal {
+	position: fixed;
+	display: none;
+	top: 25%;
+	left: 25%;
+	width: 50vw;
+	background-color: white;
+}
+
